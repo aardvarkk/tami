@@ -20,5 +20,5 @@ add_executable(famitracker
 	Source/APU/Square.cpp
 	Source/APU/Triangle.cpp
 	Source/Blip_Buffer/Blip_Buffer.cpp
-	main.cpp
+	Source/main.cpp
 	)
