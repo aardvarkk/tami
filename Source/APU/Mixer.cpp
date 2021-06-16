@@ -142,6 +142,9 @@ void CMixer::SetChipLevel(chip_level_t Chip, float Level)
 		case CHIP_LEVEL_N163:
 			m_fLevelN163 = Level;
 			break;
+	  default:
+	    // Missing CHIP_LEVEL_VRC7 and CHIP_LEVEL_S5B
+	    abort();
 	}
 }
 
