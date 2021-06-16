@@ -6,11 +6,13 @@
 #ifndef BLIP_BUFFER_H
 #define BLIP_BUFFER_H
 
+#include <stdint.h>
+
 // Time unit at source clock rate
-typedef long blip_time_t;
+typedef int32_t blip_time_t;
 
 // Output samples are 16-bit signed, with a range of -32767 to 32767
-typedef short blip_sample_t;
+typedef int16_t blip_sample_t;
 enum { blip_sample_max = 32767 };
 
 class Blip_Buffer {
@@ -20,10 +22,10 @@ public:
 	// Set output sample rate and buffer length in milliseconds (1/1000 sec, defaults
 	// to 1/4 second), then clear buffer. Returns NULL on success, otherwise if there
 	// isn't enough memory, returns error without affecting current buffer setup.
-	blargg_err_t set_sample_rate( long samples_per_sec, int msec_length = 1000 / 4 );
+	blargg_err_t set_sample_rate( int32_t samples_per_sec, int msec_length = 1000 / 4 );
 	
 	// Set number of source time units per second
-	void clock_rate( long );
+	void clock_rate( int32_t );
 	
 	// End current time frame of specified duration and make its samples available
 	// (along with any still-unread samples) for reading with read_samples(). Begins
@@ -34,18 +36,18 @@ public:
 	// the buffer. Returns number of samples actually read and removed. If stereo is
 	// true, increments 'dest' one extra time after writing each sample, to allow
 	// easy interleving of two channels into a stereo output buffer.
-	long read_samples( blip_sample_t* dest, long max_samples, int stereo = 0 );
+	int32_t read_samples( blip_sample_t* dest, int32_t max_samples, int stereo = 0 );
 	
 // Additional optional features
 
 	// Current output sample rate
-	long sample_rate() const;
+	int32_t sample_rate() const;
 	
 	// Length of buffer, in milliseconds
 	int length() const;
 	
 	// Number of source time units per second
-	long clock_rate() const;
+	int32_t clock_rate() const;
 	
 	// Set frequency high-pass filter frequency, where higher values reduce bass more
 	void bass_freq( int frequency );
@@ -58,45 +60,45 @@ public:
 	void clear( int entire_buffer = 1 );
 	
 	// Number of samples available for reading with read_samples()
-	long samples_avail() const;
+	int32_t samples_avail() const;
 	
 	// Remove 'count' samples from those waiting to be read
-	void remove_samples( long count );
+	void remove_samples( int32_t count );
 	
 // Experimental features
 	
 	// Number of raw samples that can be mixed within frame of specified duration.
-	long count_samples( blip_time_t duration ) const;
+	int32_t count_samples( blip_time_t duration ) const;
 	
 	// Mix 'count' samples from 'buf' into buffer.
-	void mix_samples( blip_sample_t const* buf, long count );
+	void mix_samples( blip_sample_t const* buf, int32_t count );
 	
 	// Count number of clocks needed until 'count' samples will be available.
 	// If buffer can't even hold 'count' samples, returns number of clocks until
 	// buffer becomes full.
-	blip_time_t count_clocks( long count ) const;
+	blip_time_t count_clocks( int32_t count ) const;
 	
 	// not documented yet
-	typedef unsigned long blip_resampled_time_t;
-	void remove_silence( long count );
+	typedef uint32_t blip_resampled_time_t;
+	void remove_silence( int32_t count );
 	blip_resampled_time_t resampled_duration( int t ) const     { return t * factor_; }
 	blip_resampled_time_t resampled_time( blip_time_t t ) const { return t * factor_ + offset_; }
-	blip_resampled_time_t clock_rate_factor( long clock_rate ) const;
+	blip_resampled_time_t clock_rate_factor( int32_t clock_rate ) const;
 public:
 	Blip_Buffer();
 	~Blip_Buffer();
 	
 	// Deprecated
 	typedef blip_resampled_time_t resampled_time_t;
-	blargg_err_t sample_rate( long r ) { return set_sample_rate( r ); }
-	blargg_err_t sample_rate( long r, int msec ) { return set_sample_rate( r, msec ); }
+	blargg_err_t sample_rate( int32_t r ) { return set_sample_rate( r ); }
+	blargg_err_t sample_rate( int32_t r, int msec ) { return set_sample_rate( r, msec ); }
 private:
 	// noncopyable
 	Blip_Buffer( const Blip_Buffer& );
 	Blip_Buffer& operator = ( const Blip_Buffer& );
 public:
-	typedef long buf_t_;
-	unsigned long factor_;
+	typedef int32_t buf_t_;
+	uint32_t factor_;
 	blip_resampled_time_t offset_;
 	buf_t_* buffer_;
 	long buffer_size_;
@@ -128,16 +130,16 @@ private:
 #endif
 
 	// Internal
-	typedef unsigned long blip_resampled_time_t;
+	typedef uint32_t blip_resampled_time_t;
 	int const blip_widest_impulse_ = 16;
 	int const blip_res = 1 << BLIP_PHASE_BITS;
 	class blip_eq_t;
 	
 	class Blip_Synth_ {
 		double volume_unit_;
-		short* const impulses;
+		int16_t* const impulses;
 		int const width;
-		long kernel_unit;
+		int32_t kernel_unit;
 		int impulses_size() const { return blip_res / 2 * width + 1; }
 		void adjust_impulse();
 	public:
@@ -145,7 +147,7 @@ private:
 		int last_amp;
 		int delta_factor;
 		
-		Blip_Synth_( short* impulses, int width );
+		Blip_Synth_( int16_t* impulses, int width );
 		void treble_eq( blip_eq_t const& );
 		void volume_unit( double );
 	};
@@ -197,7 +199,7 @@ public:
 public:
 	Blip_Synth() : impl( impulses, quality ) { }
 private:
-	typedef short imp_t;
+	typedef int16_t imp_t;
 	imp_t impulses [blip_res * (quality / 2) + 1];
 	Blip_Synth_ impl;
 };
@@ -210,13 +212,13 @@ public:
 	blip_eq_t( double treble_db = 0 );
 	
 	// See notes.txt
-	blip_eq_t( double treble, long rolloff_freq, long sample_rate, long cutoff_freq = 0 );
+	blip_eq_t( double treble, int32_t rolloff_freq, int32_t sample_rate, int32_t cutoff_freq = 0 );
 	
 private:
 	double treble;
-	long rolloff_freq;
-	long sample_rate;
-	long cutoff_freq;
+	int32_t rolloff_freq;
+	int32_t sample_rate;
+	int32_t cutoff_freq;
 	void generate( float* out, int count ) const;
 	friend class Blip_Synth_;
 };
@@ -231,10 +233,10 @@ public:
 	int begin( Blip_Buffer& );
 	
 	// Current sample
-	long read() const                       { return accum >> (blip_sample_bits - 16); }
+	int32_t read() const                       { return accum >> (blip_sample_bits - 16); }
 	
 	// Current raw sample in full internal resolution
-	long read_raw() const                   { return accum; }
+	int32_t read_raw() const                   { return accum; }
 	
 	// Advance to next sample
 	void next( int bass_shift = 9 )         { accum += *buf++ - (accum >> bass_shift); }
@@ -245,7 +247,7 @@ public:
 	
 private:
 	const Blip_Buffer::buf_t_* buf;
-	long accum;
+	int32_t accum;
 };
 
 
@@ -255,20 +257,20 @@ private:
 #include <assert.h>
 
 // Compatibility with older version
-const long blip_unscaled = 65535;
+const int32_t blip_unscaled = 65535;
 const int blip_low_quality  = blip_med_quality;
 const int blip_best_quality = blip_high_quality;
 
 #define BLIP_FWD( i ) {                     \
-	long t0 = i0 * delta + buf [fwd + i];   \
-	long t1 = imp [blip_res * (i + 1)] * delta + buf [fwd + 1 + i]; \
+	int32_t t0 = i0 * delta + buf [fwd + i];   \
+	int32_t t1 = imp [blip_res * (i + 1)] * delta + buf [fwd + 1 + i]; \
 	i0 = imp [blip_res * (i + 2)];          \
 	buf [fwd + i] = t0;                     \
 	buf [fwd + 1 + i] = t1; }
 
 #define BLIP_REV( r ) {                     \
-	long t0 = i0 * delta + buf [rev - r];   \
-	long t1 = imp [blip_res * r] * delta + buf [rev + 1 - r];   \
+	int32_t t0 = i0 * delta + buf [rev - r];   \
+	int32_t t1 = imp [blip_res * r] * delta + buf [rev + 1 - r];   \
 	i0 = imp [blip_res * (r - 1)];          \
 	buf [rev - r] = t0;                     \
 	buf [rev + 1 - r] = t1; }
@@ -279,12 +281,12 @@ inline void Blip_Synth<quality,range>::offset_resampled( blip_resampled_time_t t
 {
 	// Fails if time is beyond end of Blip_Buffer, due to a bug in caller code or the
 	// need for a longer buffer as set by set_sample_rate().
-	assert( (long) (time >> BLIP_BUFFER_ACCURACY) < blip_buf->buffer_size_ );
+	assert( (int32_t) (time >> BLIP_BUFFER_ACCURACY) < blip_buf->buffer_size_ );
 	delta *= impl.delta_factor;
 	int phase = (int) (time >> (BLIP_BUFFER_ACCURACY - BLIP_PHASE_BITS) & (blip_res - 1));
 	imp_t const* imp = impulses + blip_res - phase;
-	long* buf = blip_buf->buffer_ + (time >> BLIP_BUFFER_ACCURACY);
-	long i0 = *imp;
+	int32_t* buf = blip_buf->buffer_ + (time >> BLIP_BUFFER_ACCURACY);
+	int32_t i0 = *imp;
 	
 	int const fwd = (blip_widest_impulse_ - quality) / 2;
 	int const rev = fwd + quality - 2;
@@ -294,8 +296,8 @@ inline void Blip_Synth<quality,range>::offset_resampled( blip_resampled_time_t t
 	if ( quality > 12 ) BLIP_FWD( 4 )
 	{
 		int const mid = quality / 2 - 1;
-		long t0 = i0 * delta + buf [fwd + mid - 1];
-		long t1 = imp [blip_res * mid] * delta + buf [fwd + mid];
+		int32_t t0 = i0 * delta + buf [fwd + mid - 1];
+		int32_t t1 = imp [blip_res * mid] * delta + buf [fwd + mid];
 		imp = impulses + phase;
 		i0 = imp [blip_res * mid];
 		buf [fwd + mid - 1] = t0;
@@ -305,8 +307,8 @@ inline void Blip_Synth<quality,range>::offset_resampled( blip_resampled_time_t t
 	if ( quality > 8  ) BLIP_REV( 4 )
 	BLIP_REV( 2 )
 	
-	long t0 = i0 * delta + buf [rev];
-	long t1 = *imp * delta + buf [rev + 1];
+	int32_t t0 = i0 * delta + buf [rev];
+	int32_t t1 = *imp * delta + buf [rev + 1];
 	buf [rev] = t0;
 	buf [rev + 1] = t1;
 }
@@ -330,15 +332,15 @@ void Blip_Synth<quality,range>::update( blip_time_t t, int amp )
 
 inline blip_eq_t::blip_eq_t( double t ) :
 		treble( t ), rolloff_freq( 0 ), sample_rate( 44100 ), cutoff_freq( 0 ) { }
-inline blip_eq_t::blip_eq_t( double t, long rf, long sr, long cf ) :
+inline blip_eq_t::blip_eq_t( double t, int32_t rf, int32_t sr, int32_t cf ) :
 		treble( t ), rolloff_freq( rf ), sample_rate( sr ), cutoff_freq( cf ) { }
 
 inline int  Blip_Buffer::length() const         { return length_; }
-inline long Blip_Buffer::samples_avail() const  { return (long) (offset_ >> BLIP_BUFFER_ACCURACY); }
-inline long Blip_Buffer::sample_rate() const    { return sample_rate_; }
+inline int32_t Blip_Buffer::samples_avail() const  { return (int32_t) (offset_ >> BLIP_BUFFER_ACCURACY); }
+inline int32_t Blip_Buffer::sample_rate() const    { return sample_rate_; }
 inline int  Blip_Buffer::output_latency() const { return blip_widest_impulse_ / 2; }
-inline long Blip_Buffer::clock_rate() const     { return clock_rate_; }
-inline void Blip_Buffer::clock_rate( long cps ) { factor_ = clock_rate_factor( clock_rate_ = cps ); }
+inline int32_t Blip_Buffer::clock_rate() const     { return clock_rate_; }
+inline void Blip_Buffer::clock_rate( int32_t cps ) { factor_ = clock_rate_factor( clock_rate_ = cps ); }
 
 inline int Blip_Reader::begin( Blip_Buffer& blip_buf )
 {
