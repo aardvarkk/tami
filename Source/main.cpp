@@ -12,6 +12,7 @@ int main() {
   std::cout << "hi" << std::endl;
 
   auto apu = new CAPU(new App(), nullptr);
+  apu->SetupSound(44100, 2, MACHINE_NTSC);
 
   return EXIT_SUCCESS;
 }
