@@ -21,7 +21,7 @@
 #ifndef VRC7_H
 #define VRC7_H
 
-#include "external.h"
+#include "External.h"
 #include "emu2413.h"
 
 class CVRC7 : public CExternal {

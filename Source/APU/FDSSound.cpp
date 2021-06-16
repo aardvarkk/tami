@@ -1,6 +1,6 @@
 #include <cmath>
 #include <memory>
-#include "apu.h"
+#include "APU.h"
 
 // Code is from nezplug via nintendulator
 
