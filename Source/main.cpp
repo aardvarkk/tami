@@ -3,8 +3,13 @@
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/screen/screen.hpp"
 #include "ftxui/screen/string.hpp"
+#include "ftxui/component/container.hpp"
+#include "ftxui/component/screen_interactive.hpp"
 
 #include "APU/APU.h"
+
+using namespace std;
+using namespace ftxui;
 
 class App : public IAudioCallback {
   void FlushBuffer(int16 *Buffer, uint32 Size) override {
@@ -12,11 +17,35 @@ class App : public IAudioCallback {
   }
 };
 
+class MainWindow : public ComponentBase {
+  function<void()> do_exit;
+  shared_ptr<ComponentBase> container;
+
+  Element Render() override {
+    return container->Render();
+  }
+
+  bool OnEvent(Event ev) override {
+    if (ev.character() == 'q') {
+      do_exit();
+      return true;
+    }
+
+    return false;
+  }
+
+public:
+  static shared_ptr<ComponentBase> Create(function<void()> do_exit) {
+    auto mw = new MainWindow();
+    mw->do_exit = do_exit;
+    mw->container = Container::Vertical({});
+    return shared_ptr<ComponentBase>(mw);
+  }
+};
+
 int main() {
   auto apu = new CAPU(new App(), nullptr);
   apu->SetupSound(44100, 2, MACHINE_NTSC);
-
-  using namespace ftxui;
 
   auto summary = [&] {
     auto content = vbox({
@@ -41,10 +70,8 @@ int main() {
   // Limit the size of the document to 80 char.
   document = document | size(WIDTH, LESS_THAN, 80);
 
-  auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
-  Render(screen, document);
-
-  std::cout << screen.ToString() << std::endl;
+  auto screen = ScreenInteractive::Fullscreen();
+  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
 
   return EXIT_SUCCESS;
 }
