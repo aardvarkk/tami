@@ -1,9 +1,23 @@
 cmake_minimum_required(VERSION 3.19)
-project(famitracker)
+project(tami)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(famitracker
+include(FetchContent)
+
+FetchContent_Declare(
+	ftxui
+	GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI.git
+	GIT_TAG        20a05e99ca1b9d7ffbb2e79320be075e3a13fadf
+)
+
+FetchContent_GetProperties(ftxui)
+if(NOT ftxui_POPULATED)
+	FetchContent_Populate(ftxui)
+	add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+add_executable(tami
 	Source/APU/APU.cpp
 	Source/APU/FDS.cpp
 	Source/APU/FDSSound.cpp
@@ -22,3 +36,10 @@ add_executable(famitracker
 	Source/Blip_Buffer/Blip_Buffer.cpp
 	Source/main.cpp
 	)
+
+target_link_libraries(
+	tami
+	PRIVATE ftxui::screen
+	PRIVATE ftxui::dom
+	PRIVATE ftxui::component # Not needed for this example.
+)
