@@ -16,6 +16,9 @@ using namespace ftxui;
 PaError paErr = paNoError;
 PaDeviceIndex paDevice = -1;
 PaDeviceInfo const* paInfo = nullptr;
+PaStream* paStream = nullptr;
+PaStreamParameters paStreamParams = {};
+PaStreamFlags paFlags = paNoFlag;
 
 class App : public IAudioCallback {
   void FlushBuffer(int16 *Buffer, uint32 Size) override {
@@ -60,18 +63,43 @@ void printDeviceInfo(PaDeviceInfo const* info) {
   std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
 }
 
+int portaudioCallback(
+  const void *input,
+  void *output,
+  unsigned long frameCount,
+  const PaStreamCallbackTimeInfo* timeInfo,
+  PaStreamCallbackFlags statusFlags,
+  void *userData
+) {
+  std::cout << "hi" << std::endl;
+  return paContinue;
+}
+
 int main() {
   paErr = Pa_Initialize();
 
   std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
-
-//  std::cout << "Found " << Pa_GetDeviceCount() << " devices" << std::endl;
-//  for (PaDeviceIndex i = 0; i < Pa_GetDeviceCount(); ++i) {
-//    printDeviceInfo(Pa_GetDeviceInfo((i)));
-//  }
-
-  paInfo = Pa_GetDeviceInfo(Pa_GetDefaultOutputDevice());
+  paDevice = Pa_GetDefaultOutputDevice();
+  paInfo = Pa_GetDeviceInfo(paDevice);
   printDeviceInfo(paInfo);
+
+  paStreamParams.device = paDevice;
+  paStreamParams.sampleFormat = paFloat32;
+  paStreamParams.channelCount = paInfo->maxOutputChannels;
+  paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
+
+  paErr = Pa_OpenStream(
+    &paStream,
+    nullptr,
+    &paStreamParams,
+    paInfo->defaultSampleRate,
+    paFramesPerBufferUnspecified,
+    paFlags,
+    portaudioCallback,
+    nullptr
+  );
+
+  paErr = Pa_StartStream(paStream);
 
   auto apu = new CAPU(new App(), nullptr);
   apu->SetupSound(paInfo->defaultSampleRate, paInfo->maxOutputChannels, MACHINE_NTSC);
@@ -102,6 +130,10 @@ int main() {
   auto screen = ScreenInteractive::Fullscreen();
 //  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
 
+  Pa_Sleep(1000);
+
+  paErr = Pa_CloseStream(paStream);
+  paErr = Pa_StopStream(paStream);
   paErr = Pa_Terminate();
 
   return EXIT_SUCCESS;
