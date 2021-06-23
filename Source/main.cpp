@@ -14,6 +14,8 @@ using namespace std;
 using namespace ftxui;
 
 PaError paErr = paNoError;
+PaDeviceIndex paDevice = -1;
+PaDeviceInfo const* paInfo = nullptr;
 
 class App : public IAudioCallback {
   void FlushBuffer(int16 *Buffer, uint32 Size) override {
@@ -47,13 +49,32 @@ public:
   }
 };
 
-int main() {
-  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
+void printDeviceInfo(PaDeviceInfo const* info) {
+  auto host_info = Pa_GetHostApiInfo(info->hostApi);
+  std::cout << std::endl;
+  std::cout << "Name: " << info->name << std::endl;
+  std::cout << "Host: " << host_info->name << std::endl;
+  std::cout << "Outputs: " << info->maxOutputChannels << std::endl;
+  std::cout << "Low Latency: " << info->defaultLowOutputLatency << std::endl;
+  std::cout << "High Latency: " << info->defaultHighOutputLatency << std::endl;
+  std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
+}
 
+int main() {
   paErr = Pa_Initialize();
 
+  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
+
+//  std::cout << "Found " << Pa_GetDeviceCount() << " devices" << std::endl;
+//  for (PaDeviceIndex i = 0; i < Pa_GetDeviceCount(); ++i) {
+//    printDeviceInfo(Pa_GetDeviceInfo((i)));
+//  }
+
+  paInfo = Pa_GetDeviceInfo(Pa_GetDefaultOutputDevice());
+  printDeviceInfo(paInfo);
+
   auto apu = new CAPU(new App(), nullptr);
-  apu->SetupSound(44100, 2, MACHINE_NTSC);
+  apu->SetupSound(paInfo->defaultSampleRate, paInfo->maxOutputChannels, MACHINE_NTSC);
 
   auto summary = [&] {
     auto content = vbox({
@@ -79,7 +100,7 @@ int main() {
   document = document | size(WIDTH, LESS_THAN, 80);
 
   auto screen = ScreenInteractive::Fullscreen();
-  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
+//  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
 
   paErr = Pa_Terminate();
 
