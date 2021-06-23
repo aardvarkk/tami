@@ -17,6 +17,16 @@ if(NOT ftxui_POPULATED)
 	add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
+find_path(PORTAUDIO_INCLUDE
+	NAMES portaudio.h
+)
+
+find_library(PORTAUDIO_LIBRARY
+	NAMES portaudio
+)
+
+include_directories(${PORTAUDIO_INCLUDE})
+
 add_executable(tami
 	Source/APU/APU.cpp
 	Source/APU/FDS.cpp
@@ -41,5 +51,6 @@ target_link_libraries(
 	tami
 	PRIVATE ftxui::screen
 	PRIVATE ftxui::dom
-	PRIVATE ftxui::component # Not needed for this example.
+	PRIVATE ftxui::component
+	PRIVATE ${PORTAUDIO_LIBRARY}
 )

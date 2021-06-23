@@ -8,8 +8,12 @@
 
 #include "APU/APU.h"
 
+#include "portaudio.h"
+
 using namespace std;
 using namespace ftxui;
+
+PaError paErr = paNoError;
 
 class App : public IAudioCallback {
   void FlushBuffer(int16 *Buffer, uint32 Size) override {
@@ -44,6 +48,10 @@ public:
 };
 
 int main() {
+  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
+
+  paErr = Pa_Initialize();
+
   auto apu = new CAPU(new App(), nullptr);
   apu->SetupSound(44100, 2, MACHINE_NTSC);
 
@@ -72,6 +80,8 @@ int main() {
 
   auto screen = ScreenInteractive::Fullscreen();
   screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
+
+  paErr = Pa_Terminate();
 
   return EXIT_SUCCESS;
 }
