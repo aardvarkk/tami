@@ -1290,11 +1290,11 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 	}
 
 	// Check if empty file
-//	if (OpenFile.GetLength() == 0) {
-//		// Setup default settings
+	if (OpenFile.GetLength() == 0) {
+		// Setup default settings
 //		CreateEmpty();
-//		return TRUE;
-//	}
+		return TRUE;
+	}
 
 	// Read header ID and version
 //	if (!OpenFile.ValidateFile()) {

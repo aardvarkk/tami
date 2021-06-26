@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+#include <fstream>
 #include <string>
 
 typedef bool BOOL;
@@ -21,13 +23,17 @@ public:
   void Delete() {}
 };
 
-class CFile {
+class CFile : public std::fstream {
 public:
-  static const int modeRead = 0;
-  static const int shareDenyWrite = 1;
+  static const int modeRead = std::fstream::in;
+  static const int shareDenyWrite = 0; // TODO: handle this?
+
+  std::string filename;
 
   bool Open(std::string const& filename, int flags, CFileException* ex) {
-    return true;
+    this->filename = filename;
+    this->open(this->filename, flags);
+    return this->good();
   }
 
   int Read(void* buffer, int sz) {
@@ -37,5 +43,7 @@ public:
   void Write(void const* data, int sz) {
 
   }
+
+  int GetLength() { return std::filesystem::file_size(this->filename); }
 };
 

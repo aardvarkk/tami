@@ -346,7 +346,7 @@ public:
 //	// File management functions (load/save)
 //	//
 //
-//	void			CreateEmpty();
+	void			CreateEmpty();
 //
 //	BOOL			SaveDocument(LPCTSTR lpszPathName) const;
 	BOOL			OpenDocument(LPCTSTR lpszPathName);
