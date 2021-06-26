@@ -37,7 +37,8 @@ public:
   }
 
   int Read(void* buffer, int sz) {
-    return 0;
+    this->read(static_cast<char*>(buffer), sz);
+    return this->gcount();
   }
 
   void Write(void const* data, int sz) {

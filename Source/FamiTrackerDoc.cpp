@@ -1297,10 +1297,10 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 	}
 
 	// Read header ID and version
-//	if (!OpenFile.ValidateFile()) {
+	if (!OpenFile.ValidateFile()) {
 //		AfxMessageBox(IDS_FILE_VALID_ERROR, MB_ICONERROR);
-//		return FALSE;
-//	}
+		return FALSE;
+	}
 
 //	iVersion = OpenFile.GetFileVersion();
 
