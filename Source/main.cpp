@@ -7,6 +7,7 @@
 #include "ftxui/component/screen_interactive.hpp"
 
 #include "APU/APU.h"
+#include "FamiTrackerDoc.h"
 
 #include "portaudio.h"
 
@@ -95,6 +96,9 @@ int portaudioCallback(
 }
 
 int main() {
+  CFamiTrackerDoc doc;
+  doc.OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
+
   paErr = Pa_Initialize();
 
   std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;

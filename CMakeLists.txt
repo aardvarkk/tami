@@ -25,7 +25,7 @@ find_library(PORTAUDIO_LIBRARY
 	NAMES portaudio
 )
 
-include_directories(${PORTAUDIO_INCLUDE})
+include_directories(. ${PORTAUDIO_INCLUDE})
 
 add_executable(tami
 	Source/APU/APU.cpp
@@ -44,6 +44,8 @@ add_executable(tami
 	Source/APU/Square.cpp
 	Source/APU/Triangle.cpp
 	Source/Blip_Buffer/Blip_Buffer.cpp
+	Source/FamiTrackerDoc.cpp
+	Source/DocumentFile.cpp
 	Source/main.cpp
 	)
 
