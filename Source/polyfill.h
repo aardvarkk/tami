@@ -15,12 +15,13 @@ typedef std::string LPCTSTR;
 #define ASSERT assert
 #define TRUE true
 #define FALSE false
-
+#define strcpy_s(dst,sz,src) strlcpy(dst,src,sz)
 #define AfxMessageBox(x,y) std::cerr << #x << " " << #y << std::endl;
 
 template<typename T>
 class CArray : public std::vector<T> {
 public:
+  void SetSize(int sz) { this->resize(sz); }
   void RemoveAll() { this->clear(); }
 };
 
@@ -30,7 +31,11 @@ public:
   char GetAt(int idx) { return this->at(idx); }
   void AppendChar(char c) { return this->push_back(c); }
   void Empty() { this->clear(); }
+  void operator=(char const* str) { this->assign(str); }
+  void Format(std::string const& fmt, ...);
 };
+
+class CStringA : public CString {};
 
 class CFileException {
 public:

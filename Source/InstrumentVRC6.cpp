@@ -21,11 +21,11 @@
 #include <map>
 #include <vector>
 #include "stdafx.h"
-#include "FamiTracker.h"
+//#include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
 #include "Instrument.h"
-#include "Compiler.h"
-#include "Chunk.h"
+//#include "Compiler.h"
+//#include "Chunk.h"
 #include "DocumentFile.h"
 
 /*
@@ -174,30 +174,30 @@ bool CInstrumentVRC6::LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTracke
 	return true;
 }
 
-int CInstrumentVRC6::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
-{
-	int ModSwitch = 0;
-	int StoredBytes = 0;
-
-	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
-		ModSwitch = (ModSwitch >> 1) | (GetSeqEnable(i) && (pDoc->GetSequence(SNDCHIP_VRC6, GetSeqIndex(i), i)->GetItemCount() > 0) ? 0x10 : 0);
-	}
-
-	pChunk->StoreByte(ModSwitch);
-	StoredBytes++;
-
-	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
-		if (GetSeqEnable(i) != 0 && (pDoc->GetSequence(SNDCHIP_VRC6, GetSeqIndex(i), i)->GetItemCount() != 0)) {
-			CStringA str;
-			str.Format(CCompiler::LABEL_SEQ_VRC6, GetSeqIndex(i) * SEQUENCE_COUNT + i);
-			pChunk->StoreReference(str);
-			StoredBytes += 2;
-		}
-	}
-	
-	return StoredBytes;
-}
-
+//int CInstrumentVRC6::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
+//{
+//	int ModSwitch = 0;
+//	int StoredBytes = 0;
+//
+//	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
+//		ModSwitch = (ModSwitch >> 1) | (GetSeqEnable(i) && (pDoc->GetSequence(SNDCHIP_VRC6, GetSeqIndex(i), i)->GetItemCount() > 0) ? 0x10 : 0);
+//	}
+//
+//	pChunk->StoreByte(ModSwitch);
+//	StoredBytes++;
+//
+//	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
+//		if (GetSeqEnable(i) != 0 && (pDoc->GetSequence(SNDCHIP_VRC6, GetSeqIndex(i), i)->GetItemCount() != 0)) {
+//			CStringA str;
+//			str.Format(CCompiler::LABEL_SEQ_VRC6, GetSeqIndex(i) * SEQUENCE_COUNT + i);
+//			pChunk->StoreReference(str);
+//			StoredBytes += 2;
+//		}
+//	}
+//
+//	return StoredBytes;
+//}
+//
 bool CInstrumentVRC6::CanRelease() const
 {
 	if (GetSeqEnable(0) != 0) {

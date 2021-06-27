@@ -22,8 +22,8 @@
 #include "stdafx.h"
 #include "FamiTrackerDoc.h"
 #include "Instrument.h"
-#include "Compiler.h"
-#include "Chunk.h"
+//#include "Compiler.h"
+//#include "Chunk.h"
 #include "DocumentFile.h"
 
 /*
@@ -98,22 +98,22 @@ bool CInstrumentVRC7::LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTracke
 	return true;
 }
 
-int CInstrumentVRC7::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
-{
-	int Patch = GetPatch();
-
-	pChunk->StoreByte(Patch << 4);	// Shift up by 4 to make room for volume
-
-	if (Patch == 0) {
-		// Write custom patch settings
-		for (int i = 0; i < 8; ++i) {
-			pChunk->StoreByte(GetCustomReg(i));
-		}
-	}
-
-	return (Patch == 0) ? 9 : 1;
-}
-
+//int CInstrumentVRC7::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
+//{
+//	int Patch = GetPatch();
+//
+//	pChunk->StoreByte(Patch << 4);	// Shift up by 4 to make room for volume
+//
+//	if (Patch == 0) {
+//		// Write custom patch settings
+//		for (int i = 0; i < 8; ++i) {
+//			pChunk->StoreByte(GetCustomReg(i));
+//		}
+//	}
+//
+//	return (Patch == 0) ? 9 : 1;
+//}
+//
 bool CInstrumentVRC7::CanRelease() const
 {
 	return false;	// This can use release but disable it when previewing notes

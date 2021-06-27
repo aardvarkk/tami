@@ -23,8 +23,8 @@
 #include "stdafx.h"
 #include "FamiTrackerDoc.h"
 #include "Instrument.h"
-#include "Compiler.h"
-#include "Chunk.h"
+//#include "Compiler.h"
+//#include "Chunk.h"
 #include "DocumentFile.h"
 
 const char TEST_WAVE[] = {
@@ -290,54 +290,54 @@ bool CInstrumentFDS::LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTracker
 	return true;
 }
 
-int CInstrumentFDS::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
-{
-	CStringA str;
-
-	// Store wave
-//	int Table = pCompiler->AddWavetable(m_iSamples);
-//	int Table = 0;
-//	pChunk->StoreByte(Table);
-
-	// Store modulation table, two entries/byte
-	for (int i = 0; i < 16; ++i) {
-		char Data = GetModulation(i << 1) | (GetModulation((i << 1) + 1) << 3);
-		pChunk->StoreByte(Data);
-	}
-	
-	pChunk->StoreByte(GetModulationDelay());
-	pChunk->StoreByte(GetModulationDepth());
-	pChunk->StoreWord(GetModulationSpeed());
-
-	// Store sequences
-	char Switch = (m_pVolume->GetItemCount() > 0 ? 1 : 0) | (m_pArpeggio->GetItemCount() > 0 ? 2 : 0) | (m_pPitch->GetItemCount() > 0 ? 4 : 0);
-
-	pChunk->StoreByte(Switch);
-
-	// Volume
-	if (Switch & 1) {
-		str.Format(CCompiler::LABEL_SEQ_FDS, Index * 5 + 0);
-		pChunk->StoreReference(str);
-	}
-
-	// Arpeggio
-	if (Switch & 2) {
-		str.Format(CCompiler::LABEL_SEQ_FDS, Index * 5 + 1);
-		pChunk->StoreReference(str);
-	}
-	
-	// Pitch
-	if (Switch & 4) {
-		str.Format(CCompiler::LABEL_SEQ_FDS, Index * 5 + 2);
-		pChunk->StoreReference(str);
-	}
-
-	int size = FIXED_FDS_INST_SIZE;
-	size += (m_pVolume->GetItemCount() > 0 ? 2 : 0);
-	size += (m_pArpeggio->GetItemCount() > 0 ? 2 : 0);
-	size += (m_pPitch->GetItemCount() > 0 ? 2 : 0);
-	return size;
-}
+//int CInstrumentFDS::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
+//{
+//	CStringA str;
+//
+//	// Store wave
+////	int Table = pCompiler->AddWavetable(m_iSamples);
+////	int Table = 0;
+////	pChunk->StoreByte(Table);
+//
+//	// Store modulation table, two entries/byte
+//	for (int i = 0; i < 16; ++i) {
+//		char Data = GetModulation(i << 1) | (GetModulation((i << 1) + 1) << 3);
+//		pChunk->StoreByte(Data);
+//	}
+//
+//	pChunk->StoreByte(GetModulationDelay());
+//	pChunk->StoreByte(GetModulationDepth());
+//	pChunk->StoreWord(GetModulationSpeed());
+//
+//	// Store sequences
+//	char Switch = (m_pVolume->GetItemCount() > 0 ? 1 : 0) | (m_pArpeggio->GetItemCount() > 0 ? 2 : 0) | (m_pPitch->GetItemCount() > 0 ? 4 : 0);
+//
+//	pChunk->StoreByte(Switch);
+//
+//	// Volume
+//	if (Switch & 1) {
+//		str.Format(CCompiler::LABEL_SEQ_FDS, Index * 5 + 0);
+//		pChunk->StoreReference(str);
+//	}
+//
+//	// Arpeggio
+//	if (Switch & 2) {
+//		str.Format(CCompiler::LABEL_SEQ_FDS, Index * 5 + 1);
+//		pChunk->StoreReference(str);
+//	}
+//
+//	// Pitch
+//	if (Switch & 4) {
+//		str.Format(CCompiler::LABEL_SEQ_FDS, Index * 5 + 2);
+//		pChunk->StoreReference(str);
+//	}
+//
+//	int size = FIXED_FDS_INST_SIZE;
+//	size += (m_pVolume->GetItemCount() > 0 ? 2 : 0);
+//	size += (m_pArpeggio->GetItemCount() > 0 ? 2 : 0);
+//	size += (m_pPitch->GetItemCount() > 0 ? 2 : 0);
+//	return size;
+//}
 
 bool CInstrumentFDS::CanRelease() const
 {

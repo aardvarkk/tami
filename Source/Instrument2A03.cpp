@@ -20,11 +20,11 @@
 
 #include <vector>
 #include "stdafx.h"
-#include "FamiTracker.h"
+//#include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
 #include "Instrument.h"
-#include "Compiler.h"
-#include "Chunk.h"
+//#include "Compiler.h"
+//#include "Chunk.h"
 #include "DocumentFile.h"
 
 // 2A03 instruments
@@ -358,7 +358,7 @@ bool CInstrument2A03::LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTracke
 				}
 				else {
 					CString message;
-					message.Format(IDS_OUT_OF_SAMPLEMEM_FORMAT, MAX_SAMPLE_SPACE / 1024);
+//					message.Format(IDS_OUT_OF_SAMPLEMEM_FORMAT, MAX_SAMPLE_SPACE / 1024);
 					AfxMessageBox(message, MB_ICONERROR);
 					SAFE_RELEASE_ARRAY(SampleData);
 					return false;
@@ -378,31 +378,31 @@ bool CInstrument2A03::LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTracke
 	return true;
 }
 
-int CInstrument2A03::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
-{
-	int ModSwitch = 0;
-	int StoredBytes = 0;
-
-	for (unsigned int i = 0; i < SEQUENCE_COUNT; ++i) {
-		const CSequence *pSequence = pDoc->GetSequence(unsigned(GetSeqIndex(i)), i);
-		ModSwitch = (ModSwitch >> 1) | ((GetSeqEnable(i) && (pSequence->GetItemCount() > 0)) ? 0x10 : 0);
-	}
-	
-	pChunk->StoreByte(ModSwitch);
-	StoredBytes++;
-
-	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
-		const CSequence *pSequence = pDoc->GetSequence(unsigned(GetSeqIndex(i)), i);
-		if (GetSeqEnable(i) != 0 && (pSequence->GetItemCount() != 0)) {
-			CStringA str;
-			str.Format(CCompiler::LABEL_SEQ_2A03, GetSeqIndex(i) * SEQUENCE_COUNT + i);
-			pChunk->StoreReference(str);
-			StoredBytes += 2;
-		}
-	}
-
-	return StoredBytes;
-}
+//int CInstrument2A03::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
+//{
+//	int ModSwitch = 0;
+//	int StoredBytes = 0;
+//
+//	for (unsigned int i = 0; i < SEQUENCE_COUNT; ++i) {
+//		const CSequence *pSequence = pDoc->GetSequence(unsigned(GetSeqIndex(i)), i);
+//		ModSwitch = (ModSwitch >> 1) | ((GetSeqEnable(i) && (pSequence->GetItemCount() > 0)) ? 0x10 : 0);
+//	}
+//
+//	pChunk->StoreByte(ModSwitch);
+//	StoredBytes++;
+//
+//	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
+//		const CSequence *pSequence = pDoc->GetSequence(unsigned(GetSeqIndex(i)), i);
+//		if (GetSeqEnable(i) != 0 && (pSequence->GetItemCount() != 0)) {
+//			CStringA str;
+//			str.Format(CCompiler::LABEL_SEQ_2A03, GetSeqIndex(i) * SEQUENCE_COUNT + i);
+//			pChunk->StoreReference(str);
+//			StoredBytes += 2;
+//		}
+//	}
+//
+//	return StoredBytes;
+//}
 
 bool CInstrument2A03::CanRelease() const
 {

@@ -20,12 +20,12 @@
 
 #include <vector>
 #include "stdafx.h"
-#include "FamiTracker.h"
+//#include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
 #include "DocumentFile.h"
 #include "Instrument.h"
-#include "Compiler.h"
-#include "Chunk.h"
+//#include "Compiler.h"
+//#include "Chunk.h"
 
 const int CInstrumentN163::SEQUENCE_TYPES[] = {SEQ_VOLUME, SEQ_ARPEGGIO, SEQ_PITCH, SEQ_HIPITCH, SEQ_DUTYCYCLE};
 
@@ -251,62 +251,62 @@ bool CInstrumentN163::LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTracke
 	return true;
 }
 
-int CInstrumentN163::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
-{
-	int ModSwitch = 0;
-	int StoredBytes = 0;
+//int CInstrumentN163::Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index)
+//{
+//	int ModSwitch = 0;
+//	int StoredBytes = 0;
+//
+//	CCompiler *pCompiler = CCompiler::GetCompiler();
+//
+//	ASSERT(pDoc != NULL);
+//	ASSERT(pCompiler != NULL);
+//
+//	// Store wave info
+//	pChunk->StoreByte(m_iWaveSize >> 1);
+//	pChunk->StoreByte(/*m_bAutoWavePos ? 0xFF :*/ m_iWavePos);
+//	StoredBytes += 2;
+//
+//	// Store reference to wave
+//	CStringA waveLabel;
+//	waveLabel.Format(CCompiler::LABEL_WAVES, Index);
+//	pChunk->StoreReference(waveLabel);
+//	StoredBytes += 2;
+//
+//	// Store sequences
+//	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
+//		ModSwitch = (ModSwitch >> 1) | (GetSeqEnable(i) && (pDoc->GetSequence(SNDCHIP_N163, GetSeqIndex(i), i)->GetItemCount() > 0) ? 0x10 : 0);
+//	}
+//
+//	pChunk->StoreByte(ModSwitch);
+//	StoredBytes++;
+//
+//	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
+//		if (GetSeqEnable(i) != 0 && (pDoc->GetSequence(SNDCHIP_N163, GetSeqIndex(i), i)->GetItemCount() != 0)) {
+//			CStringA str;
+//			str.Format(CCompiler::LABEL_SEQ_N163, GetSeqIndex(i) * SEQUENCE_COUNT + i);
+//			pChunk->StoreReference(str);
+//			StoredBytes += 2;
+//		}
+//	}
+//
+//	return StoredBytes;
+//}
 
-	CCompiler *pCompiler = CCompiler::GetCompiler();
-
-	ASSERT(pDoc != NULL);
-	ASSERT(pCompiler != NULL);
-
-	// Store wave info
-	pChunk->StoreByte(m_iWaveSize >> 1);
-	pChunk->StoreByte(/*m_bAutoWavePos ? 0xFF :*/ m_iWavePos);
-	StoredBytes += 2;
-
-	// Store reference to wave
-	CStringA waveLabel;
-	waveLabel.Format(CCompiler::LABEL_WAVES, Index);
-	pChunk->StoreReference(waveLabel);
-	StoredBytes += 2;
-
-	// Store sequences
-	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
-		ModSwitch = (ModSwitch >> 1) | (GetSeqEnable(i) && (pDoc->GetSequence(SNDCHIP_N163, GetSeqIndex(i), i)->GetItemCount() > 0) ? 0x10 : 0);
-	}
-
-	pChunk->StoreByte(ModSwitch);
-	StoredBytes++;
-
-	for (int i = 0; i < SEQUENCE_COUNT; ++i) {
-		if (GetSeqEnable(i) != 0 && (pDoc->GetSequence(SNDCHIP_N163, GetSeqIndex(i), i)->GetItemCount() != 0)) {
-			CStringA str;
-			str.Format(CCompiler::LABEL_SEQ_N163, GetSeqIndex(i) * SEQUENCE_COUNT + i);
-			pChunk->StoreReference(str);
-			StoredBytes += 2;
-		}
-	}
-	
-	return StoredBytes;
-}
-
-int CInstrumentN163::StoreWave(CChunk *pChunk) const
-{
-	// Number of waves
-//	pChunk->StoreByte(m_iWaveCount);
-
-	// Pack samples
-	for (int i = 0; i < m_iWaveCount; ++i) {
-		for (int j = 0; j < m_iWaveSize; j += 2) {
-			pChunk->StoreByte((m_iSamples[i][j + 1] << 4) | m_iSamples[i][j]);
-		}
-	}
-
-	return m_iWaveCount * (m_iWaveSize >> 1);
-}
-
+//int CInstrumentN163::StoreWave(CChunk *pChunk) const
+//{
+//	// Number of waves
+////	pChunk->StoreByte(m_iWaveCount);
+//
+//	// Pack samples
+//	for (int i = 0; i < m_iWaveCount; ++i) {
+//		for (int j = 0; j < m_iWaveSize; j += 2) {
+//			pChunk->StoreByte((m_iSamples[i][j + 1] << 4) | m_iSamples[i][j]);
+//		}
+//	}
+//
+//	return m_iWaveCount * (m_iWaveSize >> 1);
+//}
+//
 bool CInstrumentN163::IsWaveEqual(CInstrumentN163 *pInstrument)
 {
 	int Count = GetWaveCount();

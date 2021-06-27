@@ -50,6 +50,12 @@ add_executable(tami
 	Source/PatternData.cpp
 	Source/DSample.cpp
 	Source/Instrument.cpp
+	Source/InstrumentFDS.cpp
+	Source/Instrument2A03.cpp
+	Source/InstrumentN163.cpp
+	Source/InstrumentVRC6.cpp
+	Source/InstrumentVRC7.cpp
+	Source/Sequence.cpp
 
 	Source/main.cpp
 	)

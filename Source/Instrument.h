@@ -82,7 +82,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile) = 0;									// Loads the instrument from a module
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc) = 0;	// Saves to an FTI file
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc) = 0;	// Loads from an FTI file
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index) = 0;		// Compiles the instrument for NSF generation
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index) = 0;		// Compiles the instrument for NSF generation
 	virtual bool CanRelease() const = 0;
 protected:
 	void InstrumentChanged() const;
@@ -104,7 +104,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile);
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc);
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc);
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
 	virtual bool CanRelease() const;
 
 public:
@@ -152,7 +152,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile);
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc);
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc);
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
 	virtual bool CanRelease() const;
 
 public:
@@ -181,7 +181,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile);
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc);
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc);
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
 	virtual bool CanRelease() const;
 
 public:
@@ -207,7 +207,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile);
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc);
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc);
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
 	virtual bool CanRelease() const;
 
 public:
@@ -262,7 +262,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile);
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc);
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc);
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
 	virtual bool CanRelease() const;
 
 public:	
@@ -313,7 +313,7 @@ public:
 	virtual bool Load(CDocumentFile *pDocFile);
 	virtual void SaveFile(CInstrumentFile *pFile, const CFamiTrackerDoc *pDoc);
 	virtual bool LoadFile(CInstrumentFile *pFile, int iVersion, CFamiTrackerDoc *pDoc);
-	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
+//	virtual int Compile(CFamiTrackerDoc *pDoc, CChunk *pChunk, int Index);
 	virtual bool CanRelease() const;
 
 public:

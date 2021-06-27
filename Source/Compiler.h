@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "polyfill.h"
+
 // NSF file header
 struct stNSFHeader {
 	unsigned char	Ident[5];
@@ -42,7 +44,7 @@ struct stNSFHeader {
 
 struct driver_t;
 class CChunk;
-enum chunk_type_t;
+//enum chunk_type_t;
 
 /*
  * Logger class
