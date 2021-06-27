@@ -41,6 +41,8 @@ class CFamiTrackerDoc;
 
 class CChunk;
 
+#include <atomic>
+
 class CRefCounter {
 public:
 	CRefCounter();
@@ -48,7 +50,8 @@ public:
 	void Retain();
 	void Release();
 private:
-	volatile int m_iRefCounter;
+//	volatile int m_iRefCounter;
+  std::atomic<int> m_iRefCounter;
 };
 
 // Instrument file load/store
@@ -336,7 +339,7 @@ class CInstrumentContainer {
 public:
 	CInstrumentContainer(CFamiTrackerDoc *pDoc, int Index) {
 		ASSERT(Index < MAX_INSTRUMENTS);
-		m_pInstrument = pDoc->GetInstrument(Index);
+//		m_pInstrument = pDoc->GetInstrument(Index);
 	}
 	~CInstrumentContainer() {
 		if (m_pInstrument != NULL)

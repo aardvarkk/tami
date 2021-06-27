@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "polyfill.h"
 #include "DSample.h"
 
 #define MIDI_NOTE(octave, note)		((octave) * 12 + (note) - 1)
@@ -93,7 +94,7 @@ const int MAX_VOLUME = 0x10;
 // Sequence types (shared with VRC6)
 
 enum sequence_t {
-	SEQ_VOLUME,
+	SEQ_VOLUME = 0,
 	SEQ_ARPEGGIO,
 	SEQ_PITCH,
 	SEQ_HIPITCH,		// TODO: remove this eventually

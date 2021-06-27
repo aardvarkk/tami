@@ -26,22 +26,20 @@
 //
 //// Get access to some APU constants
 //#include "APU/Types.h"
-//// Constants, types and enums
-//#include "FamiTrackerTypes.h"
-
-#include "polyfill.h"
+// Constants, types and enums
+#include "FamiTrackerTypes.h"
 
 //
 //#define TRANSPOSE_FDS
 //
-//// Default song settings
-//const unsigned int DEFAULT_TEMPO_NTSC		 = 150;
-//const unsigned int DEFAULT_TEMPO_PAL		 = 125;
-//const unsigned int DEFAULT_SPEED			 = 6;
-//const unsigned int DEFAULT_MACHINE_TYPE		 = NTSC;
-//const unsigned int DEFAULT_SPEED_SPLIT_POINT = 32;
-//const unsigned int OLD_SPEED_SPLIT_POINT	 = 21;
-//
+// Default song settings
+const unsigned int DEFAULT_TEMPO_NTSC		 = 150;
+const unsigned int DEFAULT_TEMPO_PAL		 = 125;
+const unsigned int DEFAULT_SPEED			 = 6;
+const unsigned int DEFAULT_MACHINE_TYPE		 = NTSC;
+const unsigned int DEFAULT_SPEED_SPLIT_POINT = 32;
+const unsigned int OLD_SPEED_SPLIT_POINT	 = 21;
+
 //// Cursor columns
 //enum cursor_column_t {
 //	C_NOTE,
@@ -84,27 +82,29 @@
 //	UPDATE_CLOSE			// Document is closing (TODO remove)
 //};
 //
-//// Old sequence list, kept for compability
-//struct stSequence {
-//	unsigned int Count;
-//	signed char Length[MAX_SEQUENCE_ITEMS];
-//	signed char Value[MAX_SEQUENCE_ITEMS];
-//};
-//
+// Old sequence list, kept for compability
+struct stSequence {
+	unsigned int Count;
+	signed char Length[MAX_SEQUENCE_ITEMS];
+	signed char Value[MAX_SEQUENCE_ITEMS];
+};
+
+#include "polyfill.h"
+
 //// Access data types used by the document class
 //#include "PatternData.h"
-//#include "Instrument.h"
-//#include "Sequence.h"
-//
+#include "Instrument.h"
+#include "Sequence.h"
+
 //// External classes
 //class CTrackerChannel;
-//class CDocumentFile;
+class CDocumentFile;
 //
 ////
 //// I'll try to organize this class, things are quite messy right now!
 ////
 //
-class CFamiTrackerDoc// : public CDocument
+class CFamiTrackerDoc : public CDocument
 {
 //protected: // create from serialization only
 //	CFamiTrackerDoc();
@@ -323,18 +323,18 @@ class CFamiTrackerDoc// : public CDocument
 //	// For file version compability
 //	static void		ConvertSequence(stSequence *pOldSequence, CSequence *pNewSequence, int Type);
 //
-//	// Constants
-//public:
-//	static const char*	DEFAULT_TRACK_NAME;
-//	static const int	DEFAULT_ROW_COUNT;
-//	static const char*	NEW_INST_NAME;
-//
-//	static const int	DEFAULT_NAMCO_CHANS;
-//
-//	static const int	DEFAULT_FIRST_HIGHLIGHT;
-//	static const int	DEFAULT_SECOND_HIGHLIGHT;
-//
-//	static const bool	DEFAULT_LINEAR_PITCH;
+	// Constants
+public:
+	static const char*	DEFAULT_TRACK_NAME;
+	static const int	DEFAULT_ROW_COUNT;
+	static const char*	NEW_INST_NAME;
+
+	static const int	DEFAULT_NAMCO_CHANS;
+
+	static const int	DEFAULT_FIRST_HIGHLIGHT;
+	static const int	DEFAULT_SECOND_HIGHLIGHT;
+
+	static const bool	DEFAULT_LINEAR_PITCH;
 //
 //
 //	//
@@ -352,7 +352,7 @@ public:
 	BOOL			OpenDocument(LPCTSTR lpszPathName);
 //
 //	BOOL			OpenDocumentOld(CFile *pOpenFile);
-//	BOOL			OpenDocumentNew(CDocumentFile &DocumentFile);
+	BOOL			OpenDocumentNew(CDocumentFile &DocumentFile);
 //
 //	bool			WriteBlocks(CDocumentFile *pDocFile) const;
 //	bool			WriteBlock_Parameters(CDocumentFile *pDocFile) const;
@@ -426,12 +426,12 @@ public:
 //	// State variables
 //	//
 //
-//	bool			m_bFileLoaded;			// Is a file loaded?
+	bool			m_bFileLoaded;			// Is a file loaded?
 //	bool			m_bFileLoadFailed;		// Last file load operation failed
-//	unsigned int	m_iFileVersion;			// Loaded file version
+	unsigned int	m_iFileVersion;			// Loaded file version
 //
-//	bool			m_bForceBackup;
-//	bool			m_bBackupDone;
+	bool			m_bForceBackup;
+	bool			m_bBackupDone;
 //#ifdef TRANSPOSE_FDS
 //	bool			m_bAdjustFDSArpeggio;
 //#endif
@@ -446,55 +446,55 @@ public:
 //	// Document data
 //	//
 //
-//	// Patterns and song data
-//	CPatternData	*m_pTracks[MAX_TRACKS];						// List of all tracks
-//	CString			m_sTrackNames[MAX_TRACKS];
-//
-//	unsigned int	m_iTrackCount;								// Number of tracks added
-//	unsigned int	m_iChannelsAvailable;						// Number of channels added
-//
-//	// Instruments, samples and sequences
-//	CInstrument		*m_pInstruments[MAX_INSTRUMENTS];
-//	CDSample		m_DSamples[MAX_DSAMPLES];					// The DPCM sample list
-//	CSequence		*m_pSequences2A03[MAX_SEQUENCES][SEQ_COUNT];
-//	CSequence		*m_pSequencesVRC6[MAX_SEQUENCES][SEQ_COUNT];
-//	CSequence		*m_pSequencesN163[MAX_SEQUENCES][SEQ_COUNT];
-//	CSequence		*m_pSequencesS5B[MAX_SEQUENCES][SEQ_COUNT];
-//
-//	// Module properties
-//	unsigned char	m_iExpansionChip;							// Expansion chip
-//	unsigned int	m_iNamcoChannels;
-//	vibrato_t		m_iVibratoStyle;							// 0 = old style, 1 = new style
-//	bool			m_bLinearPitch;
-//	unsigned int	m_iMachine;									// NTSC / PAL
-//	unsigned int	m_iEngineSpeed;								// Refresh rate
-//	unsigned int	m_iSpeedSplitPoint;							// Speed/tempo split-point
-//
-//	// NSF info
-//	char			m_strName[32];								// Song name
-//	char			m_strArtist[32];							// Song artist
-//	char			m_strCopyright[32];							// Song copyright
-//
-//	// Comments
-//	CString			m_strComment;
-//	bool			m_bDisplayComment;
-//
-//	// Row highlight (TODO remove)
-//	unsigned int	m_iFirstHighlight;
-//	unsigned int	m_iSecondHighlight;
-//
-//	// Things below are for compability with older files
-//	CArray<stSequence> m_vTmpSequences;
-//	CArray<stSequence[SEQ_COUNT]> m_vSequences;
-//
-//	//
-//	// End of document data
-//	//
-//
-//	// Thread synchronization
-//private:
+	// Patterns and song data
+	CPatternData	*m_pTracks[MAX_TRACKS];						// List of all tracks
+	CString			m_sTrackNames[MAX_TRACKS];
+
+	unsigned int	m_iTrackCount;								// Number of tracks added
+	unsigned int	m_iChannelsAvailable;						// Number of channels added
+
+	// Instruments, samples and sequences
+	CInstrument		*m_pInstruments[MAX_INSTRUMENTS];
+	CDSample		m_DSamples[MAX_DSAMPLES];					// The DPCM sample list
+	CSequence		*m_pSequences2A03[MAX_SEQUENCES][SEQ_COUNT];
+	CSequence		*m_pSequencesVRC6[MAX_SEQUENCES][SEQ_COUNT];
+	CSequence		*m_pSequencesN163[MAX_SEQUENCES][SEQ_COUNT];
+	CSequence		*m_pSequencesS5B[MAX_SEQUENCES][SEQ_COUNT];
+
+	// Module properties
+	unsigned char	m_iExpansionChip;							// Expansion chip
+	unsigned int	m_iNamcoChannels;
+	vibrato_t		m_iVibratoStyle;							// 0 = old style, 1 = new style
+	bool			m_bLinearPitch;
+	unsigned int	m_iMachine;									// NTSC / PAL
+	unsigned int	m_iEngineSpeed;								// Refresh rate
+	unsigned int	m_iSpeedSplitPoint;							// Speed/tempo split-point
+
+	// NSF info
+	char			m_strName[32];								// Song name
+	char			m_strArtist[32];							// Song artist
+	char			m_strCopyright[32];							// Song copyright
+
+	// Comments
+	CString			m_strComment;
+	bool			m_bDisplayComment;
+
+	// Row highlight (TODO remove)
+	unsigned int	m_iFirstHighlight;
+	unsigned int	m_iSecondHighlight;
+
+	// Things below are for compability with older files
+	CArray<stSequence> m_vTmpSequences;
+	CArray<std::array<stSequence,SEQ_COUNT>> m_vSequences;
+
+	//
+	// End of document data
+	//
+
+	// Thread synchronization
+private:
 //	mutable CCriticalSection m_csInstrument;
-//	mutable CMutex			 m_csDocumentLock;
+	mutable CMutex			 m_csDocumentLock;
 //
 //// Operations
 //public:
@@ -505,8 +505,8 @@ public:
 //	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 //	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 //	virtual void OnCloseDocument();
-//	virtual void DeleteContents();
-//	virtual void SetModifiedFlag(BOOL bModified = 1);
+	virtual void DeleteContents();
+	virtual void SetModifiedFlag(BOOL bModified = 1);
 //	virtual void Serialize(CArchive& ar);
 //
 //// Implementation

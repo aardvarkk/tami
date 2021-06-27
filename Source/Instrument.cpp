@@ -54,12 +54,12 @@ const char *CInstrument::GetName() const
 void CInstrument::InstrumentChanged() const
 {
 	// Set modified flag
-	CFrameWnd *pFrameWnd = dynamic_cast<CFrameWnd*>(AfxGetMainWnd());
-	if (pFrameWnd != NULL) {
-		CDocument *pDoc = pFrameWnd->GetActiveDocument();
-		if (pDoc != NULL)
-			pDoc->SetModifiedFlag();
-	}
+//	CFrameWnd *pFrameWnd = dynamic_cast<CFrameWnd*>(AfxGetMainWnd());
+//	if (pFrameWnd != NULL) {
+//		CDocument *pDoc = pFrameWnd->GetActiveDocument();
+//		if (pDoc != NULL)
+//			pDoc->SetModifiedFlag();
+//	}
 }
 
 // Reference counting
@@ -77,14 +77,16 @@ void CRefCounter::Retain()
 {
 	ASSERT(m_iRefCounter > 0);
 
-	InterlockedIncrement((volatile LONG*)&m_iRefCounter);
+//	InterlockedIncrement((volatile LONG*)&m_iRefCounter);
+  m_iRefCounter++;
 }
 
 void CRefCounter::Release()
 {
 	ASSERT(m_iRefCounter > 0);
 
-	InterlockedDecrement((volatile LONG*)&m_iRefCounter);
+//	InterlockedDecrement((volatile LONG*)&m_iRefCounter);
+  m_iRefCounter--;
 
 	if (!m_iRefCounter)
 		delete this;

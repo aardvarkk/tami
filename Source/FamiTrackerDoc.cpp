@@ -39,7 +39,7 @@
 //
 //*/
 //
-//#include "stdafx.h"
+#include "stdafx.h"
 //#include <algorithm>
 //#include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
@@ -49,26 +49,26 @@
 //#include "Settings.h"
 //#include "SoundGen.h"
 //#include "ChannelMap.h"
-//#include "APU/APU.h"
+#include "APU/APU.h"
 //
 //#ifdef _DEBUG
 //#define new DEBUG_NEW
 //#endif
-//
-//// Defaults when creating new modules
-//const char* CFamiTrackerDoc::DEFAULT_TRACK_NAME = "New song";
-//const int	CFamiTrackerDoc::DEFAULT_ROW_COUNT	= 64;
-//
-//const char* CFamiTrackerDoc::NEW_INST_NAME = "New instrument";
-//
-//// Make 1 channel default since 8 sounds bad
-//const int	CFamiTrackerDoc::DEFAULT_NAMCO_CHANS = 1;
-//
-//const int	CFamiTrackerDoc::DEFAULT_FIRST_HIGHLIGHT = 4;
-//const int	CFamiTrackerDoc::DEFAULT_SECOND_HIGHLIGHT = 16;
-//
-//const bool	CFamiTrackerDoc::DEFAULT_LINEAR_PITCH = false;
-//
+
+// Defaults when creating new modules
+const char* CFamiTrackerDoc::DEFAULT_TRACK_NAME = "New song";
+const int	CFamiTrackerDoc::DEFAULT_ROW_COUNT	= 64;
+
+const char* CFamiTrackerDoc::NEW_INST_NAME = "New instrument";
+
+// Make 1 channel default since 8 sounds bad
+const int	CFamiTrackerDoc::DEFAULT_NAMCO_CHANS = 1;
+
+const int	CFamiTrackerDoc::DEFAULT_FIRST_HIGHLIGHT = 4;
+const int	CFamiTrackerDoc::DEFAULT_SECOND_HIGHLIGHT = 16;
+
+const bool	CFamiTrackerDoc::DEFAULT_LINEAR_PITCH = false;
+
 //// File I/O constants
 //static const char *FILE_HEADER				= "FamiTracker Module";
 //static const char *FILE_BLOCK_PARAMS		= "PARAMS";
@@ -359,111 +359,111 @@
 //	CDocument::OnCloseDocument();
 //}
 //
-//void CFamiTrackerDoc::DeleteContents()
-//{
-//	// Current document is being unloaded, clear and reset variables and memory
-//	// Delete everything because the current object is being reused in SDI
-//
-//	// Make sure player is stopped
+void CFamiTrackerDoc::DeleteContents()
+{
+	// Current document is being unloaded, clear and reset variables and memory
+	// Delete everything because the current object is being reused in SDI
+
+	// Make sure player is stopped
 //	theApp.StopPlayerAndWait();
-//
-//	m_csDocumentLock.Lock();
-//
-//	// Mark file as unloaded
-//	m_bFileLoaded = false;
-//	m_bForceBackup = false;
-//	m_bBackupDone = true;	// No backup on new modules
-//
+
+	m_csDocumentLock.Lock();
+
+	// Mark file as unloaded
+	m_bFileLoaded = false;
+	m_bForceBackup = false;
+	m_bBackupDone = true;	// No backup on new modules
+
 //	UpdateAllViews(NULL, UPDATE_CLOSE);	// TODO remove
-//
-//	// DPCM samples
-//	for (int i = 0; i < MAX_DSAMPLES; ++i) {
-//		m_DSamples[i].Clear();
-//	}
-//
-//	// Instruments
-//	for (int i = 0; i < MAX_INSTRUMENTS; ++i) {
-//		if (m_pInstruments[i] != NULL) {
-//			m_pInstruments[i]->Release();
-//			m_pInstruments[i] = NULL;
-//		}
-//	}
-//
-//	// Clear sequences
-//	for (int i = 0; i < MAX_SEQUENCES; ++i) {
-//		for (int j = 0; j < SEQ_COUNT; ++j) {
-//			SAFE_RELEASE(m_pSequences2A03[i][j]);
-//			SAFE_RELEASE(m_pSequencesVRC6[i][j]);
-//			SAFE_RELEASE(m_pSequencesN163[i][j]);
-//			SAFE_RELEASE(m_pSequencesS5B[i][j]);
-//		}
-//	}
-//
-//	// Clear number of tracks
-//	m_iTrackCount = 1;
-//
-//	// Delete all patterns
-//	for (int i = 0; i < MAX_TRACKS; ++i) {
-//		SAFE_RELEASE(m_pTracks[i]);
-//		m_sTrackNames[i].Empty();
-//	}
-//
-//	// Clear song info
-//	memset(m_strName, 0, 32);
-//	memset(m_strArtist, 0, 32);
-//	memset(m_strCopyright, 0, 32);
-//
-//	// Reset variables to default
-//	m_iMachine			 = DEFAULT_MACHINE_TYPE;
-//	m_iEngineSpeed		 = 0;
-//	m_iExpansionChip	 = SNDCHIP_NONE;
-//	m_iVibratoStyle		 = VIBRATO_OLD;
-//	m_bLinearPitch		 = DEFAULT_LINEAR_PITCH;
-//	m_iChannelsAvailable = CHANNELS_DEFAULT;
-//	m_iSpeedSplitPoint	 = DEFAULT_SPEED_SPLIT_POINT;
-//
-//	m_iFirstHighlight  = DEFAULT_FIRST_HIGHLIGHT;
-//	m_iSecondHighlight = DEFAULT_SECOND_HIGHLIGHT;
-//
-//	// Used for loading older files
-//	m_vSequences.RemoveAll();
-//	m_vTmpSequences.RemoveAll();
-//
-//	// Auto save
-//#ifdef AUTOSAVE
-//	ClearAutoSave();
-//#endif
-//
-//	m_strComment.Empty();
-//	m_bDisplayComment = false;
-//
-//	// Remove modified flag
-//	SetModifiedFlag(FALSE);
-//
-//	m_csDocumentLock.Unlock();
-//
-//	CDocument::DeleteContents();
-//}
-//
-//void CFamiTrackerDoc::SetModifiedFlag(BOOL bModified)
-//{
-//	// Trigger auto-save in 10 seconds
-//#ifdef AUTOSAVE
-//	if (bModified)
-//		m_iAutoSaveCounter = 10;
-//#endif
-//
-//	BOOL bWasModified = IsModified();
-//	CDocument::SetModifiedFlag(bModified);
-//
+
+	// DPCM samples
+	for (int i = 0; i < MAX_DSAMPLES; ++i) {
+		m_DSamples[i].Clear();
+	}
+
+	// Instruments
+	for (int i = 0; i < MAX_INSTRUMENTS; ++i) {
+		if (m_pInstruments[i] != NULL) {
+			m_pInstruments[i]->Release();
+			m_pInstruments[i] = NULL;
+		}
+	}
+
+	// Clear sequences
+	for (int i = 0; i < MAX_SEQUENCES; ++i) {
+		for (int j = 0; j < SEQ_COUNT; ++j) {
+			SAFE_RELEASE(m_pSequences2A03[i][j]);
+			SAFE_RELEASE(m_pSequencesVRC6[i][j]);
+			SAFE_RELEASE(m_pSequencesN163[i][j]);
+			SAFE_RELEASE(m_pSequencesS5B[i][j]);
+		}
+	}
+
+	// Clear number of tracks
+	m_iTrackCount = 1;
+
+	// Delete all patterns
+	for (int i = 0; i < MAX_TRACKS; ++i) {
+		SAFE_RELEASE(m_pTracks[i]);
+		m_sTrackNames[i].Empty();
+	}
+
+	// Clear song info
+	memset(m_strName, 0, 32);
+	memset(m_strArtist, 0, 32);
+	memset(m_strCopyright, 0, 32);
+
+	// Reset variables to default
+	m_iMachine			 = DEFAULT_MACHINE_TYPE;
+	m_iEngineSpeed		 = 0;
+	m_iExpansionChip	 = SNDCHIP_NONE;
+	m_iVibratoStyle		 = VIBRATO_OLD;
+	m_bLinearPitch		 = DEFAULT_LINEAR_PITCH;
+	m_iChannelsAvailable = CHANNELS_DEFAULT;
+	m_iSpeedSplitPoint	 = DEFAULT_SPEED_SPLIT_POINT;
+
+	m_iFirstHighlight  = DEFAULT_FIRST_HIGHLIGHT;
+	m_iSecondHighlight = DEFAULT_SECOND_HIGHLIGHT;
+
+	// Used for loading older files
+	m_vSequences.RemoveAll();
+	m_vTmpSequences.RemoveAll();
+
+	// Auto save
+#ifdef AUTOSAVE
+	ClearAutoSave();
+#endif
+
+	m_strComment.Empty();
+	m_bDisplayComment = false;
+
+	// Remove modified flag
+	SetModifiedFlag(FALSE);
+
+	m_csDocumentLock.Unlock();
+
+	CDocument::DeleteContents();
+}
+
+void CFamiTrackerDoc::SetModifiedFlag(BOOL bModified)
+{
+	// Trigger auto-save in 10 seconds
+#ifdef AUTOSAVE
+	if (bModified)
+		m_iAutoSaveCounter = 10;
+#endif
+
+	BOOL bWasModified = IsModified();
+	CDocument::SetModifiedFlag(bModified);
+
 //	CFrameWnd *pFrameWnd = dynamic_cast<CFrameWnd*>(theApp.m_pMainWnd);
 //	if (pFrameWnd != NULL) {
 //		if (pFrameWnd->GetActiveDocument() == this && bWasModified != bModified) {
 //			pFrameWnd->OnUpdateFrameTitle(TRUE);
 //		}
 //	}
-//}
-//
+}
+
 //void CFamiTrackerDoc::CreateEmpty()
 //{
 //	m_csDocumentLock.Lock();
@@ -1302,9 +1302,9 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 		return FALSE;
 	}
 
-//	iVersion = OpenFile.GetFileVersion();
+	iVersion = OpenFile.GetFileVersion();
 
-//	if (iVersion < 0x0200) {
+	if (iVersion < 0x0200) {
 //		// Older file version
 //		if (iVersion < CDocumentFile::COMPATIBLE_VER) {
 //			AfxMessageBox(IDS_FILE_VERSION_ERROR, MB_ICONERROR);
@@ -1322,18 +1322,18 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 //		// Auto-select old style vibrato for old files
 //		m_iVibratoStyle = VIBRATO_OLD;
 //		m_bLinearPitch = false;
-//	}
-//	else if (iVersion >= 0x0200) {
-//		// New file version
-//
-//		// Try to open file, create new if it fails
-//		if (!OpenDocumentNew(OpenFile))
-//			return FALSE;
-//
-//		// Backup if files was of an older version
-//		//bForceBackup = m_iFileVersion < CDocumentFile::FILE_VER;
+	}
+	else if (iVersion >= 0x0200) {
+		// New file version
+
+		// Try to open file, create new if it fails
+		if (!OpenDocumentNew(OpenFile))
+			return FALSE;
+
+		// Backup if files was of an older version
+//		bForceBackup = m_iFileVersion < CDocumentFile::FILE_VER;
 //		m_bForceBackup = m_iFileVersion < CDocumentFile::FILE_VER;
-//	}
+	}
 
 #ifdef WIP
 	// Force backups if compiled as beta
@@ -1531,40 +1531,40 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 // *  This function opens the most recent file version
 // *
 // */
-//BOOL CFamiTrackerDoc::OpenDocumentNew(CDocumentFile &DocumentFile)
-//{
-//	const char *BlockID;
-//	bool FileFinished = false;
-//	bool ErrorFlag = false;
-//
-//#ifdef _DEBUG
-//	int _msgs_ = 0;
-//#endif
-//
-//#ifdef TRANSPOSE_FDS
-//	m_bAdjustFDSArpeggio = false;
-//#endif
-//
-//	// File version checking
-//	m_iFileVersion = DocumentFile.GetFileVersion();
-//
-//	// From version 2.0, all files should be compatible (though individual blocks may not)
-//	if (m_iFileVersion < 0x0200) {
-//		AfxMessageBox(IDS_FILE_VERSION_ERROR, MB_ICONERROR);
-//		DocumentFile.Close();
-//		return FALSE;
-//	}
-//
-//	// File version is too new
-//	if (m_iFileVersion > CDocumentFile::FILE_VER) {
-//		AfxMessageBox(IDS_FILE_VERSION_TOO_NEW, MB_ICONERROR);
-//		DocumentFile.Close();
-//		return FALSE;
-//	}
-//
-//	// Delete loaded document
-//	DeleteContents();
-//
+BOOL CFamiTrackerDoc::OpenDocumentNew(CDocumentFile &DocumentFile)
+{
+	const char *BlockID;
+	bool FileFinished = false;
+	bool ErrorFlag = false;
+
+#ifdef _DEBUG
+	int _msgs_ = 0;
+#endif
+
+#ifdef TRANSPOSE_FDS
+	m_bAdjustFDSArpeggio = false;
+#endif
+
+	// File version checking
+	m_iFileVersion = DocumentFile.GetFileVersion();
+
+	// From version 2.0, all files should be compatible (though individual blocks may not)
+	if (m_iFileVersion < 0x0200) {
+		AfxMessageBox(IDS_FILE_VERSION_ERROR, MB_ICONERROR);
+		DocumentFile.Close();
+		return FALSE;
+	}
+
+	// File version is too new
+	if (m_iFileVersion > CDocumentFile::FILE_VER) {
+		AfxMessageBox(IDS_FILE_VERSION_TOO_NEW, MB_ICONERROR);
+		DocumentFile.Close();
+		return FALSE;
+	}
+
+	// Delete loaded document
+	DeleteContents();
+
 //	if (m_iFileVersion < 0x0210) {
 //		// This has to be done for older files
 //		AllocateTrack(0);
@@ -1644,26 +1644,26 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 //
 //	if (m_iFileVersion < 0x0300)
 //		ConvertSequences();
-//
-//#ifdef TRANSPOSE_FDS
-//	if (m_bAdjustFDSArpeggio) {
-//		for (int i = 0; i < MAX_INSTRUMENTS; ++i) {
-//			if (IsInstrumentUsed(i) && GetInstrumentType(i) == INST_FDS) {
-//				CInstrumentFDS *pInstrument = static_cast<CInstrumentFDS*>(GetInstrument(i));
-//				CSequence *pSeq = pInstrument->GetArpSeq();
-//				if (pSeq->GetItemCount() > 0 && pSeq->GetSetting() == ARP_SETTING_FIXED) {
-//					for (unsigned int j = 0; j < pSeq->GetItemCount(); ++j) {
-//						pSeq->SetItem(j, pSeq->GetItem(j) + 24);
-//					}
-//				}
-//				pInstrument->Release();
-//			}
-//		}
-//	}
-//#endif /* TRANSPOSE_FDS */
-//
-//	return TRUE;
-//}
+
+#ifdef TRANSPOSE_FDS
+	if (m_bAdjustFDSArpeggio) {
+		for (int i = 0; i < MAX_INSTRUMENTS; ++i) {
+			if (IsInstrumentUsed(i) && GetInstrumentType(i) == INST_FDS) {
+				CInstrumentFDS *pInstrument = static_cast<CInstrumentFDS*>(GetInstrument(i));
+				CSequence *pSeq = pInstrument->GetArpSeq();
+				if (pSeq->GetItemCount() > 0 && pSeq->GetSetting() == ARP_SETTING_FIXED) {
+					for (unsigned int j = 0; j < pSeq->GetItemCount(); ++j) {
+						pSeq->SetItem(j, pSeq->GetItem(j) + 24);
+					}
+				}
+				pInstrument->Release();
+			}
+		}
+	}
+#endif /* TRANSPOSE_FDS */
+
+	return TRUE;
+}
 //
 //bool CFamiTrackerDoc::ReadBlock_Parameters(CDocumentFile *pDocFile)
 //{

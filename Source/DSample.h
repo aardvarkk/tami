@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "polyfill.h"
 
 // DPCM sample class
 

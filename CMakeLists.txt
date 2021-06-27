@@ -44,8 +44,13 @@ add_executable(tami
 	Source/APU/Square.cpp
 	Source/APU/Triangle.cpp
 	Source/Blip_Buffer/Blip_Buffer.cpp
+
 	Source/FamiTrackerDoc.cpp
 	Source/DocumentFile.cpp
+	Source/PatternData.cpp
+	Source/DSample.cpp
+	Source/Instrument.cpp
+
 	Source/main.cpp
 	)
 
