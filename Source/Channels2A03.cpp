@@ -603,9 +603,9 @@ void CDPCMChan::RefreshChannel()
 		// Cut sample
 		WriteRegister(0x4015, 0x0F);
 
-		if (!theApp.GetSettings()->General.bNoDPCMReset || theApp.IsPlaying()) {
-			WriteRegister(0x4011, 0);	// regain full volume for TN
-		}
+//		if (!theApp.GetSettings()->General.bNoDPCMReset || theApp.IsPlaying()) {
+//			WriteRegister(0x4011, 0);	// regain full volume for TN
+//		}
 
 		m_bEnabled = false;		// don't write to this channel anymore
 	}

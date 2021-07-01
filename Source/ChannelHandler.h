@@ -21,6 +21,7 @@
 #pragma once
 
 class CAPU;
+class CSoundGen;
 
 // Sequence states
 enum seq_state_t {

@@ -40,27 +40,27 @@ const unsigned int DEFAULT_MACHINE_TYPE		 = NTSC;
 const unsigned int DEFAULT_SPEED_SPLIT_POINT = 32;
 const unsigned int OLD_SPEED_SPLIT_POINT	 = 21;
 
-//// Cursor columns
-//enum cursor_column_t {
-//	C_NOTE,
-//	C_INSTRUMENT1,
-//	C_INSTRUMENT2,
-//	C_VOLUME,
-//	C_EFF_NUM,
-//	C_EFF_PARAM1,
-//	C_EFF_PARAM2,
-//	C_EFF2_NUM,
-//	C_EFF2_PARAM1,
-//	C_EFF2_PARAM2,
-//	C_EFF3_NUM,
-//	C_EFF3_PARAM1,
-//	C_EFF3_PARAM2,
-//	C_EFF4_NUM,
-//	C_EFF4_PARAM1,
-//	C_EFF4_PARAM2
-//};
-//
-//const unsigned int COLUMNS = 7;
+// Cursor columns
+enum cursor_column_t {
+	C_NOTE,
+	C_INSTRUMENT1,
+	C_INSTRUMENT2,
+	C_VOLUME,
+	C_EFF_NUM,
+	C_EFF_PARAM1,
+	C_EFF_PARAM2,
+	C_EFF2_NUM,
+	C_EFF2_PARAM1,
+	C_EFF2_PARAM2,
+	C_EFF3_NUM,
+	C_EFF3_PARAM1,
+	C_EFF3_PARAM2,
+	C_EFF4_NUM,
+	C_EFF4_PARAM1,
+	C_EFF4_PARAM2
+};
+
+const unsigned int COLUMNS = 7;
 
 // Special assert used when loading files
 #ifdef _DEBUG
@@ -139,73 +139,73 @@ public:
 //	bool ImportInstruments(CFamiTrackerDoc *pImported, int *pInstTable);
 //	bool ImportTrack(int Track, CFamiTrackerDoc *pImported, int *pInstTable);
 //
-//	//
-//	// Interface functions (not related to document data) TODO move this?
-//	//
-//	void			ResetChannels();
-//	void			RegisterChannel(CTrackerChannel *pChannel, int ChannelType, int ChipType);
-//	CTrackerChannel* GetChannel(int Index) const;
-//	int				GetChannelIndex(int Channel) const;
-//
+	//
+	// Interface functions (not related to document data) TODO move this?
+	//
+	void			ResetChannels();
+	void			RegisterChannel(CTrackerChannel *pChannel, int ChannelType, int ChipType);
+	CTrackerChannel* GetChannel(int Index) const;
+	int				GetChannelIndex(int Channel) const;
+
 	int				GetChannelType(int Channel) const;
 	int				GetChipType(int Channel) const;
 	int				GetChannelCount() const;
-//
-//	// Synchronization
-//	BOOL			LockDocument() const;
-//	BOOL			LockDocument(DWORD dwTimeout) const;
-//	BOOL			UnlockDocument() const;
-//
-//	//
-//	// Document data access functions
-//	//
-//
-//	// Local (song) data
-//	void			SetPatternLength(unsigned int Track, unsigned int Length);
-//	void			SetFrameCount(unsigned int Track, unsigned int Count);
-//	void			SetSongSpeed(unsigned int Track, unsigned int Speed);
-//	void			SetSongTempo(unsigned int Track, unsigned int Tempo);
-//
-//	unsigned int	GetPatternLength(unsigned int Track) const;
-//	unsigned int	GetFrameCount(unsigned int Track) const;
-//	unsigned int	GetSongSpeed(unsigned int Track) const;
-//	unsigned int	GetSongTempo(unsigned int Track) const;
-//
-//	unsigned int	GetEffColumns(unsigned int Track, unsigned int Channel) const;
-//	void			SetEffColumns(unsigned int Track, unsigned int Channel, unsigned int Columns);
-//
-//	unsigned int 	GetPatternAtFrame(unsigned int Track, unsigned int Frame, unsigned int Channel) const;
-//	void			SetPatternAtFrame(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Pattern);
-//
-//	bool			IsPatternEmpty(unsigned int Track, unsigned int Channel, unsigned int Pattern) const;
-//
-//	// Pattern editing
-//	void			SetNoteData(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, const stChanNote *pData);
-//	void			GetNoteData(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, stChanNote *pData) const;
-//
-//	void			SetDataAtPattern(unsigned int Track, unsigned int Pattern, unsigned int Channel, unsigned int Row, const stChanNote *pData);
-//	void			GetDataAtPattern(unsigned int Track, unsigned int Pattern, unsigned int Channel, unsigned int Row, stChanNote *pData) const;
-//
-//	void			ClearPatterns(unsigned int Track);
-//	void			ClearPattern(unsigned int Track, unsigned int Frame, unsigned int Channel);
-//
-//	bool			InsertRow(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
-//	bool			DeleteNote(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, unsigned int Column);
-//	bool			ClearRow(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
-//	bool			ClearRowField(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, unsigned int Column);
-//	bool			RemoveNote(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
-//	bool			PullUp(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
-//	void			CopyPattern(unsigned int Track, int Target, int Source, int Channel);
-//
-//	// Frame editing
-//	bool			InsertFrame(unsigned int Track, unsigned int Frame);
-//	bool			RemoveFrame(unsigned int Track, unsigned int Frame);
-//	bool			DuplicateFrame(unsigned int Track, unsigned int Frame);
-//	bool			DuplicatePatterns(unsigned int Track, unsigned int Frame);
-//	bool			MoveFrameDown(unsigned int Track, unsigned int Frame);
-//	bool			MoveFrameUp(unsigned int Track, unsigned int Frame);
-//	void			DeleteFrames(unsigned int Track, unsigned int Frame, int Count);
-//
+
+	// Synchronization
+	BOOL			LockDocument() const;
+	BOOL			LockDocument(DWORD dwTimeout) const;
+	BOOL			UnlockDocument() const;
+
+	//
+	// Document data access functions
+	//
+
+	// Local (song) data
+	void			SetPatternLength(unsigned int Track, unsigned int Length);
+	void			SetFrameCount(unsigned int Track, unsigned int Count);
+	void			SetSongSpeed(unsigned int Track, unsigned int Speed);
+	void			SetSongTempo(unsigned int Track, unsigned int Tempo);
+
+	unsigned int	GetPatternLength(unsigned int Track) const;
+	unsigned int	GetFrameCount(unsigned int Track) const;
+	unsigned int	GetSongSpeed(unsigned int Track) const;
+	unsigned int	GetSongTempo(unsigned int Track) const;
+
+	unsigned int	GetEffColumns(unsigned int Track, unsigned int Channel) const;
+	void			SetEffColumns(unsigned int Track, unsigned int Channel, unsigned int Columns);
+
+	unsigned int 	GetPatternAtFrame(unsigned int Track, unsigned int Frame, unsigned int Channel) const;
+	void			SetPatternAtFrame(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Pattern);
+
+	bool			IsPatternEmpty(unsigned int Track, unsigned int Channel, unsigned int Pattern) const;
+
+	// Pattern editing
+	void			SetNoteData(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, const stChanNote *pData);
+	void			GetNoteData(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, stChanNote *pData) const;
+
+	void			SetDataAtPattern(unsigned int Track, unsigned int Pattern, unsigned int Channel, unsigned int Row, const stChanNote *pData);
+	void			GetDataAtPattern(unsigned int Track, unsigned int Pattern, unsigned int Channel, unsigned int Row, stChanNote *pData) const;
+
+	void			ClearPatterns(unsigned int Track);
+	void			ClearPattern(unsigned int Track, unsigned int Frame, unsigned int Channel);
+
+	bool			InsertRow(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
+	bool			DeleteNote(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, unsigned int Column);
+	bool			ClearRow(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
+	bool			ClearRowField(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row, unsigned int Column);
+	bool			RemoveNote(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
+	bool			PullUp(unsigned int Track, unsigned int Frame, unsigned int Channel, unsigned int Row);
+	void			CopyPattern(unsigned int Track, int Target, int Source, int Channel);
+
+	// Frame editing
+	bool			InsertFrame(unsigned int Track, unsigned int Frame);
+	bool			RemoveFrame(unsigned int Track, unsigned int Frame);
+	bool			DuplicateFrame(unsigned int Track, unsigned int Frame);
+	bool			DuplicatePatterns(unsigned int Track, unsigned int Frame);
+	bool			MoveFrameDown(unsigned int Track, unsigned int Frame);
+	bool			MoveFrameUp(unsigned int Track, unsigned int Frame);
+	void			DeleteFrames(unsigned int Track, unsigned int Frame, int Count);
+
 	// Global (module) data
 	void			SetEngineSpeed(unsigned int Speed);
 	void			SetMachine(unsigned int Machine);
@@ -494,22 +494,22 @@ private:
 
 	// Thread synchronization
 private:
-//	mutable CCriticalSection m_csInstrument;
+	mutable CCriticalSection m_csInstrument;
 	mutable CMutex			 m_csDocumentLock;
-//
-//// Operations
-//public:
-//
-//// Overrides
-//public:
-//	virtual BOOL OnNewDocument();
-//	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-//	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-//	virtual void OnCloseDocument();
+
+// Operations
+public:
+
+// Overrides
+public:
+	virtual BOOL OnNewDocument();
+	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	virtual void OnCloseDocument();
 	virtual void DeleteContents();
 	virtual void SetModifiedFlag(BOOL bModified = 1);
 //	virtual void Serialize(CArchive& ar);
-//
+
 // Implementation
 public:
 	virtual ~CFamiTrackerDoc();
@@ -518,10 +518,10 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-//// Generated message map functions
-//protected:
-//	DECLARE_MESSAGE_MAP()
-//public:
-//	afx_msg void OnFileSaveAs();
-//	afx_msg void OnFileSave();
+// Generated message map functions
+protected:
+	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnFileSaveAs();
+	afx_msg void OnFileSave();
 };

@@ -6,13 +6,20 @@
 #include "ftxui/component/container.hpp"
 #include "ftxui/component/screen_interactive.hpp"
 
+#include "FamiTracker.h"
 #include "APU/APU.h"
 #include "FamiTrackerDoc.h"
+#include "SoundGen.h"
 
 #include "portaudio.h"
 
 using namespace std;
 using namespace ftxui;
+
+CFamiTrackerApp::CFamiTrackerApp() {}
+BOOL CFamiTrackerApp::InitInstance() { return true; }
+int CFamiTrackerApp::ExitInstance() { return 0; }
+CFamiTrackerApp theApp;
 
 PaError paErr = paNoError;
 PaDeviceIndex paDevice = -1;
@@ -152,6 +159,8 @@ int main() {
 
   auto screen = ScreenInteractive::Fullscreen();
 //  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
+
+  CSoundGen soundGen;
 
   Pa_Sleep(1000);
 

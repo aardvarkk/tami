@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "polyfill.h"
 
 // FamiTracker.h : main header file for the FamiTracker application
 
@@ -29,7 +30,7 @@
 #define SUPPORT_TRANSLATIONS
 
 #ifndef __AFXWIN_H__
-	#error include 'stdafx.h' before including this file for PCH
+//	#error include 'stdafx.h' before including this file for PCH
 #endif
 
 #include "resource.h"       // main symbols
@@ -46,23 +47,23 @@ enum {
 #endif /* RELEASE_BUILD */
 
 // Custom command line reader
-class CFTCommandLineInfo : public CCommandLineInfo
-{
-public:
-	CFTCommandLineInfo();
-	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast);
-public:
-	bool m_bLog;
-	bool m_bExport;
-	bool m_bPlay;
-#ifdef EXPORT_TEST
-	bool m_bVerifyExport;
-	CString m_strVerifyFile;
-#endif
-	CString m_strExportFile;
-	CString m_strExportLogFile;
-	CString m_strExportDPCMFile;
-};
+//class CFTCommandLineInfo : public CCommandLineInfo
+//{
+//public:
+//	CFTCommandLineInfo();
+//	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast);
+//public:
+//	bool m_bLog;
+//	bool m_bExport;
+//	bool m_bPlay;
+//#ifdef EXPORT_TEST
+//	bool m_bVerifyExport;
+//	CString m_strVerifyFile;
+//#endif
+//	CString m_strExportFile;
+//	CString m_strExportLogFile;
+//	CString m_strExportDPCMFile;
+//};
 
 
 class CMIDI;
@@ -74,7 +75,8 @@ class CCustomExporters;
 
 class CMutex;
 
-enum play_mode_t;	// Defined in soundgen.h
+//enum play_mode_t;	// Defined in soundgen.h
+#include "SoundGen.h"
 
 // CFamiTrackerApp:
 // See FamiTracker.cpp for the implementation of this class
@@ -129,14 +131,14 @@ public:
 private:
 	void CheckAppThemed();
 	void ShutDownSynth();
-	bool CheckSingleInstance(CFTCommandLineInfo &cmdInfo);
+//	bool CheckSingleInstance(CFTCommandLineInfo &cmdInfo);
 	void RegisterSingleInstance();
 	void UnregisterSingleInstance();
 	void CheckNewVersion();
 	void LoadLocalization();
 
 protected:
-	BOOL DoPromptFileName(CString& fileName, CString& filePath, UINT nIDSTitle, DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate);
+//	BOOL DoPromptFileName(CString& fileName, CString& filePath, UINT nIDSTitle, DWORD lFlags, BOOL bOpenFileDialog, CDocTemplate* pTemplate);
 
 	// Private variables and objects
 private:
@@ -160,7 +162,7 @@ private:
 #endif
 
 #ifdef SUPPORT_TRANSLATIONS
-	HINSTANCE		m_hInstResDLL;
+//	HINSTANCE		m_hInstResDLL;
 #endif
 
 	// Overrides
@@ -169,11 +171,11 @@ public:
 	virtual int ExitInstance();	
 
 	// Implementation
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnAppAbout();
 	afx_msg void OnFileOpen();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+//	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnTestExport();
 };
 

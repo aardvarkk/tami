@@ -45,17 +45,26 @@ add_executable(tami
 	Source/APU/Triangle.cpp
 	Source/Blip_Buffer/Blip_Buffer.cpp
 
-	Source/FamiTrackerDoc.cpp
-	Source/DocumentFile.cpp
-	Source/PatternData.cpp
+	Source/ChannelHandler.cpp
+	Source/Channels2A03.cpp
+	Source/ChannelsFDS.cpp
+	Source/ChannelsMMC5.cpp
+	Source/ChannelsN163.cpp
+	Source/ChannelsVRC6.cpp
+	Source/ChannelsVRC7.cpp
 	Source/DSample.cpp
+	Source/DocumentFile.cpp
+	Source/FamiTrackerDoc.cpp
 	Source/Instrument.cpp
-	Source/InstrumentFDS.cpp
 	Source/Instrument2A03.cpp
+	Source/InstrumentFDS.cpp
 	Source/InstrumentN163.cpp
 	Source/InstrumentVRC6.cpp
 	Source/InstrumentVRC7.cpp
+	Source/PatternData.cpp
 	Source/Sequence.cpp
+	Source/SoundGen.cpp
+	Source/TrackerChannel.cpp
 
 	Source/main.cpp
 	)

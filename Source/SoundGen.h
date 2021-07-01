@@ -24,8 +24,12 @@
 // This thread will take care of the NES sound generation
 //
 
-#include <afxmt.h>		// Synchronization objects
-#include "WaveFile.h"
+#include "polyfill.h"
+#include "TrackerChannel.h"
+#include "APU/Types.h"
+
+//#include <afxmt.h>		// Synchronization objects
+//#include "WaveFile.h"
 #include "Common.h"
 
 const int VIBRATO_LENGTH = 256;
@@ -35,7 +39,7 @@ const int NOTE_COUNT = 96;	// 96 available notes
 
 // Custom messages
 enum { 
-	WM_USER_SILENT_ALL = WM_USER + 1,
+	WM_USER_SILENT_ALL = /*WM_USER +*/ 1,
 	WM_USER_LOAD_SETTINGS,
 	WM_USER_PLAY,
 	WM_USER_STOP,
@@ -66,7 +70,7 @@ enum render_end_t {
 
 struct stChanNote;
 
-enum note_prio_t;
+//enum note_prio_t;
 
 class CChannelHandler;
 class CFamiTrackerView;
@@ -84,10 +88,12 @@ class CExportTest;
 
 // CSoundGen
 
+class CSequence;
+
 class CSoundGen : public CWinThread, IAudioCallback
 {
 protected:
-	DECLARE_DYNCREATE(CSoundGen)
+//	DECLARE_DYNCREATE(CSoundGen)
 public:
 	CSoundGen();
 	virtual ~CSoundGen();
@@ -109,7 +115,7 @@ public:
 	void		LoadMachineSettings(int Machine, int Rate, int NamcoChannels);
 
 	// Sound
-	bool		InitializeSound(HWND hWnd);
+  bool		InitializeSound(/*HWND hWnd*/);
 	void		FlushBuffer(int16 *Buffer, uint32 Size);
 	CDSound		*GetSoundInterface() const { return m_pDSound; };
 
@@ -356,7 +362,7 @@ private:
 	int					m_iTempoRemainder;
 	bool				m_bUpdateRow;
 
-	CWaveFile			m_wfWaveFile;
+//	CWaveFile			m_wfWaveFile;
 
 	// FDS & N163 waves
 	volatile bool		m_bWaveChanged;
@@ -390,7 +396,7 @@ public:
 
 	// Implementation
 public:
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
 	afx_msg void OnSilentAll(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnLoadSettings(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnStartPlayer(WPARAM wParam, LPARAM lParam);

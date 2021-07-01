@@ -23,13 +23,17 @@
 
 // CTrackerChannel
 
-#include <afxmt.h>	// For CMutex
+#include "polyfill.h"
+#include "PatternData.h"
+//#include <afxmt.h>	// For CMutex
 
 enum note_prio_t {
 	NOTE_PRIO_0, 
 	NOTE_PRIO_1, 
 	NOTE_PRIO_2
 };
+
+class CFamiTrackerDoc;
 
 class CTrackerChannel
 {
