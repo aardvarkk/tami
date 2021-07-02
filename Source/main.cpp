@@ -88,8 +88,8 @@ int portaudioCallback(
 
   for(int i = 0; i < frameCount; i++)
   {
-    *out++ = paTestData.left_phase;
-    *out++ = paTestData.right_phase;
+//    *out++ = paTestData.left_phase;
+//    *out++ = paTestData.right_phase;
     /* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
     paTestData.left_phase += 0.01f;
     /* When signal reaches top, drop back down. */
@@ -103,9 +103,6 @@ int portaudioCallback(
 }
 
 int main() {
-  CFamiTrackerDoc doc;
-  doc.OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
-
   paErr = Pa_Initialize();
 
   std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
@@ -160,7 +157,11 @@ int main() {
   auto screen = ScreenInteractive::Fullscreen();
 //  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
 
+  CFamiTrackerDoc doc;
+  doc.OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
+
   CSoundGen soundGen;
+  soundGen.StartPlayer(MODE_PLAY_START, 0);
 
   Pa_Sleep(1000);
 

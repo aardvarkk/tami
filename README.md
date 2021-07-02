@@ -17,3 +17,20 @@ VRC7 -> emu2413
 
 - BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
   - Relies on CDocumentFile (which sits on top of CFile)
+  
+# Threading Model
+
+- https://www.codeproject.com/Articles/1169105/Cplusplus-std-thread-Event-Loop-with-Message-Queue
+
+# Playing
+
+- CSoundGen is shared between main thread and player thread
+- CSoundGen::StartPlayer (public)
+  - PostThreadMessage(WM_USER_PLAY)
+    - Takes something that could be called from main thread and puts it into its own (player) thread
+    - e.g. StartPlayer
+  - ON_THREAD_MESSAGE(WM_USER_PLAY)
+  - CSoundGen::OnStartPlayer (public)
+  - CSoundGen::BeginPlayer (private)
+  - Checks that it's being called from the *player thread*
+  - Requires a document, tracker view, and sound channel
