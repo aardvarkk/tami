@@ -118,12 +118,15 @@ protected:
     {
       std::unique_lock lk(msgs_mutex);
       cv.wait(lk);
+      auto msg = msgs.front();
+      msgs.pop();
     }
   }
 
   void PostThreadMessage(int messageID, WPARAM wparam, LPARAM lparam) {
     std::unique_lock lk(msgs_mutex);
     msgs.push({ messageID, wparam, lparam });
+    cv.notify_one();
   }
 };
 
