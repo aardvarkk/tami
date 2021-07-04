@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "polyfill.h"
+#include "src/polyfill.h"
 #include "DSample.h"
 
 #define MIDI_NOTE(octave, note)		((octave) * 12 + (note) - 1)

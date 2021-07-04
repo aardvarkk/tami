@@ -24,7 +24,7 @@
 // This thread will take care of the NES sound generation
 //
 
-#include "polyfill.h"
+#include "src/polyfill.h"
 #include "TrackerChannel.h"
 #include "APU/Types.h"
 

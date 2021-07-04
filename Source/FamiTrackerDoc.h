@@ -89,7 +89,8 @@ struct stSequence {
 	signed char Value[MAX_SEQUENCE_ITEMS];
 };
 
-#include "polyfill.h"
+#include "src/polyfill.h"
+#include <array>
 
 // Access data types used by the document class
 #include "PatternData.h"

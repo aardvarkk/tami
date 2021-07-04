@@ -66,7 +66,14 @@ add_executable(tami
 	Source/SoundGen.cpp
 	Source/TrackerChannel.cpp
 
-	Source/main.cpp
+	src/document.cpp
+	src/file.cpp
+	src/mutex.cpp
+	src/string.cpp
+	src/winapp.cpp
+	src/winthread.cpp
+
+	src/main.cpp
 	)
 
 target_link_libraries(
