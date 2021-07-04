@@ -102,6 +102,8 @@ int portaudioCallback(
   return paContinue;
 }
 
+class CFamiTrackerView {};
+
 int main() {
   paErr = Pa_Initialize();
 
@@ -160,7 +162,11 @@ int main() {
   CFamiTrackerDoc doc;
   doc.OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
 
+  CFamiTrackerView view;
+
   CSoundGen soundGen;
+  soundGen.AssignDocument(&doc);
+  soundGen.AssignView(&view);
   soundGen.StartPlayer(MODE_PLAY_START, 0);
 
   Pa_Sleep(1000);
