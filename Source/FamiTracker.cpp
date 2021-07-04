@@ -53,18 +53,18 @@ const DWORD	SHARED_MEM_SIZE			= 256;
 
 // CFamiTrackerApp
 
-BEGIN_MESSAGE_MAP(CFamiTrackerApp, CWinApp)
-	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-	// Standard file based document commands
-	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
-#ifdef UPDATE_CHECK
-	ON_COMMAND(ID_HELP_CHECKFORNEWVERSIONS, CheckNewVersion)
-#endif
-#ifdef EXPORT_TEST
-	ON_COMMAND(ID_MODULE_TEST_EXPORT, OnTestExport)
-#endif
-END_MESSAGE_MAP()
+//BEGIN_MESSAGE_MAP(CFamiTrackerApp, CWinApp)
+//	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+//	// Standard file based document commands
+//	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+//	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
+//#ifdef UPDATE_CHECK
+//	ON_COMMAND(ID_HELP_CHECKFORNEWVERSIONS, CheckNewVersion)
+//#endif
+//#ifdef EXPORT_TEST
+//	ON_COMMAND(ID_MODULE_TEST_EXPORT, OnTestExport)
+//#endif
+//END_MESSAGE_MAP()
 
 // Include this for windows xp style in visual studio 2005 or later
 #pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='X86' publicKeyToken='6595b64144ccf1df' language='*'\"")

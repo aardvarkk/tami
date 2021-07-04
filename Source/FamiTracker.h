@@ -27,7 +27,7 @@
 #include "version.h"
 
 // Support DLL translations
-#define SUPPORT_TRANSLATIONS
+//#define SUPPORT_TRANSLATIONS
 
 #ifndef __AFXWIN_H__
 //	#error include 'stdafx.h' before including this file for PCH

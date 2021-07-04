@@ -10,4 +10,9 @@ public:
   CWinApp();
   virtual BOOL InitInstance();
   virtual int ExitInstance();
+  void EnableHtmlHelp();
+  void InitCommonControls();
+  bool AfxOleInit();
+  void SetRegistryKey(std::string const& key);
+  void LoadStdProfileSettings(int val);
 };

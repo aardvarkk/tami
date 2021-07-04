@@ -54,6 +54,7 @@ add_executable(tami
 	Source/ChannelsVRC7.cpp
 	Source/DSample.cpp
 	Source/DocumentFile.cpp
+	Source/FamiTracker.cpp
 	Source/FamiTrackerDoc.cpp
 	Source/Instrument.cpp
 	Source/Instrument2A03.cpp

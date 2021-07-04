@@ -34,3 +34,6 @@ VRC7 -> emu2413
   - CSoundGen::BeginPlayer (private)
   - Checks that it's being called from the *player thread*
   - Requires a document, tracker view, and sound channel
+  - For document, need to call AssignDocument (happens on construction)
+  - For tracker view, need to call AssignView (happens on construction)
+    - BOOL CFamiTrackerApp::InitInstance() -> RUNTIME_CLASS(CFamiTrackerView)?
