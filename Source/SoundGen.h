@@ -396,7 +396,7 @@ public:
 
 	// Implementation
 public:
-//	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 	afx_msg void OnSilentAll(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnLoadSettings(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnStartPlayer(WPARAM wParam, LPARAM lParam);

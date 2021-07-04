@@ -36,6 +36,8 @@ protected:
 
   void Process();
 
+  virtual void ThreadMessageProcess(ThreadMessage const& msg) = 0;
+
   void PostThreadMessage(int messageID, WPARAM wparam, LPARAM lparam);
 };
 

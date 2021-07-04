@@ -12,12 +12,16 @@ CWinThread::CWinThread() {
 }
 
 void CWinThread::Process() {
+  ThreadMessage msg;
+
   {
     std::unique_lock lk(msgs_mutex);
     cv.wait(lk);
-    auto msg = msgs.front();
+    msg = msgs.front();
     msgs.pop();
   }
+
+  ThreadMessageProcess(msg);
 }
 
 void CWinThread::PostThreadMessage(int messageID, WPARAM wparam, LPARAM lparam) {
