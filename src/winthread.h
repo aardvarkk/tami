@@ -1,5 +1,8 @@
 #pragma once
 
+// https://docs.microsoft.com/en-us/windows/win32/procthread/process-creation-flags
+#define CREATE_SUSPENDED 0x00000004
+
 #include "typedefs.h"
 
 #include <queue>
@@ -27,12 +30,15 @@ public:
   std::thread m_hThread;
   ThreadId m_nThreadID;
 
-  CWinThread();
+  bool CreateThread(int state);
+  void ResumeThread();
 
 protected:
   std::mutex msgs_mutex;
   std::queue<ThreadMessage> msgs;
   std::condition_variable cv;
+
+  virtual BOOL InitInstance() { return true; };
 
   void Process();
 

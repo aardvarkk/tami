@@ -111,9 +111,9 @@ public:
 	void			WaitUntilStopped() const;
 
 	// Get-functions
-	CAccelerator	*GetAccelerator() const		{ ASSERT(m_pAccel); return m_pAccel; }
+//	CAccelerator	*GetAccelerator() const		{ ASSERT(m_pAccel); return m_pAccel; }
 	CSoundGen		*GetSoundGenerator() const	{ ASSERT(m_pSoundGenerator); return m_pSoundGenerator; }
-	CMIDI			*GetMIDI() const			{ ASSERT(m_pMIDI); return m_pMIDI; }
+//	CMIDI			*GetMIDI() const			{ ASSERT(m_pMIDI); return m_pMIDI; }
 	CSettings		*GetSettings() const		{ ASSERT(m_pSettings); return m_pSettings; }
 	CChannelMap		*GetChannelMap() const		{ ASSERT(m_pChannelMap); return m_pChannelMap; }
 	
@@ -143,26 +143,26 @@ protected:
 	// Private variables and objects
 private:
 	// Objects
-	CMIDI			*m_pMIDI;
-	CAccelerator	*m_pAccel;					// Keyboard accelerator
+//	CMIDI			*m_pMIDI;
+//	CAccelerator	*m_pAccel;					// Keyboard accelerator
 	CSoundGen		*m_pSoundGenerator;			// Sound synth & player
 	CSettings		*m_pSettings;				// Program settings
 	CChannelMap		*m_pChannelMap;
 
-	CCustomExporters *m_customExporters;
+//	CCustomExporters *m_customExporters;
 
 	// Single instance stuff
 	CMutex			*m_pInstanceMutex;
-	HANDLE			m_hWndMapFile;
+//	HANDLE			m_hWndMapFile;
 
-	bool			m_bThemeActive;
+//	bool			m_bThemeActive;
 
 #ifdef EXPORT_TEST
 	bool			m_bExportTesting;
 #endif
 
 #ifdef SUPPORT_TRANSLATIONS
-//	HINSTANCE		m_hInstResDLL;
+	HINSTANCE		m_hInstResDLL;
 #endif
 
 	// Overrides
@@ -171,7 +171,7 @@ public:
 	virtual int ExitInstance();	
 
 	// Implementation
-//	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnAppAbout();
 	afx_msg void OnFileOpen();

@@ -24,3 +24,6 @@
 
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-makelparam
 #define MAKELPARAM(x, y) ((x << 16) | y)
+
+// https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=cmd
+#define MAX_PATH 260

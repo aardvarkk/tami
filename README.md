@@ -37,3 +37,9 @@ VRC7 -> emu2413
   - For document, need to call AssignDocument (happens on construction)
   - For tracker view, need to call AssignView (happens on construction)
     - BOOL CFamiTrackerApp::InitInstance() -> RUNTIME_CLASS(CFamiTrackerView)?
+
+## Setting DirectSound channel
+- Happens on ResetAudioDevice
+  - Which happens on InitInstance of CSoundGen
+  - Which must be part of CWinThread
+  - But document and view are already supposed to be set at that point

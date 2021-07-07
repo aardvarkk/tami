@@ -454,7 +454,7 @@ bool CSoundGen::InitializeSound(/*HWND hWnd*/)
 //	m_pDSound->EnumerateDevices();
 
 	// Start thread when audio is done
-//	ResumeThread();
+	ResumeThread();
 
 	return true;
 }
@@ -1563,7 +1563,8 @@ BOOL CSoundGen::InitInstance()
 	// Generate default vibrato table
 	GenerateVibratoTable(VIBRATO_NEW);
 
-	if (!ResetAudioDevice()) {
+	if (!
+	ResetAudioDevice()) {
 		TRACE0("SoundGen: Failed to reset audio device!\n");
 //		if (m_pVisualizerWnd != NULL)
 //			m_pVisualizerWnd->ReportAudioProblem();

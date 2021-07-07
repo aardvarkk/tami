@@ -46,6 +46,7 @@ add_executable(tami
 	Source/Blip_Buffer/Blip_Buffer.cpp
 
 	Source/ChannelHandler.cpp
+	Source/ChannelMap.cpp
 	Source/Channels2A03.cpp
 	Source/ChannelsFDS.cpp
 	Source/ChannelsMMC5.cpp
@@ -54,7 +55,7 @@ add_executable(tami
 	Source/ChannelsVRC7.cpp
 	Source/DSample.cpp
 	Source/DocumentFile.cpp
-#	Source/FamiTracker.cpp
+	Source/FamiTracker.cpp
 	Source/FamiTrackerDoc.cpp
 	Source/Instrument.cpp
 	Source/Instrument2A03.cpp
@@ -64,6 +65,7 @@ add_executable(tami
 	Source/InstrumentVRC7.cpp
 	Source/PatternData.cpp
 	Source/Sequence.cpp
+	Source/Settings.cpp
 	Source/SoundGen.cpp
 	Source/TrackerChannel.cpp
 

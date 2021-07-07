@@ -15,6 +15,7 @@ public:
   int CompareNoCase(std::string const& cmp);
   CString Right(int n);
   CString Left(int n);
+  int Find(char letter);
 };
 
 class CStringA : public CString {};

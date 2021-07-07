@@ -6,7 +6,11 @@ ThreadId::ThreadId(std::thread::id const &id) : id(id) {}
 
 bool ThreadId::operator!() { return this->id == std::thread().get_id(); }
 
-CWinThread::CWinThread() {
+bool CWinThread::CreateThread(int state) {
+  if (state == CREATE_SUSPENDED) return true;
+}
+
+void CWinThread::ResumeThread() {
   m_hThread = std::thread(&CWinThread::Process, this);
   m_nThreadID = ThreadId(m_hThread.get_id());
 }

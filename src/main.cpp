@@ -16,11 +16,6 @@
 using namespace std;
 using namespace ftxui;
 
-CFamiTrackerApp::CFamiTrackerApp() {}
-BOOL CFamiTrackerApp::InitInstance() { return true; }
-int CFamiTrackerApp::ExitInstance() { return 0; }
-CFamiTrackerApp theApp;
-
 PaError paErr = paNoError;
 PaDeviceIndex paDevice = -1;
 PaDeviceInfo const* paInfo = nullptr;
@@ -167,6 +162,8 @@ int main() {
   CSoundGen soundGen;
   soundGen.AssignDocument(&doc);
   soundGen.AssignView(&view);
+  soundGen.OnLoadSettings(0,0); // required for initial directsound channel setup
+  soundGen.InitInstance(); // requires document, view, and directsound channel
   soundGen.StartPlayer(MODE_PLAY_START, 0);
 
   Pa_Sleep(1000);
