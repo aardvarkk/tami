@@ -154,17 +154,19 @@ int main() {
   auto screen = ScreenInteractive::Fullscreen();
 //  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
 
+  theApp.InitInstance();
+
   CFamiTrackerDoc doc;
   doc.OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
 
   CFamiTrackerView view;
 
-  CSoundGen soundGen;
-  soundGen.AssignDocument(&doc);
-  soundGen.AssignView(&view);
-  soundGen.OnLoadSettings(0,0); // required for initial directsound channel setup
-  soundGen.InitInstance(); // requires document, view, and directsound channel
-  soundGen.StartPlayer(MODE_PLAY_START, 0);
+  auto soundGen = theApp.GetSoundGenerator();
+  soundGen->AssignDocument(&doc);
+  soundGen->AssignView(&view);
+  soundGen->OnLoadSettings(0,0); // required for initial directsound channel setup
+  soundGen->InitInstance(); // requires document, view, and directsound channel
+  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   Pa_Sleep(1000);
 
