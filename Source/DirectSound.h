@@ -21,9 +21,12 @@
 #ifndef DSOUND_H
 #define DSOUND_H
 
-#include <windows.h>
-#include <mmsystem.h>
-#include <dsound.h>
+#include "src/polyfill.h"
+
+//#include <windows.h>
+//#include <mmsystem.h>
+//#include <dsound.h>
+#include <portaudio.h>
 
 // Return values from WaitForDirectSoundEvent()
 enum buffer_event_t {
@@ -66,11 +69,11 @@ private:
 	void AdvanceWritePointer();
 
 private:
-	LPDIRECTSOUNDBUFFER	m_lpDirectSoundBuffer;
-	LPDIRECTSOUNDNOTIFY	m_lpDirectSoundNotify;
+//	LPDIRECTSOUNDBUFFER	m_lpDirectSoundBuffer;
+//	LPDIRECTSOUNDNOTIFY	m_lpDirectSoundNotify;
 
 	HANDLE			m_hEventList[2];
-	HWND			m_hWndTarget;
+//	HWND			m_hWndTarget;
 
 	// Configuration
 	unsigned int	m_iSampleSize;
@@ -89,7 +92,7 @@ private:
 class CDSound 
 {
 public:
-	CDSound(HWND hWnd, HANDLE hNotification);
+	CDSound(/*HWND hWnd, HANDLE hNotification*/);
 	~CDSound();
 
 	bool			SetupDevice(int iDevice);
@@ -103,7 +106,8 @@ public:
 	// Enumeration
 	void			EnumerateDevices();
 	void			ClearEnumeration();
-	BOOL			EnumerateCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext);
+//  BOOL			EnumerateCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext);
+  BOOL			EnumerateCallback(PaDeviceIndex idx, LPCTSTR lpcstrDescription);
 	unsigned int	GetDeviceCount() const;
 	LPCTSTR			GetDeviceName(unsigned int iDevice) const;
 	int				MatchDeviceID(LPCTSTR Name) const;
@@ -115,18 +119,18 @@ public:
 	static const unsigned int MAX_BUFFER_LENGTH = 10000;
 
 protected:
-	static BOOL CALLBACK DSEnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext);
+//  static BOOL CALLBACK DSEnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext);
 	static CDSound *pThisObject;
 
 private:
-	HWND			m_hWndTarget;
+//	HWND			m_hWndTarget;
 	HANDLE			m_hNotificationHandle;
-	LPDIRECTSOUND	m_lpDirectSound;
+//	LPDIRECTSOUND	m_lpDirectSound;
 
 	// For enumeration
 	unsigned int	m_iDevices;
 	LPCTSTR			m_pcDevice[MAX_DEVICES];
-	GUID			*m_pGUIDs[MAX_DEVICES];
+  PaDeviceIndex /*GUID*/			*m_pGUIDs[MAX_DEVICES];
 };
 
 #endif /* DSOUND_H */

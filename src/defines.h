@@ -27,3 +27,5 @@
 
 // https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=cmd
 #define MAX_PATH 260
+
+#define CALLBACK

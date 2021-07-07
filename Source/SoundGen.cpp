@@ -36,7 +36,7 @@
 //#include "FamiTrackerView.h"
 //#include "VisualizerWnd.h"
 //#include "MainFrm.h"
-//#include "DirectSound.h"
+#include "DirectSound.h"
 #include "APU/APU.h"
 #include "ChannelHandler.h"
 #include "Channels2A03.h"
@@ -445,13 +445,13 @@ bool CSoundGen::InitializeSound(/*HWND hWnd*/)
 //	m_hInterruptEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	// Create DirectSound object
-//	m_pDSound = new CDSound(hWnd, m_hInterruptEvent);
+	m_pDSound = new CDSound(/*hWnd, m_hInterruptEvent*/);
 
 	// Out of memory
-//	if (!m_pDSound)
-//		return false;
+	if (!m_pDSound)
+		return false;
 
-//	m_pDSound->EnumerateDevices();
+	m_pDSound->EnumerateDevices();
 
 	// Start thread when audio is done
 	ResumeThread();
@@ -495,7 +495,7 @@ bool CSoundGen::ResetAudioDevice()
 	//
 
 	// Called from player thread
-	ASSERT(GetCurrentThreadId() == m_nThreadID);
+//	ASSERT(GetCurrentThreadId() == m_nThreadID);
 	ASSERT(m_pDSound != NULL);
 
 	CSettings *pSettings = theApp.GetSettings();
@@ -512,14 +512,14 @@ bool CSoundGen::ResetAudioDevice()
 	// Close the old sound channel
 	CloseAudioDevice();
 
-	if (false/*Device >= m_pDSound->GetDeviceCount()*/) {
+	if (Device >= m_pDSound->GetDeviceCount()) {
 		// Invalid device detected, reset to 0
 		Device = 0;
 		pSettings->Sound.iDevice = 0;
 	}
 
 	// Reinitialize direct sound
-	if (false/*!m_pDSound->SetupDevice(Device)*/) {
+	if (!m_pDSound->SetupDevice(Device)) {
 		AfxMessageBox(IDS_DSOUND_ERROR, MB_ICONERROR);
 		return false;
 	}

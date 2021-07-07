@@ -11,17 +11,15 @@
 #include "Source/FamiTrackerDoc.h"
 #include "Source/SoundGen.h"
 
-#include "portaudio.h"
-
 using namespace std;
 using namespace ftxui;
 
-PaError paErr = paNoError;
-PaDeviceIndex paDevice = -1;
-PaDeviceInfo const* paInfo = nullptr;
-PaStream* paStream = nullptr;
-PaStreamParameters paStreamParams = {};
-PaStreamFlags paFlags = paNoFlag;
+//PaError paErr = paNoError;
+//PaDeviceIndex paDevice = -1;
+//PaDeviceInfo const* paInfo = nullptr;
+//PaStream* paStream = nullptr;
+//PaStreamParameters paStreamParams = {};
+//PaStreamFlags paFlags = paNoFlag;
 
 class App : public IAudioCallback {
   void FlushBuffer(int16 *Buffer, uint32 Size) override {
@@ -55,78 +53,75 @@ public:
   }
 };
 
-void printDeviceInfo(PaDeviceInfo const* info) {
-  auto host_info = Pa_GetHostApiInfo(info->hostApi);
-  std::cout << std::endl;
-  std::cout << "Name: " << info->name << std::endl;
-  std::cout << "Host: " << host_info->name << std::endl;
-  std::cout << "Outputs: " << info->maxOutputChannels << std::endl;
-  std::cout << "Low Latency: " << info->defaultLowOutputLatency << std::endl;
-  std::cout << "High Latency: " << info->defaultHighOutputLatency << std::endl;
-  std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
-}
+//void printDeviceInfo(PaDeviceInfo const* info) {
+//  auto host_info = Pa_GetHostApiInfo(info->hostApi);
+//  std::cout << std::endl;
+//  std::cout << "Name: " << info->name << std::endl;
+//  std::cout << "Host: " << host_info->name << std::endl;
+//  std::cout << "Outputs: " << info->maxOutputChannels << std::endl;
+//  std::cout << "Low Latency: " << info->defaultLowOutputLatency << std::endl;
+//  std::cout << "High Latency: " << info->defaultHighOutputLatency << std::endl;
+//  std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
+//}
 
 struct {
   float left_phase;
   float right_phase;
 } paTestData;
 
-int portaudioCallback(
-  const void* input,
-  void* output,
-  unsigned long frameCount,
-  PaStreamCallbackTimeInfo const* timeInfo,
-  PaStreamCallbackFlags statusFlags,
-  void* userData
-) {
-  float* out = static_cast<float*>(output);
-
-  for(int i = 0; i < frameCount; i++)
-  {
-//    *out++ = paTestData.left_phase;
-//    *out++ = paTestData.right_phase;
-    /* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
-    paTestData.left_phase += 0.01f;
-    /* When signal reaches top, drop back down. */
-    if (paTestData.left_phase >= 1.0f ) paTestData.left_phase -= 2.0f;
-    /* higher pitch so we can distinguish left and right. */
-    paTestData.right_phase += 0.03f;
-    if( paTestData.right_phase >= 1.0f ) paTestData.right_phase -= 2.0f;
-  }
-
-  return paContinue;
-}
+//int portaudioCallback(
+//  const void* input,
+//  void* output,
+//  unsigned long frameCount,
+//  PaStreamCallbackTimeInfo const* timeInfo,
+//  PaStreamCallbackFlags statusFlags,
+//  void* userData
+//) {
+//  float* out = static_cast<float*>(output);
+//
+//  for(int i = 0; i < frameCount; i++)
+//  {
+////    *out++ = paTestData.left_phase;
+////    *out++ = paTestData.right_phase;
+//    /* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
+//    paTestData.left_phase += 0.01f;
+//    /* When signal reaches top, drop back down. */
+//    if (paTestData.left_phase >= 1.0f ) paTestData.left_phase -= 2.0f;
+//    /* higher pitch so we can distinguish left and right. */
+//    paTestData.right_phase += 0.03f;
+//    if( paTestData.right_phase >= 1.0f ) paTestData.right_phase -= 2.0f;
+//  }
+//
+//  return paContinue;
+//}
 
 class CFamiTrackerView {};
 
 int main() {
-  paErr = Pa_Initialize();
-
-  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
-  paDevice = Pa_GetDefaultOutputDevice();
-  paInfo = Pa_GetDeviceInfo(paDevice);
-  printDeviceInfo(paInfo);
-
-  paStreamParams.device = paDevice;
-  paStreamParams.sampleFormat = paFloat32;
-  paStreamParams.channelCount = paInfo->maxOutputChannels;
-  paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
-
-  paErr = Pa_OpenStream(
-    &paStream,
-    nullptr,
-    &paStreamParams,
-    paInfo->defaultSampleRate,
-    paFramesPerBufferUnspecified,
-    paFlags,
-    portaudioCallback,
-    nullptr
-  );
-
-  paErr = Pa_StartStream(paStream);
-
-  auto apu = new CAPU(new App(), nullptr);
-  apu->SetupSound(paInfo->defaultSampleRate, paInfo->maxOutputChannels, MACHINE_NTSC);
+//  paErr = Pa_Initialize();
+//
+//  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
+//  paDevice = Pa_GetDefaultOutputDevice();
+//  paInfo = Pa_GetDeviceInfo(paDevice);
+//  printDeviceInfo(paInfo);
+//
+//  paStreamParams.device = paDevice;
+//  paStreamParams.sampleFormat = paFloat32;
+//  paStreamParams.channelCount = paInfo->maxOutputChannels;
+//  paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
+//
+//  paErr = Pa_OpenStream(
+//    &paStream,
+//    nullptr,
+//    &paStreamParams,
+//    paInfo->defaultSampleRate,
+//    paFramesPerBufferUnspecified,
+//    paFlags,
+//    portaudioCallback,
+//    nullptr
+//  );
+//
+//  paErr = Pa_StartStream(paStream);
 
   auto summary = [&] {
     auto content = vbox({
@@ -164,15 +159,14 @@ int main() {
   auto soundGen = theApp.GetSoundGenerator();
   soundGen->AssignDocument(&doc);
   soundGen->AssignView(&view);
-  soundGen->OnLoadSettings(0,0); // required for initial directsound channel setup
-  soundGen->InitInstance(); // requires document, view, and directsound channel
+  soundGen->InitInstance(); // requires document and view
   soundGen->StartPlayer(MODE_PLAY_START, 0);
 
-  Pa_Sleep(1000);
-
-  paErr = Pa_CloseStream(paStream);
-  paErr = Pa_StopStream(paStream);
-  paErr = Pa_Terminate();
+//  Pa_Sleep(1000);
+//
+//  paErr = Pa_CloseStream(paStream);
+//  paErr = Pa_StopStream(paStream);
+//  paErr = Pa_Terminate();
 
   return EXIT_SUCCESS;
 }

@@ -40,6 +40,6 @@ VRC7 -> emu2413
 
 ## Setting DirectSound channel
 - Happens on ResetAudioDevice
-  - Which happens on InitInstance of CSoundGen
+  - Which happens on InitInstance of CSoundGen and also OnLoadSettings()
   - Which must be part of CWinThread
   - But document and view are already supposed to be set at that point
