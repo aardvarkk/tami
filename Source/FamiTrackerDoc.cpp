@@ -7,11 +7,11 @@
 ** the Free Software Foundation; either version 2 of the License, or
 ** (at your option) any later version.
 **
-** This program is distributed in the hope that it will be useful,
+** This program is distributed in the hope that it will be useful, 
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-** Library General Public License for more details.  To obtain a
-** copy of the GNU Library General Public License, write to the Free
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+** Library General Public License for more details.  To obtain a 
+** copy of the GNU Library General Public License, write to the Free 
 ** Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **
 ** Any permitted reproduction of these routines, in whole or in part,
@@ -19,41 +19,41 @@
 */
 
 /*
-//
-// Document file version changes
-//
-// Ver 4.0
-//  - Header block, added song names
-//
-// Ver 3.0
-//  - Sequences are stored in the way they are represented in the instrument editor
-//  - Added separate speed and tempo settings
-//  - Changed automatic portamento to 3xx and added 1xx & 2xx portamento
-//
-// Ver 2.1
-//  - Made some additions to support multiple effect columns and prepared for more channels
-//  - Made some speed adjustments, increase speed effects by one if it's below 20
-//
-// Ver 2.0
-//  - Files are small
-//
+
+ Document file version changes
+
+ Ver 4.0
+  - Header block, added song names
+
+ Ver 3.0
+  - Sequences are stored in the way they are represented in the instrument editor
+  - Added separate speed and tempo settings
+  - Changed automatic portamento to 3xx and added 1xx & 2xx portamento
+
+ Ver 2.1
+  - Made some additions to support multiple effect columns and prepared for more channels
+  - Made some speed adjustments, increase speed effects by one if it's below 20
+
+ Ver 2.0
+  - Files are small
+
 */
 
 #include "stdafx.h"
-//#include <algorithm>
+#include <algorithm>
 #include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
 #include "TrackerChannel.h"
-//#include "MainFrm.h"
+#include "MainFrm.h"
 #include "DocumentFile.h"
 #include "Settings.h"
 #include "SoundGen.h"
 #include "ChannelMap.h"
 #include "APU/APU.h"
-//
-//#ifdef _DEBUG
-//#define new DEBUG_NEW
-//#endif
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 // Defaults when creating new modules
 const char* CFamiTrackerDoc::DEFAULT_TRACK_NAME = "New song";
@@ -95,7 +95,7 @@ static const char *FILE_BLOCK_SEQUENCES_S5B = "SEQUENCES_S5B";
 static const char INST_HEADER[] = "FTI";
 static const char INST_VERSION[] = "2.4";
 
-/*
+/* 
 	Instrument version history
 	 * 2.1 - Release points for sequences in 2A03 & VRC6
 	 * 2.2 - FDS volume sequences goes from 0-31 instead of 0-15
@@ -188,10 +188,10 @@ static int GetChipFromInstrument(int Type)
 
 // CFamiTrackerDoc construction/destruction
 
-CFamiTrackerDoc::CFamiTrackerDoc() :
-	m_bFileLoaded(false),
-	m_bFileLoadFailed(false),
-	m_iRegisteredChannels(0),
+CFamiTrackerDoc::CFamiTrackerDoc() : 
+	m_bFileLoaded(false), 
+	m_bFileLoadFailed(false), 
+	m_iRegisteredChannels(0), 
 	m_iNamcoChannels(DEFAULT_NAMCO_CHANS),
 	m_bDisplayComment(false)
 {
@@ -245,9 +245,9 @@ CFamiTrackerDoc::~CFamiTrackerDoc()
 	}
 }
 
-
+//
 // Static functions
-
+//
 
 CFamiTrackerDoc *CFamiTrackerDoc::GetDoc()
 {
