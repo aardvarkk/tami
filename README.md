@@ -43,3 +43,25 @@ VRC7 -> emu2413
   - Which happens on InitInstance of CSoundGen and also OnLoadSettings()
   - Which must be part of CWinThread
   - But document and view are already supposed to be set at that point
+  
+# DirectSound Approach
+  - read and write cursors with settable position
+  - Lock() the buffer then write to it (WriteBuffer())
+  
+- CSoundGen::StartPlayer is called from main thread
+  - Posts a thread message of WM_USER_PLAY
+  - Picked up by CSoundGen::OnStartPlayer
+  - CSoundGen::OnIdle (main thread loop)
+    - called when no thread messages are being performed
+    - checks if a document is loaded
+    - CSoundGen::UpdateAPU
+      - APU::Process
+        - APU::EndFrame
+          - calls FlushBuffer on its IAudioCallback (defines a FlushBuffer call)
+          - CSoundGen::FlushBuffer
+            - called from player thread (implies APU runs in player thread)
+            - calls fillbuffer at either uint8 or int16 sample size
+            - CSoundGen::FillBuffer
+              - CSoundGen::PlayBuffer
+                - waits for a "buffer event" of BUFFER_IN_SYNC and then writes to the buffer
+                - CDSoundChannel::WriteBuffer

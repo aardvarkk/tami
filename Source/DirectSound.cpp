@@ -71,7 +71,7 @@ bool CDSound::SetupDevice(int iDevice)
 //		m_lpDirectSound->Release();
 //		m_lpDirectSound = NULL;
 //	}
-//
+
 //	if (FAILED(DirectSoundCreate((LPCGUID)m_pGUIDs[iDevice], &m_lpDirectSound, NULL))) {
 //		m_lpDirectSound = NULL;
 //		return false;
@@ -81,6 +81,7 @@ bool CDSound::SetupDevice(int iDevice)
 //		m_lpDirectSound = NULL;
 //		return false;
 //	}
+
 
 	return true;
 }

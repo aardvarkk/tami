@@ -488,12 +488,12 @@ void CFamiTrackerApp::CheckAppThemed()
 //	TRACE0("App: Sound generator has closed\n");
 //}
 //
-//void CFamiTrackerApp::RemoveSoundGenerator()
-//{
-//	// Sound generator object has been deleted, remove reference
-//	m_pSoundGenerator = NULL;
-//}
-//
+void CFamiTrackerApp::RemoveSoundGenerator()
+{
+	// Sound generator object has been deleted, remove reference
+	m_pSoundGenerator = NULL;
+}
+
 //CCustomExporters* CFamiTrackerApp::GetCustomExporters(void) const
 //{
 //	return m_customExporters;

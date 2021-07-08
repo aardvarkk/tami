@@ -12,6 +12,7 @@
 #define TRACE0(...) printf(__VA_ARGS__);
 #define TRACE1(...) printf(__VA_ARGS__);
 #define TRACE2(...) printf(__VA_ARGS__);
+#define IMPLEMENT_DYNCREATE(x,y)
 
 // Goes in the header file
 #define DECLARE_MESSAGE_MAP() void ThreadMessageProcess(ThreadMessage const& msg);

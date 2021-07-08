@@ -76,7 +76,7 @@ const double CSoundGen::OLD_VIBRATO_DEPTH[] = {
 	1.0, 1.0, 2.0, 3.0, 4.0, 7.0, 8.0, 15.0, 16.0, 31.0, 32.0, 63.0, 64.0, 127.0, 128.0, 255.0
 };
 
-//IMPLEMENT_DYNCREATE(CSoundGen, CWinThread)
+IMPLEMENT_DYNCREATE(CSoundGen, CWinThread)
 
 BEGIN_MESSAGE_MAP(CSoundGen, CWinThread)
 	ON_THREAD_MESSAGE(WM_USER_SILENT_ALL, OnSilentAll)
@@ -278,7 +278,7 @@ void CSoundGen::RemoveDocument()
 	StopPlayer();
 	WaitForStop();
 
-//	PostThreadMessage(WM_USER_REMOVE_DOCUMENT, 0, 0);
+	PostThreadMessage(WM_USER_REMOVE_DOCUMENT, 0, 0);
 
 	// Wait 5s for thread to clear the pointer
 	for (int i = 0; i < 50 && m_pDocument != NULL; ++i)
@@ -430,7 +430,7 @@ bool CSoundGen::IsRunning() const
 	return (m_hThread != NULL) && m_bRunning;
 }
 
-// Sound buffer handling /////////////////////////////////////////////////////////////////////////////////
+//// Sound buffer handling /////////////////////////////////////////////////////////////////////////////////
 
 bool CSoundGen::InitializeSound(/*HWND hWnd*/)
 {
@@ -495,7 +495,7 @@ bool CSoundGen::ResetAudioDevice()
 	//
 
 	// Called from player thread
-//	ASSERT(GetCurrentThreadId() == m_nThreadID);
+	ASSERT(GetCurrentThreadId() == m_nThreadID);
 	ASSERT(m_pDSound != NULL);
 
 	CSettings *pSettings = theApp.GetSettings();
@@ -531,7 +531,7 @@ bool CSoundGen::ResetAudioDevice()
 		iBlocks += (BufferLen / 66);
 
 	// Create channel
-	m_pDSoundChannel = nullptr;//m_pDSound->OpenChannel(SampleRate, SampleSize, 1, BufferLen, iBlocks);
+	m_pDSoundChannel = m_pDSound->OpenChannel(SampleRate, SampleSize, 1, BufferLen, iBlocks);
 
 	// Channel failed
 	if (m_pDSoundChannel == NULL) {
@@ -540,7 +540,7 @@ bool CSoundGen::ResetAudioDevice()
 	}
 
 	// Create a buffer
-	m_iBufSizeBytes	  = 0;//m_pDSoundChannel->GetBlockSize();
+	m_iBufSizeBytes	  = m_pDSoundChannel->GetBlockSize();
 	m_iBufSizeSamples = m_iBufSizeBytes / (SampleSize / 8);
 
 	// Temp. audio buffer
@@ -595,11 +595,11 @@ bool CSoundGen::ResetAudioDevice()
 void CSoundGen::CloseAudioDevice()
 {
 	// Kill DirectSound
-//	if (m_pDSoundChannel) {
-//		m_pDSoundChannel->Stop();
-//		m_pDSound->CloseChannel(m_pDSoundChannel);
-//		m_pDSoundChannel = NULL;
-//	}
+	if (m_pDSoundChannel) {
+		m_pDSoundChannel->Stop();
+		m_pDSound->CloseChannel(m_pDSoundChannel);
+		m_pDSoundChannel = NULL;
+	}
 }
 
 void CSoundGen::CloseAudio()
@@ -609,11 +609,11 @@ void CSoundGen::CloseAudio()
 
 	CloseAudioDevice();
 
-//	if (m_pDSound) {
-//		m_pDSound->CloseDevice();
-//		delete m_pDSound;
-//		m_pDSound = NULL;
-//	}
+	if (m_pDSound) {
+		m_pDSound->CloseDevice();
+		delete m_pDSound;
+		m_pDSound = NULL;
+	}
 
 //	if (m_hInterruptEvent) {
 //		::CloseHandle(m_hInterruptEvent);
@@ -628,8 +628,8 @@ void CSoundGen::ResetBuffer()
 
 	m_iBufferPtr = 0;
 
-//	if (m_pDSoundChannel)
-//		m_pDSoundChannel->ClearBuffer();
+	if (m_pDSoundChannel)
+		m_pDSoundChannel->ClearBuffer();
 
 	m_pAPU->Reset();
 }
@@ -753,7 +753,7 @@ bool CSoundGen::PlayBuffer()
 //		}
 
 		// Write audio to buffer
-//		m_pDSoundChannel->WriteBuffer(m_pAccumBuffer, m_iBufSizeBytes);
+		m_pDSoundChannel->WriteBuffer(m_pAccumBuffer, m_iBufSizeBytes);
 
 		// Draw graph
 		m_csVisualizerWndLock.Lock();
@@ -1563,8 +1563,7 @@ BOOL CSoundGen::InitInstance()
 	// Generate default vibrato table
 	GenerateVibratoTable(VIBRATO_NEW);
 
-	if (!
-	ResetAudioDevice()) {
+	if (!ResetAudioDevice()) {
 		TRACE0("SoundGen: Failed to reset audio device!\n");
 //		if (m_pVisualizerWnd != NULL)
 //			m_pVisualizerWnd->ReportAudioProblem();
@@ -1603,11 +1602,11 @@ int CSoundGen::ExitInstance()
 	// Make sure sound interface is shut down
 	CloseAudio();
 
-//	theApp.RemoveSoundGenerator();
+	theApp.RemoveSoundGenerator();
 
 	m_bRunning = false;
 
-	return 0;//CWinThread::ExitInstance();
+	return CWinThread::ExitInstance();
 }
 
 BOOL CSoundGen::OnIdle(LONG lCount)

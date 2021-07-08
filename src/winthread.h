@@ -39,6 +39,7 @@ protected:
   std::condition_variable cv;
 
   virtual BOOL InitInstance() { return true; };
+  virtual int ExitInstance() { return 0; };
 
   void Process();
 

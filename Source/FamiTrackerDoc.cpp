@@ -41,14 +41,14 @@
 
 #include "stdafx.h"
 //#include <algorithm>
-//#include "FamiTracker.h"
+#include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
 #include "TrackerChannel.h"
 //#include "MainFrm.h"
 #include "DocumentFile.h"
 #include "Settings.h"
-//#include "SoundGen.h"
-//#include "ChannelMap.h"
+#include "SoundGen.h"
+#include "ChannelMap.h"
 #include "APU/APU.h"
 //
 //#ifdef _DEBUG
@@ -156,36 +156,36 @@ enum {
 // CFamiTrackerDoc
 //
 
-//IMPLEMENT_DYNCREATE(CFamiTrackerDoc, CDocument)
-//
+IMPLEMENT_DYNCREATE(CFamiTrackerDoc, CDocument)
+
 //BEGIN_MESSAGE_MAP(CFamiTrackerDoc, CDocument)
 //	ON_COMMAND(ID_FILE_SAVE_AS, OnFileSaveAs)
 //	ON_COMMAND(ID_FILE_SAVE, OnFileSave)
 //END_MESSAGE_MAP()
+
 //
-////
-//// Convert an instrument type to sound chip
-////
-//static int GetChipFromInstrument(int Type)
-//{
-//	switch (Type) {
-//		case INST_2A03:
-//			return SNDCHIP_NONE;
-//		case INST_VRC6:
-//			return SNDCHIP_VRC6;
-//		case INST_VRC7:
-//			return SNDCHIP_VRC7;
-//		case INST_S5B:
-//			return SNDCHIP_S5B;
-//		case INST_FDS:
-//			return SNDCHIP_FDS;
-//		case INST_N163:
-//			return SNDCHIP_N163;
-//	}
+// Convert an instrument type to sound chip
 //
-//	return SNDCHIP_NONE;
-//}
-//
+static int GetChipFromInstrument(int Type)
+{
+	switch (Type) {
+		case INST_2A03:
+			return SNDCHIP_NONE;
+		case INST_VRC6:
+			return SNDCHIP_VRC6;
+		case INST_VRC7:
+			return SNDCHIP_VRC7;
+		case INST_S5B:
+			return SNDCHIP_S5B;
+		case INST_FDS:
+			return SNDCHIP_FDS;
+		case INST_N163:
+			return SNDCHIP_N163;
+	}
+
+	return SNDCHIP_NONE;
+}
+
 // CFamiTrackerDoc construction/destruction
 
 CFamiTrackerDoc::CFamiTrackerDoc() :
@@ -206,10 +206,10 @@ CFamiTrackerDoc::CFamiTrackerDoc() :
 	memset(m_pSequencesS5B, 0, sizeof(CSequence*) * MAX_SEQUENCES * SEQ_COUNT);
 
 	// Register this object to the sound generator
-//	CSoundGen *pSoundGen = theApp.GetSoundGenerator();
+	CSoundGen *pSoundGen = theApp.GetSoundGenerator();
 
-//	if (pSoundGen)
-//		pSoundGen->AssignDocument(this);
+	if (pSoundGen)
+		pSoundGen->AssignDocument(this);
 }
 
 CFamiTrackerDoc::~CFamiTrackerDoc()
