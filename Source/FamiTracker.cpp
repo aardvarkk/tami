@@ -179,12 +179,12 @@ BOOL CFamiTrackerApp::InitInstance()
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
-//	CSingleDocTemplate* pDocTemplate = new CSingleDocTemplate(
-//		IDR_MAINFRAME,
-//		RUNTIME_CLASS(CFamiTrackerDoc),
-//		RUNTIME_CLASS(CMainFrame),
-//		RUNTIME_CLASS(CFamiTrackerView));
-//
+	CSingleDocTemplate* pDocTemplate = new CSingleDocTemplate(
+		IDR_MAINFRAME,
+		RUNTIME_CLASS(CFamiTrackerDoc),
+		RUNTIME_CLASS(CMainFrame),
+		RUNTIME_CLASS(CFamiTrackerView));
+
 //	if (!pDocTemplate)
 //		return FALSE;
 //

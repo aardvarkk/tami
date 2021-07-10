@@ -495,7 +495,7 @@ bool CSoundGen::ResetAudioDevice()
 	//
 
 	// Called from player thread
-	ASSERT(GetCurrentThreadId() == m_nThreadID);
+//	ASSERT(GetCurrentThreadId() == m_nThreadID);
 	ASSERT(m_pDSound != NULL);
 
 	CSettings *pSettings = theApp.GetSettings();
@@ -1615,8 +1615,8 @@ BOOL CSoundGen::OnIdle(LONG lCount)
 	// Main loop for audio playback thread
 	//
 
-//	if (CWinThread::OnIdle(lCount))
-//		return TRUE;
+	if (CWinThread::OnIdle(lCount))
+		return TRUE;
 
 	if (!m_pDocument || !m_pDSoundChannel || !m_pDocument->IsFileLoaded())
 		return TRUE;

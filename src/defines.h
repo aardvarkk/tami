@@ -3,6 +3,7 @@
 #include <iostream>
 
 #define ASSERT assert
+#define ASSERT_VALID(x) assert(x != nullptr)
 #define TRUE true
 #define FALSE false
 #define strcpy_s(dst, sz, src) strlcpy(dst,src,sz)

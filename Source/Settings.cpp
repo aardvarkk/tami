@@ -107,15 +107,15 @@ void CSettings::SetupSettings()
 //	SETTING_INT("Keys", "Clear field",	0xBD, &Keys.iKeyClear);
 //	SETTING_INT("Keys", "Repeat",		0x00, &Keys.iKeyRepeat);
 //
-//	// Sound
-//	SETTING_INT("Sound", "Audio Device", 0, &Sound.iDevice);
-//	SETTING_INT("Sound", "Sample rate",	44100, &Sound.iSampleRate);
-//	SETTING_INT("Sound", "Sample size", 16, &Sound.iSampleSize);
-//	SETTING_INT("Sound", "Buffer length", 40, &Sound.iBufferLength);
-//	SETTING_INT("Sound", "Bass filter freq", 30, &Sound.iBassFilter);
-//	SETTING_INT("Sound", "Treble filter freq", 12000, &Sound.iTrebleFilter);
-//	SETTING_INT("Sound", "Treble filter damping", 24, &Sound.iTrebleDamping);
-//	SETTING_INT("Sound", "Volume", 100, &Sound.iMixVolume);
+	// Sound
+	SETTING_INT("Sound", "Audio Device", 0, &Sound.iDevice);
+	SETTING_INT("Sound", "Sample rate",	44100, &Sound.iSampleRate);
+	SETTING_INT("Sound", "Sample size", 16, &Sound.iSampleSize);
+	SETTING_INT("Sound", "Buffer length", 40, &Sound.iBufferLength);
+	SETTING_INT("Sound", "Bass filter freq", 30, &Sound.iBassFilter);
+	SETTING_INT("Sound", "Treble filter freq", 12000, &Sound.iTrebleFilter);
+	SETTING_INT("Sound", "Treble filter damping", 24, &Sound.iTrebleDamping);
+	SETTING_INT("Sound", "Volume", 100, &Sound.iMixVolume);
 //
 //	// Midi
 //	SETTING_INT("MIDI", "Device", 0, &Midi.iMidiDevice);
@@ -283,5 +283,5 @@ void CSettingType<CString>::Save()
 template<class T>
 void CSettingType<T>::Default()
 {
-//	*m_pVariable = m_tDefaultValue;
+	*m_pVariable = m_tDefaultValue;
 }

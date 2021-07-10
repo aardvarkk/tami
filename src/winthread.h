@@ -30,18 +30,22 @@ public:
   std::thread m_hThread;
   ThreadId m_nThreadID;
 
+  CWinThread();
   bool CreateThread(int state);
   void ResumeThread();
+  virtual BOOL OnIdle(LONG lCount);
 
 protected:
-  std::mutex msgs_mutex;
+  std::mutex mutex;
   std::queue<ThreadMessage> msgs;
   std::condition_variable cv;
+  int suspend_count;
+  int idle_count;
 
   virtual BOOL InitInstance() { return true; };
   virtual int ExitInstance() { return 0; };
 
-  void Process();
+  void Lifecycle();
 
   virtual void ThreadMessageProcess(ThreadMessage const& msg) = 0;
 

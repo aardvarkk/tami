@@ -9,3 +9,4 @@
 #include "winthread.h"
 #include "document.h"
 #include "winapp.h"
+#include "single_doc_template.h"

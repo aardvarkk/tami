@@ -73,6 +73,7 @@ add_executable(tami
 	src/document.cpp
 	src/file.cpp
 	src/mutex.cpp
+	src/single_doc_template.cpp
 	src/string.cpp
 	src/winapp.cpp
 	src/winthread.cpp

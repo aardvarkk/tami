@@ -45,23 +45,37 @@ VRC7 -> emu2413
   - But document and view are already supposed to be set at that point
   
 # DirectSound Approach
-  - read and write cursors with settable position
-  - Lock() the buffer then write to it (WriteBuffer())
+- read and write cursors with settable position
+- Lock() the buffer then write to it (WriteBuffer())
   
-- CSoundGen::StartPlayer is called from main thread
+- CSoundGen::StartPlayer is called from *main thread*
   - Posts a thread message of WM_USER_PLAY
-  - Picked up by CSoundGen::OnStartPlayer
-  - CSoundGen::OnIdle (main thread loop)
-    - called when no thread messages are being performed
-    - checks if a document is loaded
-    - CSoundGen::UpdateAPU
-      - APU::Process
-        - APU::EndFrame
-          - calls FlushBuffer on its IAudioCallback (defines a FlushBuffer call)
-          - CSoundGen::FlushBuffer
-            - called from player thread (implies APU runs in player thread)
-            - calls fillbuffer at either uint8 or int16 sample size
-            - CSoundGen::FillBuffer
-              - CSoundGen::PlayBuffer
-                - waits for a "buffer event" of BUFFER_IN_SYNC and then writes to the buffer
-                - CDSoundChannel::WriteBuffer
+  - Picked up by CSoundGen::OnStartPlayer on *player thread*
+    - Calls CSoundGen::BeginPlayer which does all the work
+    
+- CSoundGen::OnIdle (primary player thread loop)
+  - called when no thread messages are being performed
+  - checks if a document is loaded
+  - CSoundGen::UpdateAPU
+    - APU::Process
+      - APU::EndFrame
+        - calls FlushBuffer on its IAudioCallback (defines a FlushBuffer call)
+        - CSoundGen::FlushBuffer
+          - called from player thread (implies APU runs in player thread)
+          - calls fillbuffer at either uint8 or int16 sample size
+          - CSoundGen::FillBuffer
+            - CSoundGen::PlayBuffer
+              - waits for a "buffer event" of BUFFER_IN_SYNC and then writes to the buffer
+              - CDSoundChannel::WriteBuffer
+  
+# TODO
+- app::initinstance constructs soundgen but *also* creates the suspended thread
+  - it then calls soundgen::initializesound and then resumes the thread
+- doc and view *require* theapp to have soundgen pointer
+- soundgen::initinstance must be run in player thread *and have doc and view set*
+  - there seems to be a race condition where initinstance is called from the createthread *before* doc and view have finished constructors,
+    which means that soundgen doesn't have assigned view and document
+  - i think that would have to happen as a side-effect of createthread (called from famitrackerapp)
+  - which means we actually need to support the initially-suspended thread thing?
+  - do a suspend count like windows
+    - https://docs.microsoft.com/en-us/cpp/mfc/reference/cwinthread-class?view=msvc-160

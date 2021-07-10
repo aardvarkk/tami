@@ -10,6 +10,7 @@
 #include "Source/APU/APU.h"
 #include "Source/FamiTrackerDoc.h"
 #include "Source/SoundGen.h"
+#include "Source/Settings.h"
 
 using namespace std;
 using namespace ftxui;
@@ -95,8 +96,6 @@ struct {
 //  return paContinue;
 //}
 
-class CFamiTrackerView {};
-
 int main() {
 //  paErr = Pa_Initialize();
 //
@@ -123,6 +122,21 @@ int main() {
 //
 //  paErr = Pa_StartStream(paStream);
 
+  // Manually calling this -- can't call directly from constructor because it's virtual
+  // Constructs SoundGen
+  // Constructor of Doc relies on SoundGen from TheApp to register with it
+  theApp.InitInstance();
+
+  // Defaulting generally happens if the player thread *fails to start*, but ours succeeds
+  theApp.GetSettings()->DefaultSettings();
+
+  // InitInstance() of SoundGen relies on Doc from theApp
+  // Can't call it until the Doc is constructed
+  // Must call it from its own thread
+  auto soundGen = theApp.GetSoundGenerator();
+  soundGen->GetDocument()->OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
+  soundGen->StartPlayer(MODE_PLAY_START, 0);
+
   auto summary = [&] {
     auto content = vbox({
                           hbox({text(L"- done:   "), text(L"3") | bold}) | color(Color::Green),
@@ -147,20 +161,7 @@ int main() {
   document = document | size(WIDTH, LESS_THAN, 80);
 
   auto screen = ScreenInteractive::Fullscreen();
-//  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
-
-  theApp.InitInstance();
-
-  CFamiTrackerDoc doc;
-  doc.OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
-
-  CFamiTrackerView view;
-
-  auto soundGen = theApp.GetSoundGenerator();
-  soundGen->AssignDocument(&doc);
-  soundGen->AssignView(&view);
-  soundGen->InitInstance(); // requires document and view
-  soundGen->StartPlayer(MODE_PLAY_START, 0);
+  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
 
 //  Pa_Sleep(1000);
 //
