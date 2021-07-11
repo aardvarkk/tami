@@ -48,8 +48,6 @@ CDSound::CDSound(/*HWND hWnd, HANDLE hNotification*/) :
 {
 	ASSERT(pThisObject == NULL);
 	pThisObject = this;
-
-  auto paErr = Pa_Initialize();
 }
 
 CDSound::~CDSound()
@@ -82,6 +80,7 @@ bool CDSound::SetupDevice(int iDevice)
 //		return false;
 //	}
 
+  m_iDevice = iDevice;
 
 	return true;
 }
@@ -129,6 +128,18 @@ BOOL CDSound::EnumerateCallback(PaDeviceIndex lpGuid, LPCTSTR lpcstrDescription)
 	return TRUE;
 }
 
+void printDeviceInfo(PaDeviceIndex idx, PaDeviceInfo const* info) {
+  auto host_info = Pa_GetHostApiInfo(info->hostApi);
+  std::cout << std::endl;
+  std::cout << "Index: " << idx << std::endl;
+  std::cout << "Name: " << info->name << std::endl;
+  std::cout << "Host: " << host_info->name << std::endl;
+  std::cout << "Outputs: " << info->maxOutputChannels << std::endl;
+  std::cout << "Low Latency: " << info->defaultLowOutputLatency << std::endl;
+  std::cout << "High Latency: " << info->defaultHighOutputLatency << std::endl;
+  std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
+}
+
 void CDSound::EnumerateDevices()
 {
 	if (m_iDevices != 0)
@@ -137,9 +148,11 @@ void CDSound::EnumerateDevices()
 //	DirectSoundEnumerate(DSEnumCallback, NULL);
   for (PaDeviceIndex i = 0; i < Pa_GetDeviceCount(); ++i) {
     auto device_info = Pa_GetDeviceInfo(i);
+    printDeviceInfo(i, device_info);
     EnumerateCallback(i, device_info->name);
   }
-	
+
+
 #ifdef _DEBUG
 	// Add an invalid device for debugging reasons
 	GUID g;
@@ -253,9 +266,30 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
 //		return NULL;
 //	}
 
-	pChannel->ClearBuffer();
-	
-	return pChannel;
+//  pChannel->ClearBuffer();
+
+  auto paInfo = Pa_GetDeviceInfo(m_iDevice);
+  PaStreamParameters paStreamParams;
+  paStreamParams.hostApiSpecificStreamInfo = nullptr;
+  paStreamParams.device = m_iDevice;
+  paStreamParams.sampleFormat = SampleSize == 16 ? paInt16 : paFloat32; // TODO: Do better
+  paStreamParams.channelCount = Channels;
+  paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
+
+  auto paErr = Pa_OpenStream(
+    &m_pStream,
+    nullptr,
+    &paStreamParams,
+    SampleRate,
+    paFramesPerBufferUnspecified,
+    paNoFlag,
+    nullptr,
+    nullptr
+  );
+
+  paErr = Pa_StartStream(m_pStream);
+
+  return pChannel;
 }
 
 void CDSound::CloseChannel(CDSoundChannel *pChannel)
@@ -348,10 +382,10 @@ bool CDSoundChannel::WriteBuffer(char *pBuffer, unsigned int Samples)
 
 //	LPVOID pAudioPtr1, pAudioPtr2;
 //	DWORD AudioBytes1, AudioBytes2;
-//	int	  Block = m_iCurrentWriteBlock;
-//
-//	ASSERT(Samples == m_iBlockSize);
-//
+	int	  Block = m_iCurrentWriteBlock;
+
+	ASSERT(Samples == m_iBlockSize);
+
 //	if (FAILED(m_lpDirectSoundBuffer->Lock(Block * m_iBlockSize, m_iBlockSize, (void**)&pAudioPtr1, &AudioBytes1, (void**)&pAudioPtr2, &AudioBytes2, 0)))
 //		return false;
 //

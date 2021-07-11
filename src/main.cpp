@@ -6,6 +6,8 @@
 #include "ftxui/component/container.hpp"
 #include "ftxui/component/screen_interactive.hpp"
 
+#include "portaudio.h"
+
 #include "Source/FamiTracker.h"
 #include "Source/APU/APU.h"
 #include "Source/FamiTrackerDoc.h"
@@ -54,17 +56,6 @@ public:
   }
 };
 
-//void printDeviceInfo(PaDeviceInfo const* info) {
-//  auto host_info = Pa_GetHostApiInfo(info->hostApi);
-//  std::cout << std::endl;
-//  std::cout << "Name: " << info->name << std::endl;
-//  std::cout << "Host: " << host_info->name << std::endl;
-//  std::cout << "Outputs: " << info->maxOutputChannels << std::endl;
-//  std::cout << "Low Latency: " << info->defaultLowOutputLatency << std::endl;
-//  std::cout << "High Latency: " << info->defaultHighOutputLatency << std::endl;
-//  std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
-//}
-
 struct {
   float left_phase;
   float right_phase;
@@ -97,30 +88,8 @@ struct {
 //}
 
 int main() {
-//  paErr = Pa_Initialize();
-//
-//  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
-//  paDevice = Pa_GetDefaultOutputDevice();
-//  paInfo = Pa_GetDeviceInfo(paDevice);
-//  printDeviceInfo(paInfo);
-//
-//  paStreamParams.device = paDevice;
-//  paStreamParams.sampleFormat = paFloat32;
-//  paStreamParams.channelCount = paInfo->maxOutputChannels;
-//  paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
-//
-//  paErr = Pa_OpenStream(
-//    &paStream,
-//    nullptr,
-//    &paStreamParams,
-//    paInfo->defaultSampleRate,
-//    paFramesPerBufferUnspecified,
-//    paFlags,
-//    portaudioCallback,
-//    nullptr
-//  );
-//
-//  paErr = Pa_StartStream(paStream);
+  auto paErr = Pa_Initialize();
+  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
 
   // Manually calling this -- can't call directly from constructor because it's virtual
   // Constructs SoundGen

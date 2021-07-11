@@ -108,7 +108,7 @@ void CSettings::SetupSettings()
 //	SETTING_INT("Keys", "Repeat",		0x00, &Keys.iKeyRepeat);
 //
 	// Sound
-	SETTING_INT("Sound", "Audio Device", 0, &Sound.iDevice);
+	SETTING_INT("Sound", "Audio Device", 1, &Sound.iDevice);
 	SETTING_INT("Sound", "Sample rate",	44100, &Sound.iSampleRate);
 	SETTING_INT("Sound", "Sample size", 16, &Sound.iSampleSize);
 	SETTING_INT("Sound", "Buffer length", 40, &Sound.iBufferLength);

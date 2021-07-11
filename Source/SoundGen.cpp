@@ -495,7 +495,7 @@ bool CSoundGen::ResetAudioDevice()
 	//
 
 	// Called from player thread
-//	ASSERT(GetCurrentThreadId() == m_nThreadID);
+	ASSERT(GetCurrentThreadId() == m_nThreadID);
 	ASSERT(m_pDSound != NULL);
 
 	CSettings *pSettings = theApp.GetSettings();

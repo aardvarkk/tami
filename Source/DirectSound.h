@@ -131,6 +131,8 @@ private:
 	unsigned int	m_iDevices;
 	LPCTSTR			m_pcDevice[MAX_DEVICES];
   PaDeviceIndex /*GUID*/			*m_pGUIDs[MAX_DEVICES];
+  PaDeviceIndex m_iDevice;
+  PaStream* m_pStream;
 };
 
 #endif /* DSOUND_H */

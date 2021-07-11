@@ -69,13 +69,5 @@ VRC7 -> emu2413
               - CDSoundChannel::WriteBuffer
   
 # TODO
-- app::initinstance constructs soundgen but *also* creates the suspended thread
-  - it then calls soundgen::initializesound and then resumes the thread
-- doc and view *require* theapp to have soundgen pointer
-- soundgen::initinstance must be run in player thread *and have doc and view set*
-  - there seems to be a race condition where initinstance is called from the createthread *before* doc and view have finished constructors,
-    which means that soundgen doesn't have assigned view and document
-  - i think that would have to happen as a side-effect of createthread (called from famitrackerapp)
-  - which means we actually need to support the initially-suspended thread thing?
-  - do a suspend count like windows
-    - https://docs.microsoft.com/en-us/cpp/mfc/reference/cwinthread-class?view=msvc-160
+- DirectSound::SetupDevice, DirectSound::OpenChannel 
+- fill in CDSoundChannel::WriteBuffer
