@@ -71,6 +71,7 @@ private:
 private:
 //	LPDIRECTSOUNDBUFFER	m_lpDirectSoundBuffer;
 //	LPDIRECTSOUNDNOTIFY	m_lpDirectSoundNotify;
+  PaStream* m_pStream;
 
 	HANDLE			m_hEventList[2];
 //	HWND			m_hWndTarget;
@@ -132,7 +133,6 @@ private:
 	LPCTSTR			m_pcDevice[MAX_DEVICES];
   PaDeviceIndex /*GUID*/			*m_pGUIDs[MAX_DEVICES];
   PaDeviceIndex m_iDevice;
-  PaStream* m_pStream;
 };
 
 #endif /* DSOUND_H */

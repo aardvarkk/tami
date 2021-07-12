@@ -69,5 +69,4 @@ VRC7 -> emu2413
               - CDSoundChannel::WriteBuffer
   
 # TODO
-- DirectSound::SetupDevice, DirectSound::OpenChannel 
 - fill in CDSoundChannel::WriteBuffer

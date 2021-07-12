@@ -277,7 +277,7 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
   paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
 
   auto paErr = Pa_OpenStream(
-    &m_pStream,
+    &pChannel->m_pStream,
     nullptr,
     &paStreamParams,
     SampleRate,
@@ -287,7 +287,7 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
     nullptr
   );
 
-  paErr = Pa_StartStream(m_pStream);
+  paErr = Pa_StartStream(pChannel->m_pStream);
 
   return pChannel;
 }
@@ -396,6 +396,8 @@ bool CDSoundChannel::WriteBuffer(char *pBuffer, unsigned int Samples)
 //
 //	if (FAILED(m_lpDirectSoundBuffer->Unlock((void*)pAudioPtr1, AudioBytes1, (void*)pAudioPtr2, AudioBytes2)))
 //		return false;
+
+  auto paErr = Pa_WriteStream(m_pStream, pBuffer, Samples);
 
 	AdvanceWritePointer();
 
