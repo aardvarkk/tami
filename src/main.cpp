@@ -56,37 +56,6 @@ public:
   }
 };
 
-struct {
-  float left_phase;
-  float right_phase;
-} paTestData;
-
-//int portaudioCallback(
-//  const void* input,
-//  void* output,
-//  unsigned long frameCount,
-//  PaStreamCallbackTimeInfo const* timeInfo,
-//  PaStreamCallbackFlags statusFlags,
-//  void* userData
-//) {
-//  float* out = static_cast<float*>(output);
-//
-//  for(int i = 0; i < frameCount; i++)
-//  {
-////    *out++ = paTestData.left_phase;
-////    *out++ = paTestData.right_phase;
-//    /* Generate simple sawtooth phaser that ranges between -1.0 and 1.0. */
-//    paTestData.left_phase += 0.01f;
-//    /* When signal reaches top, drop back down. */
-//    if (paTestData.left_phase >= 1.0f ) paTestData.left_phase -= 2.0f;
-//    /* higher pitch so we can distinguish left and right. */
-//    paTestData.right_phase += 0.03f;
-//    if( paTestData.right_phase >= 1.0f ) paTestData.right_phase -= 2.0f;
-//  }
-//
-//  return paContinue;
-//}
-
 int main() {
   auto paErr = Pa_Initialize();
   std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
@@ -104,6 +73,7 @@ int main() {
   // Must call it from its own thread
   auto soundGen = theApp.GetSoundGenerator();
   soundGen->GetDocument()->OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
+  soundGen->LoadMachineSettings(NTSC, 0, 0);
   soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   auto summary = [&] {

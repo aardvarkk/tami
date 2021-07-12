@@ -8,6 +8,7 @@
 #define FALSE false
 #define strcpy_s(dst, sz, src) strlcpy(dst,src,sz)
 #define AfxMessageBox(x, y) std::cerr << #x << " " << #y << std::endl;
+#define AfxDebugBreak abort
 #define _T(x) x
 #define TRACE(...) printf(__VA_ARGS__);
 #define TRACE0(...) printf(__VA_ARGS__);

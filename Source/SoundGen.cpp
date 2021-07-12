@@ -1920,8 +1920,8 @@ void CSoundGen::ReadPatternRow()
 	stChanNote NoteData;
 
 	for (int i = 0; i < Channels; ++i) {
-//		if (m_pTrackerView->PlayerGetNote(m_iPlayTrack, m_iPlayFrame, i, m_iPlayRow, NoteData))
-//			QueueNote(i, NoteData, NOTE_PRIO_1);
+		if (m_pTrackerView->PlayerGetNote(m_iPlayTrack, m_iPlayFrame, i, m_iPlayRow, NoteData))
+			QueueNote(i, NoteData, NOTE_PRIO_1);
 	}
 }
 

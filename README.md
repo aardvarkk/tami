@@ -68,5 +68,35 @@ VRC7 -> emu2413
               - waits for a "buffer event" of BUFFER_IN_SYNC and then writes to the buffer
               - CDSoundChannel::WriteBuffer
   
+# APU
+- runs on "cycles"
+- CAPU::AddTime accumulates cycles to run
+  - Called by CSoundGen::AddCycles
+    - Hardcoded to 250? CHANNEL_DELAY
+    - m_iConsumedCycles is incremented each time
+  
+- CSoundGen::UpdatePlayer
+  - CSoundGen::CheckControl
+    - CSoundGen::PlayerStepRow
+      - CSoundGen::PlayerStepFrame
+
 # TODO
-- fill in CDSoundChannel::WriteBuffer
+- Audio clicking...
+- pBuffer is always empty? But why clicking then?
+  - m_iEnabled seems to be off on all APU instruments?
+    - Requires CSquare::Write to be called
+  - Missing volume?
+  - ChannelHandler::SetVolume
+    - Called from UpdateSequenceRunning
+      - Called from RunSequence
+        - m_pSequence is NULL
+          - Set from SetupSequence
+            - Called from ChannelHandler::HandleInstrument
+              - Called from HandleNoteData
+                - Called from PlayNote
+                  - Called from SoundGen::PlayNote
+                    - Called from SoundGen::PlayChannelNotes
+  
+- NewNoteData returns false?
+  - Called from SetNote in TrackerChannel
+    - Called from SoundGen::QueueNote

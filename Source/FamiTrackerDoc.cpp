@@ -352,10 +352,10 @@ void CFamiTrackerDoc::OnCloseDocument()
 	// Document object is about to be deleted
 
 	// Remove itself from sound generator
-//	CSoundGen *pSoundGen = theApp.GetSoundGenerator();
+	CSoundGen *pSoundGen = theApp.GetSoundGenerator();
 
-//	if (pSoundGen)
-//		pSoundGen->RemoveDocument();
+	if (pSoundGen)
+		pSoundGen->RemoveDocument();
 
 	CDocument::OnCloseDocument();
 }
@@ -492,7 +492,7 @@ void CFamiTrackerDoc::CreateEmpty()
 
 	m_csDocumentLock.Unlock();
 
-//	theApp.GetSoundGenerator()->DocumentPropertiesChanged(this);
+	theApp.GetSoundGenerator()->DocumentPropertiesChanged(this);
 }
 
 //
@@ -1332,21 +1332,21 @@ BOOL CFamiTrackerDoc::OpenDocument(LPCTSTR lpszPathName)
 			return FALSE;
 
 		// Backup if files was of an older version
-		bForceBackup = m_iFileVersion < CDocumentFile::FILE_VER;
+//		bForceBackup = m_iFileVersion < CDocumentFile::FILE_VER;
 		m_bForceBackup = m_iFileVersion < CDocumentFile::FILE_VER;
 	}
 
 #ifdef WIP
 	// Force backups if compiled as beta
-	bForceBackup = true;
-	m_bForceBackup = true;
+//	bForceBackup = true;
+//	m_bForceBackup = true;
 #endif
 
 	// File is loaded
 	m_bFileLoaded = true;
 	m_bFileLoadFailed = false;
 
-//	theApp.GetSoundGenerator()->DocumentPropertiesChanged(this);
+	theApp.GetSoundGenerator()->DocumentPropertiesChanged(this);
 
 	return TRUE;
 }
@@ -1631,20 +1631,20 @@ BOOL CFamiTrackerDoc::OpenDocumentNew(CDocumentFile &DocumentFile)
 				ErrorFlag = true;
 		}
 	}
-//
-//	DocumentFile.Close();
-//
-//	if (ErrorFlag) {
-//		AfxMessageBox(IDS_FILE_LOAD_ERROR, MB_ICONERROR);
-//		DeleteContents();
-//		return FALSE;
-//	}
-//
-//	if (m_iFileVersion <= 0x0201)
-//		ReorderSequences();
-//
-//	if (m_iFileVersion < 0x0300)
-//		ConvertSequences();
+
+	DocumentFile.Close();
+
+	if (ErrorFlag) {
+		AfxMessageBox(IDS_FILE_LOAD_ERROR, MB_ICONERROR);
+		DeleteContents();
+		return FALSE;
+	}
+
+	if (m_iFileVersion <= 0x0201)
+		ReorderSequences();
+
+	if (m_iFileVersion < 0x0300)
+		ConvertSequences();
 
 #ifdef TRANSPOSE_FDS
 	if (m_bAdjustFDSArpeggio) {
@@ -2439,221 +2439,221 @@ bool CFamiTrackerDoc::ReadBlock_DSamples(CDocumentFile *pDocFile)
 
 // FTM import ////
 
-//CFamiTrackerDoc *CFamiTrackerDoc::LoadImportFile(LPCTSTR lpszPathName) const
-//{
-//	// Import a module as new subtunes
-//	CFamiTrackerDoc *pImported = new CFamiTrackerDoc();
-//
-//	pImported->DeleteContents();
-//
-//	// Load into a new document
-//	if (!pImported->OpenDocument(lpszPathName))
-//		SAFE_RELEASE(pImported);
-//
-//	return pImported;
-//}
-//
-//bool CFamiTrackerDoc::ImportInstruments(CFamiTrackerDoc *pImported, int *pInstTable)
-//{
-//	// Copy instruments to current module
-//	//
-//	// pInstTable must point to an int array of size MAX_INSTRUMENTS
-//	//
-//
-//	int SamplesTable[MAX_DSAMPLES];
-//	int SequenceTable[MAX_SEQUENCES][SEQ_COUNT];
-//	int SequenceTableVRC6[MAX_SEQUENCES][SEQ_COUNT];
-//	int SequenceTableN163[MAX_SEQUENCES][SEQ_COUNT];
-//
-//	memset(SamplesTable, 0, sizeof(int) * MAX_DSAMPLES);
-//	memset(SequenceTable, 0, sizeof(int) * MAX_SEQUENCES * SEQ_COUNT);
-//	memset(SequenceTableVRC6, 0, sizeof(int) * MAX_SEQUENCES * SEQ_COUNT);
-//	memset(SequenceTableN163, 0, sizeof(int) * MAX_SEQUENCES * SEQ_COUNT);
-//
-//	// Check instrument count
-//	if (GetInstrumentCount() + pImported->GetInstrumentCount() > MAX_INSTRUMENTS) {
-//		// Out of instrument slots
-//		AfxMessageBox(IDS_IMPORT_INSTRUMENT_COUNT, MB_ICONERROR);
-//		return false;
-//	}
-//
-//	// Copy sequences
-//	for (unsigned int s = 0; s < MAX_SEQUENCES; ++s) {
-//		for (int t = 0; t < SEQ_COUNT; ++t) {
-//			// 2A03
-//			if (pImported->GetSequenceItemCount(s, t) > 0) {
-//				CSequence *pImportSeq = pImported->GetSequence(s, t);
-//				int index = GetFreeSequence(t);
-//				if (index != -1) {
-//					CSequence *pSeq = GetSequence(unsigned(index), t);
-//					pSeq->Copy(pImportSeq);
-//					// Save a reference to this sequence
-//					SequenceTable[s][t] = index;
-//				}
-//			}
-//			// VRC6
-//			if (pImported->GetSequenceItemCountVRC6(s, t) > 0) {
-//				CSequence *pImportSeq = pImported->GetSequenceVRC6(s, t);
-//				int index = GetFreeSequenceVRC6(t);
-//				if (index != -1) {
-//					CSequence *pSeq = GetSequenceVRC6(unsigned(index), t);
-//					pSeq->Copy(pImportSeq);
-//					// Save a reference to this sequence
-//					SequenceTableVRC6[s][t] = index;
-//				}
-//			}
-//			// N163
-//			if (pImported->GetSequenceItemCountN163(s, t) > 0) {
-//				CSequence *pImportSeq = pImported->GetSequenceN163(s, t);
-//				int index = GetFreeSequenceN163(t);
-//				if (index != -1) {
-//					CSequence *pSeq = GetSequenceN163(unsigned(index), t);
-//					pSeq->Copy(pImportSeq);
-//					// Save a reference to this sequence
-//					SequenceTableN163[s][t] = index;
-//				}
-//			}
-//		}
-//	}
-//
-//	bool bOutOfSampleSpace = false;
-//
-//	// Copy DPCM samples
-//	for (int i = 0; i < MAX_DSAMPLES; ++i) {
-//		CDSample *pImportDSample = pImported->GetSample(i);
-//		if (pImportDSample->GetSize() > 0) {
-//			int Index = GetFreeSampleSlot();
-//			if (Index != -1) {
-//				CDSample *pDSample = GetSample(Index);
-//				pDSample->Copy(pImportDSample);
-//				// Save a reference to this DPCM sample
-//				SamplesTable[i] = Index;
-//			}
-//			else
-//				bOutOfSampleSpace = true;
-//		}
-//	}
-//
-//	if (bOutOfSampleSpace) {
-//		// Out of sample space
-//		AfxMessageBox(IDS_IMPORT_SAMPLE_SLOTS, MB_ICONEXCLAMATION);
-//		return false;
-//	}
-//
-//	// Copy instruments
-//	for (int i = 0; i < MAX_INSTRUMENTS; ++i) {
-//		if (pImported->IsInstrumentUsed(i)) {
-//			CInstrument *pImportInst = pImported->GetInstrument(i);
-//			CInstrument *pInst = pImportInst->Clone();
-//			pImportInst->Release();
-//			// Update references
-//			switch (pInst->GetType()) {
-//				case INST_2A03:
-//					{
-//						CInstrument2A03 *pInstrument = static_cast<CInstrument2A03*>(pInst);
-//						// Update sequence references
-//						for (int t = 0; t < SEQ_COUNT; ++t) {
-//							if (pInstrument->GetSeqEnable(t)) {
-//								pInstrument->SetSeqIndex(t, SequenceTable[pInstrument->GetSeqIndex(t)][t]);
-//							}
-//						}
-//						// Update DPCM samples
-//						for (int o = 0; o < OCTAVE_RANGE; ++o) {
-//							for (int n = 0; n < NOTE_RANGE; ++n) {
-//								int Sample = pInstrument->GetSample(o, n);
-//								if (Sample != 0) {
-//									pInstrument->SetSample(o, n, SamplesTable[Sample - 1] + 1);
-//								}
-//							}
-//						}
-//					}
-//					break;
-//				case INST_VRC6:
-//					{
-//						CInstrumentVRC6 *pInstrument = static_cast<CInstrumentVRC6*>(pInst);
-//						// Update sequence references
-//						for (int t = 0; t < SEQ_COUNT; ++t) {
-//							if (pInstrument->GetSeqEnable(t)) {
-//								pInstrument->SetSeqIndex(t, SequenceTableVRC6[pInstrument->GetSeqIndex(t)][t]);
-//							}
-//						}
-//					}
-//					break;
-//				case INST_N163:
-//					{
-//						CInstrumentN163 *pInstrument = static_cast<CInstrumentN163*>(pInst);
-//						// Update sequence references
-//						for (int t = 0; t < SEQ_COUNT; ++t) {
-//							if (pInstrument->GetSeqEnable(t)) {
-//								pInstrument->SetSeqIndex(t, SequenceTableN163[pInstrument->GetSeqIndex(t)][t]);
-//							}
-//						}
-//					}
-//					break;
-//				default:
-//					AfxDebugBreak();	// Add code for this instrument
-//			}
-//			// Update samples
-//			int Index = AddInstrument(pInst);
-//			// Save a reference to this instrument
-//			pInstTable[i] = Index;
-//		}
-//	}
-//
-//	return true;
-//}
-//
-//bool CFamiTrackerDoc::ImportTrack(int Track, CFamiTrackerDoc *pImported, int *pInstTable)
-//{
-//	// Import a selected track from specified source document
-//
-//	int NewTrack = AddTrack();
-//
-//	if (NewTrack == -1)
-//		return false;
-//
-//	// Copy parameters
-//	SetPatternLength(NewTrack, pImported->GetPatternLength(Track));
-//	SetFrameCount(NewTrack, pImported->GetFrameCount(Track));
-//	SetSongTempo(NewTrack, pImported->GetSongTempo(Track));
-//	SetSongSpeed(NewTrack, pImported->GetSongSpeed(Track));
-//
-//	// Copy track name
-//	SetTrackTitle(NewTrack, pImported->GetTrackTitle(Track));
-//
-//	// Copy frames
-//	for (unsigned int f = 0; f < pImported->GetFrameCount(Track); ++f) {
-//		for (unsigned int c = 0; c < GetAvailableChannels(); ++c) {
-//			SetPatternAtFrame(NewTrack, f, c, pImported->GetPatternAtFrame(Track, f, c));
-//		}
-//	}
-//
-//	stChanNote data;
-//
-//	// Copy patterns
-//	for (unsigned int p = 0; p < MAX_PATTERN; ++p) {
-//		for (unsigned int c = 0; c < GetAvailableChannels(); ++c) {
-//			for (unsigned int r = 0; r < pImported->GetPatternLength(Track); ++r) {
-//				// Get note
-//				pImported->GetDataAtPattern(Track, p, c, r, &data);
-//				// Translate instrument number
-//				if (data.Instrument < MAX_INSTRUMENTS)
-//					data.Instrument = pInstTable[data.Instrument];
-//				// Store
-//				SetDataAtPattern(NewTrack, p, c, r, &data);
-//			}
-//		}
-//	}
-//
-//	// Effect columns
-//	for (unsigned int c = 0; c < GetAvailableChannels(); ++c) {
-//		SetEffColumns(NewTrack, c, pImported->GetEffColumns(Track, c));
-//	}
-//
-//	return true;
-//}
-//
-//// End of file load/save
+CFamiTrackerDoc *CFamiTrackerDoc::LoadImportFile(LPCTSTR lpszPathName) const
+{
+	// Import a module as new subtunes
+	CFamiTrackerDoc *pImported = new CFamiTrackerDoc();
+
+	pImported->DeleteContents();
+
+	// Load into a new document
+	if (!pImported->OpenDocument(lpszPathName))
+		SAFE_RELEASE(pImported);
+
+	return pImported;
+}
+
+bool CFamiTrackerDoc::ImportInstruments(CFamiTrackerDoc *pImported, int *pInstTable)
+{
+	// Copy instruments to current module
+	//
+	// pInstTable must point to an int array of size MAX_INSTRUMENTS
+	//
+
+	int SamplesTable[MAX_DSAMPLES];
+	int SequenceTable[MAX_SEQUENCES][SEQ_COUNT];
+	int SequenceTableVRC6[MAX_SEQUENCES][SEQ_COUNT];
+	int SequenceTableN163[MAX_SEQUENCES][SEQ_COUNT];
+
+	memset(SamplesTable, 0, sizeof(int) * MAX_DSAMPLES);
+	memset(SequenceTable, 0, sizeof(int) * MAX_SEQUENCES * SEQ_COUNT);
+	memset(SequenceTableVRC6, 0, sizeof(int) * MAX_SEQUENCES * SEQ_COUNT);
+	memset(SequenceTableN163, 0, sizeof(int) * MAX_SEQUENCES * SEQ_COUNT);
+
+	// Check instrument count
+	if (GetInstrumentCount() + pImported->GetInstrumentCount() > MAX_INSTRUMENTS) {
+		// Out of instrument slots
+		AfxMessageBox(IDS_IMPORT_INSTRUMENT_COUNT, MB_ICONERROR);
+		return false;
+	}
+
+	// Copy sequences
+	for (unsigned int s = 0; s < MAX_SEQUENCES; ++s) {
+		for (int t = 0; t < SEQ_COUNT; ++t) {
+			// 2A03
+			if (pImported->GetSequenceItemCount(s, t) > 0) {
+				CSequence *pImportSeq = pImported->GetSequence(s, t);
+				int index = GetFreeSequence(t);
+				if (index != -1) {
+					CSequence *pSeq = GetSequence(unsigned(index), t);
+					pSeq->Copy(pImportSeq);
+					// Save a reference to this sequence
+					SequenceTable[s][t] = index;
+				}
+			}
+			// VRC6
+			if (pImported->GetSequenceItemCountVRC6(s, t) > 0) {
+				CSequence *pImportSeq = pImported->GetSequenceVRC6(s, t);
+				int index = GetFreeSequenceVRC6(t);
+				if (index != -1) {
+					CSequence *pSeq = GetSequenceVRC6(unsigned(index), t);
+					pSeq->Copy(pImportSeq);
+					// Save a reference to this sequence
+					SequenceTableVRC6[s][t] = index;
+				}
+			}
+			// N163
+			if (pImported->GetSequenceItemCountN163(s, t) > 0) {
+				CSequence *pImportSeq = pImported->GetSequenceN163(s, t);
+				int index = GetFreeSequenceN163(t);
+				if (index != -1) {
+					CSequence *pSeq = GetSequenceN163(unsigned(index), t);
+					pSeq->Copy(pImportSeq);
+					// Save a reference to this sequence
+					SequenceTableN163[s][t] = index;
+				}
+			}
+		}
+	}
+
+	bool bOutOfSampleSpace = false;
+
+	// Copy DPCM samples
+	for (int i = 0; i < MAX_DSAMPLES; ++i) {
+		CDSample *pImportDSample = pImported->GetSample(i);
+		if (pImportDSample->GetSize() > 0) {
+			int Index = GetFreeSampleSlot();
+			if (Index != -1) {
+				CDSample *pDSample = GetSample(Index);
+				pDSample->Copy(pImportDSample);
+				// Save a reference to this DPCM sample
+				SamplesTable[i] = Index;
+			}
+			else
+				bOutOfSampleSpace = true;
+		}
+	}
+
+	if (bOutOfSampleSpace) {
+		// Out of sample space
+		AfxMessageBox(IDS_IMPORT_SAMPLE_SLOTS, MB_ICONEXCLAMATION);
+		return false;
+	}
+
+	// Copy instruments
+	for (int i = 0; i < MAX_INSTRUMENTS; ++i) {
+		if (pImported->IsInstrumentUsed(i)) {
+			CInstrument *pImportInst = pImported->GetInstrument(i);
+			CInstrument *pInst = pImportInst->Clone();
+			pImportInst->Release();
+			// Update references
+			switch (pInst->GetType()) {
+				case INST_2A03:
+					{
+						CInstrument2A03 *pInstrument = static_cast<CInstrument2A03*>(pInst);
+						// Update sequence references
+						for (int t = 0; t < SEQ_COUNT; ++t) {
+							if (pInstrument->GetSeqEnable(t)) {
+								pInstrument->SetSeqIndex(t, SequenceTable[pInstrument->GetSeqIndex(t)][t]);
+							}
+						}
+						// Update DPCM samples
+						for (int o = 0; o < OCTAVE_RANGE; ++o) {
+							for (int n = 0; n < NOTE_RANGE; ++n) {
+								int Sample = pInstrument->GetSample(o, n);
+								if (Sample != 0) {
+									pInstrument->SetSample(o, n, SamplesTable[Sample - 1] + 1);
+								}
+							}
+						}
+					}
+					break;
+				case INST_VRC6:
+					{
+						CInstrumentVRC6 *pInstrument = static_cast<CInstrumentVRC6*>(pInst);
+						// Update sequence references
+						for (int t = 0; t < SEQ_COUNT; ++t) {
+							if (pInstrument->GetSeqEnable(t)) {
+								pInstrument->SetSeqIndex(t, SequenceTableVRC6[pInstrument->GetSeqIndex(t)][t]);
+							}
+						}
+					}
+					break;
+				case INST_N163:
+					{
+						CInstrumentN163 *pInstrument = static_cast<CInstrumentN163*>(pInst);
+						// Update sequence references
+						for (int t = 0; t < SEQ_COUNT; ++t) {
+							if (pInstrument->GetSeqEnable(t)) {
+								pInstrument->SetSeqIndex(t, SequenceTableN163[pInstrument->GetSeqIndex(t)][t]);
+							}
+						}
+					}
+					break;
+				default:
+					AfxDebugBreak();	// Add code for this instrument
+			}
+			// Update samples
+			int Index = AddInstrument(pInst);
+			// Save a reference to this instrument
+			pInstTable[i] = Index;
+		}
+	}
+
+	return true;
+}
+
+bool CFamiTrackerDoc::ImportTrack(int Track, CFamiTrackerDoc *pImported, int *pInstTable)
+{
+	// Import a selected track from specified source document
+
+	int NewTrack = AddTrack();
+
+	if (NewTrack == -1)
+		return false;
+
+	// Copy parameters
+	SetPatternLength(NewTrack, pImported->GetPatternLength(Track));
+	SetFrameCount(NewTrack, pImported->GetFrameCount(Track));
+	SetSongTempo(NewTrack, pImported->GetSongTempo(Track));
+	SetSongSpeed(NewTrack, pImported->GetSongSpeed(Track));
+
+	// Copy track name
+	SetTrackTitle(NewTrack, pImported->GetTrackTitle(Track));
+
+	// Copy frames
+	for (unsigned int f = 0; f < pImported->GetFrameCount(Track); ++f) {
+		for (unsigned int c = 0; c < GetAvailableChannels(); ++c) {
+			SetPatternAtFrame(NewTrack, f, c, pImported->GetPatternAtFrame(Track, f, c));
+		}
+	}
+
+	stChanNote data;
+
+	// Copy patterns
+	for (unsigned int p = 0; p < MAX_PATTERN; ++p) {
+		for (unsigned int c = 0; c < GetAvailableChannels(); ++c) {
+			for (unsigned int r = 0; r < pImported->GetPatternLength(Track); ++r) {
+				// Get note
+				pImported->GetDataAtPattern(Track, p, c, r, &data);
+				// Translate instrument number
+				if (data.Instrument < MAX_INSTRUMENTS)
+					data.Instrument = pInstTable[data.Instrument];
+				// Store
+				SetDataAtPattern(NewTrack, p, c, r, &data);
+			}
+		}
+	}
+
+	// Effect columns
+	for (unsigned int c = 0; c < GetAvailableChannels(); ++c) {
+		SetEffColumns(NewTrack, c, pImported->GetEffColumns(Track, c));
+	}
+
+	return true;
+}
+
+// End of file load/save
 
 // DMC Stuff
 
@@ -3083,7 +3083,7 @@ int CFamiTrackerDoc::AddInstrument(const char *pName, int ChipType)
 	if (Slot == INVALID_INSTRUMENT)
 		return INVALID_INSTRUMENT;
 
-//	m_pInstruments[Slot] = theApp.GetChannelMap()->GetChipInstrument(ChipType);
+	m_pInstruments[Slot] = theApp.GetChannelMap()->GetChipInstrument(ChipType);
 
 	if (m_pInstruments[Slot] == NULL) {
 #ifdef _DEBUG
@@ -4128,7 +4128,7 @@ void CFamiTrackerDoc::SetupChannels(unsigned char Chip)
 	m_iExpansionChip = Chip;
 
 	// Register the channels
-//	theApp.GetSoundGenerator()->RegisterChannels(Chip, this);
+	theApp.GetSoundGenerator()->RegisterChannels(Chip, this);
 
 	m_iChannelsAvailable = GetChannelCount();
 
@@ -4142,10 +4142,10 @@ void CFamiTrackerDoc::SetupChannels(unsigned char Chip)
 void CFamiTrackerDoc::ApplyExpansionChip()
 {
 	// Tell the sound emulator to switch expansion chip
-//	theApp.GetSoundGenerator()->SelectChip(m_iExpansionChip);
+	theApp.GetSoundGenerator()->SelectChip(m_iExpansionChip);
 
 	// Change period tables
-//	theApp.GetSoundGenerator()->LoadMachineSettings(m_iMachine, m_iEngineSpeed, m_iNamcoChannels);
+	theApp.GetSoundGenerator()->LoadMachineSettings(m_iMachine, m_iEngineSpeed, m_iNamcoChannels);
 
 	SetModifiedFlag();
 }
@@ -4239,13 +4239,13 @@ int CFamiTrackerDoc::GetChannelType(int Channel) const
 	return m_iChannelTypes[Channel];
 }
 
-//int CFamiTrackerDoc::GetChipType(int Channel) const
-//{
-//	ASSERT(m_iRegisteredChannels != 0);
-//	ASSERT(Channel < m_iRegisteredChannels);
-//	return m_pChannels[Channel]->GetChip();
-//}
-//
+int CFamiTrackerDoc::GetChipType(int Channel) const
+{
+	ASSERT(m_iRegisteredChannels != 0);
+	ASSERT(Channel < m_iRegisteredChannels);
+	return m_pChannels[Channel]->GetChip();
+}
+
 int CFamiTrackerDoc::GetChannelCount() const
 {
 	return m_iRegisteredChannels;
@@ -4294,7 +4294,7 @@ vibrato_t CFamiTrackerDoc::GetVibratoStyle() const
 void CFamiTrackerDoc::SetVibratoStyle(vibrato_t Style)
 {
 	m_iVibratoStyle = Style;
-//	theApp.GetSoundGenerator()->SetupVibratoTable(Style);
+	theApp.GetSoundGenerator()->SetupVibratoTable(Style);
 }
 
 // Linear pitch slides

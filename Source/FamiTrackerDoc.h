@@ -135,11 +135,11 @@ public:
 	bool IsFileLoaded() const;
 	bool HasLastLoadFailed() const;
 
-//	// Import
-//	CFamiTrackerDoc* LoadImportFile(LPCTSTR lpszPathName) const;
-//	bool ImportInstruments(CFamiTrackerDoc *pImported, int *pInstTable);
-//	bool ImportTrack(int Track, CFamiTrackerDoc *pImported, int *pInstTable);
-//
+	// Import
+	CFamiTrackerDoc* LoadImportFile(LPCTSTR lpszPathName) const;
+	bool ImportInstruments(CFamiTrackerDoc *pImported, int *pInstTable);
+	bool ImportTrack(int Track, CFamiTrackerDoc *pImported, int *pInstTable);
+
 	//
 	// Interface functions (not related to document data) TODO move this?
 	//

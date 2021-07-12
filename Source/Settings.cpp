@@ -160,15 +160,15 @@ void CSettings::SetupSettings()
 //
 //	SETTING_STRING("Paths", "Instrument menu", "", &InstrumentMenuPath);
 //
-//	// Mixing
-//	SETTING_INT("Mixer", "APU1", 0, &ChipLevels.iLevelAPU1);
-//	SETTING_INT("Mixer", "APU2", 0, &ChipLevels.iLevelAPU2);
-//	SETTING_INT("Mixer", "VRC6", 0, &ChipLevels.iLevelVRC6);
-//	SETTING_INT("Mixer", "VRC7", 0, &ChipLevels.iLevelVRC7);
-//	SETTING_INT("Mixer", "MMC5", 0, &ChipLevels.iLevelMMC5);
-//	SETTING_INT("Mixer", "FDS", 0, &ChipLevels.iLevelFDS);
-//	SETTING_INT("Mixer", "N163", 0, &ChipLevels.iLevelN163);
-//	SETTING_INT("Mixer", "S5B", 0, &ChipLevels.iLevelS5B);
+	// Mixing
+	SETTING_INT("Mixer", "APU1", 0, &ChipLevels.iLevelAPU1);
+	SETTING_INT("Mixer", "APU2", 0, &ChipLevels.iLevelAPU2);
+	SETTING_INT("Mixer", "VRC6", 0, &ChipLevels.iLevelVRC6);
+	SETTING_INT("Mixer", "VRC7", 0, &ChipLevels.iLevelVRC7);
+	SETTING_INT("Mixer", "MMC5", 0, &ChipLevels.iLevelMMC5);
+	SETTING_INT("Mixer", "FDS", 0, &ChipLevels.iLevelFDS);
+	SETTING_INT("Mixer", "N163", 0, &ChipLevels.iLevelN163);
+	SETTING_INT("Mixer", "S5B", 0, &ChipLevels.iLevelS5B);
 }
 
 template<class T> void CSettings::AddSetting(LPCTSTR pSection, LPCTSTR pEntry, T tDefault, T* pVariable)
