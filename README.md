@@ -82,21 +82,4 @@ VRC7 -> emu2413
 
 # TODO
 - Audio clicking...
-- pBuffer is always empty? But why clicking then?
-  - m_iEnabled seems to be off on all APU instruments?
-    - Requires CSquare::Write to be called
-  - Missing volume?
-  - ChannelHandler::SetVolume
-    - Called from UpdateSequenceRunning
-      - Called from RunSequence
-        - m_pSequence is NULL
-          - Set from SetupSequence
-            - Called from ChannelHandler::HandleInstrument
-              - Called from HandleNoteData
-                - Called from PlayNote
-                  - Called from SoundGen::PlayNote
-                    - Called from SoundGen::PlayChannelNotes
-  
-- NewNoteData returns false?
-  - Called from SetNote in TrackerChannel
-    - Called from SoundGen::QueueNote
+- m_pInstrument is NULL-ish 

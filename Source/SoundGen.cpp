@@ -33,7 +33,7 @@
 //#include <afxmt.h>
 #include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
-//#include "FamiTrackerView.h"
+#include "FamiTrackerView.h"
 //#include "VisualizerWnd.h"
 //#include "MainFrm.h"
 #include "DirectSound.h"

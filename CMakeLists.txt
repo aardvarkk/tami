@@ -58,6 +58,7 @@ add_executable(tami
 	Source/DocumentFile.cpp
 	Source/FamiTracker.cpp
 	Source/FamiTrackerDoc.cpp
+	Source/FamiTrackerView.cpp
 	Source/Instrument.cpp
 	Source/Instrument2A03.cpp
 	Source/InstrumentFDS.cpp
@@ -73,7 +74,6 @@ add_executable(tami
 	src/document.cpp
 	src/file.cpp
 	src/mutex.cpp
-	src/single_doc_template.cpp
 	src/string.cpp
 	src/winapp.cpp
 	src/winthread.cpp

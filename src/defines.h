@@ -17,6 +17,7 @@
 #define IMPLEMENT_DYNCREATE(x,y)
 
 // Goes in the header file
+#define DECLARE_DYNCREATE(x)
 #define DECLARE_MESSAGE_MAP() void ThreadMessageProcess(ThreadMessage const& msg);
 #define afx_msg
 

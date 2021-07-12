@@ -13,13 +13,6 @@ protected:
   friend class CSingleDocTemplate;
 };
 
-class CFamiTrackerView : public CView {
-public:
-  CFamiTrackerView();
-  bool PlayerGetNote(int Track, int Frame, int Channel, int Row, stChanNote &NoteData);
-  void PlayerPlayNote(int Channel, stChanNote *pNote);
-};
-
 class CSingleDocTemplate {
 public:
   CSingleDocTemplate(int resource, CDocument* doc, CMainFrame* frame, CView* view) {

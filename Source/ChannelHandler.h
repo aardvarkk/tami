@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "../src/instrument_container.h"
+
 class CAPU;
 class CSoundGen;
 

@@ -93,7 +93,7 @@ class CSequence;
 class CSoundGen : public CWinThread, IAudioCallback
 {
 protected:
-//	DECLARE_DYNCREATE(CSoundGen)
+	DECLARE_DYNCREATE(CSoundGen)
 public:
 	CSoundGen();
 	virtual ~CSoundGen();

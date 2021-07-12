@@ -91,6 +91,7 @@ struct stSequence {
 
 #include "src/polyfill.h"
 #include <array>
+#include "Source/DSample.h"
 
 // Access data types used by the document class
 #include "PatternData.h"
@@ -110,7 +111,7 @@ class CFamiTrackerDoc : public CDocument
 //protected: // create from serialization only
 public:
 	CFamiTrackerDoc();
-//	DECLARE_DYNCREATE(CFamiTrackerDoc)
+	DECLARE_DYNCREATE(CFamiTrackerDoc)
 //
 	// Static functions
 public:

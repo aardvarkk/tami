@@ -22,7 +22,7 @@
 #include "Exception.h"
 #include "FamiTracker.h"
 #include "FamiTrackerDoc.h"
-//#include "FamiTrackerView.h"
+#include "FamiTrackerView.h"
 //#include "MainFrm.h"
 //#include "AboutDlg.h"
 #include "TrackerChannel.h"
