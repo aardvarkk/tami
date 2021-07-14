@@ -81,5 +81,12 @@ VRC7 -> emu2413
       - CSoundGen::PlayerStepFrame
 
 # TODO
-- Audio clicking...
-- m_pInstrument is NULL-ish 
+- 44100 Hz (SampleRate)
+- 16 bits (SampleSize)
+- 1 channel
+- 40ms buffer length (BufferLen)
+  - Controllable in Settings
+  - Defaults to 40, and increasing doesn't help a ton
+- 2 blocks (iBlocks)
+  - Variable numbers are supported, and they're based on buffer length 
+  - Longer buffer length = more blocks

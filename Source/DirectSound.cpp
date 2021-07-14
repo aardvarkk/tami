@@ -274,7 +274,7 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
   paStreamParams.device = m_iDevice;
   paStreamParams.sampleFormat = SampleSize == 16 ? paInt16 : paFloat32; // TODO: Do better
   paStreamParams.channelCount = Channels;
-  paStreamParams.suggestedLatency = paInfo->defaultLowOutputLatency;
+  paStreamParams.suggestedLatency = paInfo->defaultHighOutputLatency;
 
   auto paErr = Pa_OpenStream(
     &pChannel->m_pStream,
@@ -397,7 +397,12 @@ bool CDSoundChannel::WriteBuffer(char *pBuffer, unsigned int Samples)
 //	if (FAILED(m_lpDirectSoundBuffer->Unlock((void*)pAudioPtr1, AudioBytes1, (void*)pAudioPtr2, AudioBytes2)))
 //		return false;
 
+  std::chrono::high_resolution_clock clk;
+  auto pre = clk.now();
   auto paErr = Pa_WriteStream(m_pStream, pBuffer, Samples);
+  auto pst = clk.now();
+  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(pst-pre);
+  std::cout << dur.count() << std::endl;
 
 	AdvanceWritePointer();
 
