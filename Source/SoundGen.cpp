@@ -735,22 +735,22 @@ bool CSoundGen::PlayBuffer()
 		DWORD dwEvent;
 
 		// Wait for a buffer event
-//		while ((dwEvent = m_pDSoundChannel->WaitForSyncEvent(AUDIO_TIMEOUT)) != BUFFER_IN_SYNC) {
-//			switch (dwEvent) {
-//				case BUFFER_TIMEOUT:
-//					// Buffer timeout
-//					m_bBufferTimeout = true;
-//				case BUFFER_CUSTOM_EVENT:
-//					// Custom event, quit
-//					m_iBufferPtr = 0;
-//					return false;
-//				case BUFFER_OUT_OF_SYNC:
-//					// Buffer underrun detected
-//					m_iAudioUnderruns++;
-//					m_bBufferUnderrun = true;
-//					break;
-//			}
-//		}
+		while ((dwEvent = m_pDSoundChannel->WaitForSyncEvent(AUDIO_TIMEOUT)) != BUFFER_IN_SYNC) {
+			switch (dwEvent) {
+				case BUFFER_TIMEOUT:
+					// Buffer timeout
+					m_bBufferTimeout = true;
+				case BUFFER_CUSTOM_EVENT:
+					// Custom event, quit
+					m_iBufferPtr = 0;
+					return false;
+				case BUFFER_OUT_OF_SYNC:
+					// Buffer underrun detected
+					m_iAudioUnderruns++;
+					m_bBufferUnderrun = true;
+					break;
+			}
+		}
 
 		// Write audio to buffer
 		m_pDSoundChannel->WriteBuffer(m_pAccumBuffer, m_iBufSizeBytes);

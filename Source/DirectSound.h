@@ -37,10 +37,14 @@ enum buffer_event_t {
 	BUFFER_OUT_OF_SYNC
 };
 
+class AudioBuffer;
+class AudioBufferController;
+
 // DirectSound channel
 class CDSoundChannel 
 {
 	friend class CDSound;
+	friend class AudioBufferController;
 
 public:
 	CDSoundChannel();
@@ -70,10 +74,13 @@ private:
 
 private:
 //	LPDIRECTSOUNDBUFFER	m_lpDirectSoundBuffer;
+  AudioBuffer* m_lpDirectSoundBuffer;
 //	LPDIRECTSOUNDNOTIFY	m_lpDirectSoundNotify;
   PaStream* m_pStream;
 
-	HANDLE			m_hEventList[2];
+//	HANDLE			m_hEventList[2];
+  mutable std::condition_variable audio_buffer_writable_cv;
+  mutable std::mutex audio_buffer_writable_mtx;
 //	HWND			m_hWndTarget;
 
 	// Configuration
@@ -127,6 +134,7 @@ private:
 //	HWND			m_hWndTarget;
 	HANDLE			m_hNotificationHandle;
 //	LPDIRECTSOUND	m_lpDirectSound;
+  AudioBufferController* m_lpDirectSound;
 
 	// For enumeration
 	unsigned int	m_iDevices;
@@ -136,3 +144,121 @@ private:
 };
 
 #endif /* DSOUND_H */
+
+enum AudioBufferFlags {
+  DSBSTATUS_PLAYING = 0b00000001,
+  DSBPLAY_LOOPING,
+  DSBCAPS_LOCSOFTWARE,
+  DSBCAPS_GLOBALFOCUS,
+  DSBCAPS_CTRLPOSITIONNOTIFY,
+  DSBCAPS_GETCURRENTPOSITION2
+};
+
+enum WaveFormat {
+  WAVE_FORMAT_PCM
+};
+
+struct WAVEFORMATEX {
+  size_t cbSize;
+  int nChannels;
+  int nSamplesPerSec;
+  int wBitsPerSample;
+  int nBlockAlign;
+  int nAvgBytesPerSec;
+  int wFormatTag;
+};
+
+struct DSBUFFERDESC {
+  size_t dwSize;
+  unsigned int dwBufferBytes;
+  unsigned int dwFlags;
+  WAVEFORMATEX* lpwfxFormat;
+};
+
+class AudioBuffer {
+public:
+  AudioBuffer(DSBUFFERDESC const& buffer_desc, std::mutex& audio_buffer_mtx) :
+    is_playing(false),
+    play_pos(0),
+    write_pos(0),
+    audio_buffer_mtx(audio_buffer_mtx) {
+    buffer.resize(buffer_desc.dwBufferBytes);
+  }
+  void Release() {}
+  bool Play(int reserved, int priority, AudioBufferFlags flags) {
+    is_playing = true;
+    return true;
+  }
+  bool Stop() {
+    is_playing = false;
+    return true;
+  }
+  void GetStatus(unsigned int* status) {
+    *status = 0;
+    if (is_playing) {
+      *status |= DSBSTATUS_PLAYING;
+    }
+  }
+  void AcquireLock() {
+    audio_buffer_lock = new std::unique_lock(audio_buffer_mtx);
+  }
+  void ReleaseLock() {
+    SAFE_RELEASE(audio_buffer_lock);
+  }
+  bool Lock(int offset, int sz, void** buf1, unsigned int* sz1, void** buf2, unsigned int* sz2, int flags) {
+    AcquireLock();
+
+    *buf1 = &buffer[offset];
+    if (offset + sz > buffer.size()) {
+      *sz1 = buffer.size() - offset;
+      *buf2 = &buffer[0];
+      *sz2 = offset + sz - buffer.size();
+    } else {
+      *sz1 = sz;
+      *buf2 = nullptr;
+      *sz2 = 0;
+    }
+
+    return true;
+  }
+  bool Unlock(void* buf1, int sz1, void* buf2, int sz2) {
+    ReleaseLock();
+    return true;
+  }
+  void SetCurrentPosition(int play_pos) {
+    AcquireLock();
+    this->play_pos = play_pos;
+    ReleaseLock();
+  }
+  void GetCurrentPosition(unsigned int* play_pos, unsigned int* write_pos) {
+    AcquireLock();
+    *play_pos = this->play_pos;
+    *write_pos = this->write_pos;
+    ReleaseLock();
+  }
+private:
+  std::mutex& audio_buffer_mtx;
+  std::unique_lock<std::mutex>* audio_buffer_lock;
+  bool is_playing;
+  std::vector<uint8_t> buffer;
+  int play_pos;
+  int write_pos;
+};
+
+class AudioBufferController {
+public:
+  AudioBufferController() : created_buffer(nullptr) {
+
+  }
+  void Release() {
+    SAFE_RELEASE(created_buffer);
+  }
+  bool CreateSoundBuffer(DSBUFFERDESC* buffer_desc, CDSoundChannel* channel, int flags) {
+    created_buffer = new AudioBuffer(*buffer_desc, channel->audio_buffer_writable_mtx);
+    channel->m_lpDirectSoundBuffer = created_buffer;
+    return true;
+  }
+
+private:
+  AudioBuffer* created_buffer;
+};

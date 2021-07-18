@@ -12,6 +12,7 @@ typedef int HANDLE;
 typedef uint32_t DWORD;
 typedef uint32_t WORD;
 typedef char TCHAR;
+typedef void* LPVOID;
 
 // https://stackoverflow.com/questions/2515261/what-are-the-definitions-for-lparam-and-wparam
 typedef uint64_t WPARAM;

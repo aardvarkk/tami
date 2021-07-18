@@ -40,7 +40,7 @@ void CWinThread::Lifecycle() {
 
   while (true) {
     std::unique_lock lk(mutex);
-//    cv.wait(lk);
+//    audio_buffer_writable_cv.wait(lk);
 
     if (msgs.size() > 0) {
       idle_count = 0;
@@ -49,6 +49,7 @@ void CWinThread::Lifecycle() {
       ThreadMessageProcess(msg);
     } else {
       OnIdle(++idle_count);
+      std::this_thread::yield();
     }
   }
 

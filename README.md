@@ -90,3 +90,9 @@ VRC7 -> emu2413
 - 2 blocks (iBlocks)
   - Variable numbers are supported, and they're based on buffer length 
   - Longer buffer length = more blocks
+- Wait for an event saying the playback of the buffer is complete
+
+# DirectSound approach
+- One statically sized *circular* buffer, whose "playhead" moves around
+- Always lock a Blocksize chunk, at an appropriate offset
+- Number of samples being returned is *asserted to match the blocksize*

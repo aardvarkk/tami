@@ -33,3 +33,4 @@
 #define MAX_PATH 260
 
 #define CALLBACK
+#define FAILED(x) !(x)
