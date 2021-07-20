@@ -39,18 +39,20 @@ void CWinThread::Lifecycle() {
   ThreadMessage msg;
 
   while (true) {
-    std::unique_lock lk(mutex);
-//    audio_buffer_writable_cv.wait(lk);
+    {
+      std::unique_lock lk(mutex);
+      //    audio_buffer_writable_cv.wait(lk);
 
-    if (msgs.size() > 0) {
-      idle_count = 0;
-      msg = msgs.front();
-      msgs.pop();
-      ThreadMessageProcess(msg);
-    } else {
-      OnIdle(++idle_count);
-      std::this_thread::yield();
+      if (msgs.size() > 0) {
+        idle_count = 0;
+        msg = msgs.front();
+        msgs.pop();
+        ThreadMessageProcess(msg);
+      }
     }
+
+    OnIdle(++idle_count);
+    std::this_thread::yield();
   }
 
   ExitInstance();

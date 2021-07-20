@@ -193,6 +193,55 @@ int CDSound::CalculateBufferLength(int BufferLen, int Samplerate, int Samplesize
 	return ((Samplerate * BufferLen) / 1000) * (Samplesize / 8) * Channels;
 }
 
+int audio_callback(
+  const void *input,
+  void *output,
+  unsigned long frameCount,
+  const PaStreamCallbackTimeInfo* timeInfo,
+  PaStreamCallbackFlags statusFlags,
+  void *userData
+)
+{
+  auto channel = static_cast<CDSoundChannel*>(userData);
+  if (!channel) return paContinue;
+
+  auto block_size = channel->GetBlockSize();
+  auto blocks = channel->GetBlocks();
+
+  ASSERT(frameCount == channel->GetBlockSamples());
+
+  unsigned int play_pos, write_pos;
+  channel->m_lpDirectSoundBuffer->GetCurrentPosition(&play_pos, &write_pos);
+
+  void* buf1;
+  void* buf2 = nullptr;
+  unsigned int sz1, sz2;
+  int flags;
+
+  channel->m_lpDirectSoundBuffer->Lock(
+    write_pos,
+    block_size,
+    &buf1, &sz1, &buf2, &sz2, flags
+  );
+
+  // Copy audio buffer stream to output
+  memcpy(output, buf1, sz1);
+  if (buf2) {
+    memcpy(static_cast<uint8_t*>(output) + sz1, buf2, sz2);
+  }
+
+  channel->m_lpDirectSoundBuffer->Unlock(buf1, sz1, buf2, sz2);
+
+  channel->m_lpDirectSoundBuffer->SetCurrentPosition(
+    (write_pos + block_size) % (blocks * block_size)
+  );
+
+  // Inform the player thread that it can write more data
+  channel->audio_buffer_writable_cv.notify_one();
+
+  return paContinue;
+}
+
 CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channels, int BufferLength, int Blocks)
 {
 	// Open a new secondary buffer
@@ -282,10 +331,10 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
     nullptr,
     &paStreamParams,
     SampleRate,
-    BlockSize / (SampleSize / 8) /*paFramesPerBufferUnspecified*/,
+    pChannel->GetBlockSamples() /*paFramesPerBufferUnspecified*/,
     paNoFlag,
-    nullptr,
-    nullptr
+    audio_callback /*nullptr*/,
+    pChannel
   );
 
   paErr = Pa_StartStream(pChannel->m_pStream);
@@ -398,13 +447,6 @@ bool CDSoundChannel::WriteBuffer(char *pBuffer, unsigned int Samples)
 	if (FAILED(m_lpDirectSoundBuffer->Unlock((void*)pAudioPtr1, AudioBytes1, (void*)pAudioPtr2, AudioBytes2)))
 		return false;
 
-  std::chrono::high_resolution_clock clk;
-  auto pre = clk.now();
-  auto paErr = Pa_WriteStream(m_pStream, pBuffer, Samples);
-  auto pst = clk.now();
-  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(pst-pre);
-  std::cout << dur.count() << std::endl;
-
 	AdvanceWritePointer();
 
 	return true;
@@ -428,8 +470,11 @@ buffer_event_t CDSoundChannel::WaitForSyncEvent(DWORD dwTimeout) const
 //			return BUFFER_TIMEOUT;
 //	}
 
-  std::unique_lock lk(audio_buffer_writable_mtx);
-  auto wait_result = audio_buffer_writable_cv.wait_for(lk, std::chrono::milliseconds(dwTimeout));
+  std::cv_status wait_result;
+  {
+    std::unique_lock lk(audio_buffer_writable_mtx);
+    wait_result = audio_buffer_writable_cv.wait_for(lk, std::chrono::milliseconds(dwTimeout));
+  }
   if (wait_result == std::cv_status::timeout) {
     return BUFFER_TIMEOUT;
   } else {

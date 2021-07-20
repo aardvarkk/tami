@@ -66,6 +66,10 @@ public:
 	int	GetSampleRate()	const	{ return m_iSampleRate;	};
 	int GetChannels() const		{ return m_iChannels; };
 
+  mutable std::condition_variable audio_buffer_writable_cv;
+  mutable std::mutex audio_buffer_writable_mtx;
+  AudioBuffer* m_lpDirectSoundBuffer;
+
 private:
 	int GetPlayBlock() const;
 	int GetWriteBlock() const;
@@ -74,13 +78,10 @@ private:
 
 private:
 //	LPDIRECTSOUNDBUFFER	m_lpDirectSoundBuffer;
-  AudioBuffer* m_lpDirectSoundBuffer;
 //	LPDIRECTSOUNDNOTIFY	m_lpDirectSoundNotify;
   PaStream* m_pStream;
 
 //	HANDLE			m_hEventList[2];
-  mutable std::condition_variable audio_buffer_writable_cv;
-  mutable std::mutex audio_buffer_writable_mtx;
 //	HWND			m_hWndTarget;
 
 	// Configuration
@@ -126,6 +127,8 @@ public:
 	static const unsigned int MAX_SAMPLE_RATE = 96000;
 	static const unsigned int MAX_BUFFER_LENGTH = 10000;
 
+  AudioBufferController* m_lpDirectSound;
+
 protected:
 //  static BOOL CALLBACK DSEnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext);
 	static CDSound *pThisObject;
@@ -134,7 +137,6 @@ private:
 //	HWND			m_hWndTarget;
 	HANDLE			m_hNotificationHandle;
 //	LPDIRECTSOUND	m_lpDirectSound;
-  AudioBufferController* m_lpDirectSound;
 
 	// For enumeration
 	unsigned int	m_iDevices;
@@ -225,9 +227,9 @@ public:
     ReleaseLock();
     return true;
   }
-  void SetCurrentPosition(int play_pos) {
+  void SetCurrentPosition(int write_pos) {
     AcquireLock();
-    this->play_pos = play_pos;
+    this->write_pos = write_pos;
     ReleaseLock();
   }
   void GetCurrentPosition(unsigned int* play_pos, unsigned int* write_pos) {
@@ -254,11 +256,12 @@ public:
     SAFE_RELEASE(created_buffer);
   }
   bool CreateSoundBuffer(DSBUFFERDESC* buffer_desc, CDSoundChannel* channel, int flags) {
-    created_buffer = new AudioBuffer(*buffer_desc, channel->audio_buffer_writable_mtx);
-    channel->m_lpDirectSoundBuffer = created_buffer;
+    this->created_buffer = new AudioBuffer(*buffer_desc, channel->audio_buffer_writable_mtx);
+    this->channel = channel;
+    this->channel->m_lpDirectSoundBuffer = created_buffer;
     return true;
   }
 
-private:
+  CDSoundChannel* channel;
   AudioBuffer* created_buffer;
 };
