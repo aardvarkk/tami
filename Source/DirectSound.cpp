@@ -282,7 +282,7 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
     nullptr,
     &paStreamParams,
     SampleRate,
-    paFramesPerBufferUnspecified,
+    BlockSize / (SampleSize / 8) /*paFramesPerBufferUnspecified*/,
     paNoFlag,
     nullptr,
     nullptr

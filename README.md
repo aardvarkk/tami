@@ -65,8 +65,10 @@ VRC7 -> emu2413
           - calls fillbuffer at either uint8 or int16 sample size
           - CSoundGen::FillBuffer
             - CSoundGen::PlayBuffer
-              - waits for a "buffer event" of BUFFER_IN_SYNC and then writes to the buffer
+              - *waits* for a "buffer event" of BUFFER_IN_SYNC and then writes to the buffer
+                - WaitForSyncEvent returns when it's notified that the play position is at the START of a block 
               - CDSoundChannel::WriteBuffer
+                - locks the DirectSound buffer and memcpys to it
   
 # APU
 - runs on "cycles"
@@ -79,8 +81,8 @@ VRC7 -> emu2413
   - CSoundGen::CheckControl
     - CSoundGen::PlayerStepRow
       - CSoundGen::PlayerStepFrame
-
-# TODO
+  
+# DirectSound approach
 - 44100 Hz (SampleRate)
 - 16 bits (SampleSize)
 - 1 channel
@@ -88,11 +90,9 @@ VRC7 -> emu2413
   - Controllable in Settings
   - Defaults to 40, and increasing doesn't help a ton
 - 2 blocks (iBlocks)
-  - Variable numbers are supported, and they're based on buffer length 
+  - Variable numbers are supported, and they're based on buffer length
   - Longer buffer length = more blocks
 - Wait for an event saying the playback of the buffer is complete
-
-# DirectSound approach
 - One statically sized *circular* buffer, whose "playhead" moves around
 - Always lock a Blocksize chunk, at an appropriate offset
 - Number of samples being returned is *asserted to match the blocksize*
