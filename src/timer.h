@@ -4,7 +4,6 @@ public:
     pre = clk.now();
   }
 
-protected:
   ~Timer() {
     auto pst = clk.now();
     auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(pst-pre);

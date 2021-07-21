@@ -1,4 +1,12 @@
+#pragma once
+
+#include "polyfill.h"
 #include "portaudio.h"
+
+#include <cstdint>
+#include <iostream>
+#include <thread>
+#include <vector>
 
 // Return values from WaitForDirectSoundEvent()
 enum buffer_event_t {
@@ -11,85 +19,36 @@ enum buffer_event_t {
 
 class CDSoundChannel {
 public:
-  CDSoundChannel(int block_size_bytes, PaStream* stream) : block_size_bytes(block_size_bytes), stream(stream) {
-    auto err = Pa_StartStream(stream);
-  }
-
-  ~CDSoundChannel() {
-    auto err = Pa_StopStream(stream);
-  }
-
-  int GetBlockSize() {
-    return block_size_bytes;
-  }
-
-  void Stop() {
-    int n = 0;
-  }
-
-  void ClearBuffer() {
-    int n = 0;
-  }
-
-  buffer_event_t WaitForSyncEvent(int timeout) {
-    return BUFFER_IN_SYNC;
-  }
-
-  void WriteBuffer(void* buffer, int size) {
-    auto err = Pa_WriteStream(stream, buffer, size);
-    auto err_text = Pa_GetErrorText(err);
-    int n = 0;
-  }
+  CDSoundChannel(int block_size_bytes, PaStream* stream);
+  ~CDSoundChannel();
+  int GetBlockSize();
+  void Stop();
+  void ClearBuffer();
+  buffer_event_t WaitForSyncEvent(int timeout);
+  void WriteBuffer(void* buffer, int size);
+  void WriteAudioThread();
 
 private:
   int block_size_bytes;
   PaStream* stream;
+
+  // Audio thread
+  std::vector<uint8_t> to_write;
+  std::thread audio_thread;
+  std::mutex mtx;
+  std::condition_variable cv;
 };
 
 class CDSound {
 public:
-  CDSound() {
-    Pa_Initialize();
-  }
-
-  ~CDSound() {
-    Pa_Terminate();
-  }
-
-  void EnumerateDevices() {
-  }
-
-  int GetDeviceCount() {
-    return Pa_GetDeviceCount();
-  }
-
-  bool SetupDevice(int device) {
-    auto info = Pa_GetDeviceInfo(device);
-
-    PaStreamParameters params;
-    params.sampleFormat = paInt16;
-    params.channelCount = 1;
-    params.device = device;
-    params.hostApiSpecificStreamInfo = nullptr;
-    params.suggestedLatency = info->defaultHighOutputLatency;
-
-    auto err = Pa_OpenStream(&stream, nullptr, &params, 44100, 882, paNoFlag, nullptr, nullptr);
-    return err == paNoError;
-  }
-
-  CDSoundChannel* OpenChannel(int sample_rate, int sample_size, int channels, int buffer_length, int blocks) {
-    int block_size_bytes = sample_rate * buffer_length / 1000 * (sample_size / 8) * channels / blocks;
-    return new CDSoundChannel(block_size_bytes, stream);
-  }
-
-  void CloseChannel(CDSoundChannel* channel) {
-    delete channel;
-    channel = nullptr;
-  }
-
-  void CloseDevice() {
-    Pa_CloseStream(&stream);
-  }
+  CDSound();
+  ~CDSound();
+  void EnumerateDevices();
+  int GetDeviceCount();
+  bool SetupDevice(int device);
+  CDSoundChannel* OpenChannel(int sample_rate, int sample_size, int channels, int buffer_length, int blocks);
+  void CloseChannel(CDSoundChannel* channel);
+  void CloseDevice();
 
 private:
   PaStream* stream;
