@@ -36,7 +36,7 @@
 #include "FamiTrackerView.h"
 //#include "VisualizerWnd.h"
 //#include "MainFrm.h"
-#include "DirectSound.h"
+//#include "DirectSound.h"
 #include "APU/APU.h"
 #include "ChannelHandler.h"
 #include "Channels2A03.h"

@@ -24,7 +24,7 @@
 #include "ConfigSound.h"
 #include "SoundGen.h"
 #include "Settings.h"
-#include "DirectSound.h"
+//#include "DirectSound.h"
 
 // CConfigSound dialog
 

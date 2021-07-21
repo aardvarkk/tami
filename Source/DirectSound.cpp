@@ -25,7 +25,7 @@
 #include "stdafx.h"
 #include <cstdio>
 #include "Common.h"
-#include "DirectSound.h"
+//#include "DirectSound.h"
 #include "resource.h"
 
 // The single CDSound object
