@@ -34,6 +34,7 @@ void CWinThread::Lifecycle() {
     cv.wait(lk);
   }
 
+  // Have to wait until resumed so the document exists
   InitInstance();
 
   ThreadMessage msg;

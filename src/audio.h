@@ -19,18 +19,31 @@ enum buffer_event_t {
 
 class CDSoundChannel {
 public:
-  CDSoundChannel(int block_size_bytes, PaStream* stream);
+  CDSoundChannel(int device,
+                 int sample_rate,
+                 int sample_size,
+                 int channels,
+                 int buffer_length,
+                 int blocks);
+
   ~CDSoundChannel();
+
   int GetBlockSize();
+
   void Stop();
+
   void ClearBuffer();
+
   buffer_event_t WaitForSyncEvent(int timeout);
-  void WriteBuffer(void* buffer, int size);
+
+  void WriteBuffer(void *buffer, int size);
+
   void WriteAudioThread();
 
 private:
+  int block_size_samples;
   int block_size_bytes;
-  PaStream* stream;
+  PaStream *stream;
 
   // Audio thread
   std::vector<uint8_t> to_write;
@@ -42,15 +55,22 @@ private:
 class CDSound {
 public:
   CDSound();
+
   ~CDSound();
+
   void EnumerateDevices();
+
   int GetDeviceCount();
+
   bool SetupDevice(int device);
-  CDSoundChannel* OpenChannel(int sample_rate, int sample_size, int channels, int buffer_length, int blocks);
-  void CloseChannel(CDSoundChannel* channel);
+
+  CDSoundChannel *OpenChannel(int sample_rate, int sample_size, int channels, int buffer_length, int blocks);
+
+  void CloseChannel(CDSoundChannel *channel);
+
   void CloseDevice();
 
 private:
-  PaStream* stream;
+  int device;
 };
 

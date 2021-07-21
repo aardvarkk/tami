@@ -1,14 +1,47 @@
 #include "audio.h"
 
-CDSoundChannel::CDSoundChannel(int block_size_bytes, PaStream *stream) :
-  block_size_bytes(block_size_bytes),
-  stream(stream) {
-  auto err = Pa_StartStream(stream);
+CDSoundChannel::CDSoundChannel(
+  int device,
+  int sample_rate,
+  int sample_size,
+  int channels,
+  int buffer_length,
+  int blocks
+) : stream(nullptr) {
+  block_size_samples = sample_rate * buffer_length / 1000 * channels / blocks;
+  block_size_bytes = block_size_samples * (sample_size / 8);
+
+  auto info = Pa_GetDeviceInfo(device);
+
+  PaStreamParameters params;
+  params.sampleFormat = sample_size == 16 ? paInt16 : paInt8;
+  params.channelCount = channels;
+  params.device = device;
+  params.hostApiSpecificStreamInfo = nullptr;
+  params.suggestedLatency = info->defaultHighOutputLatency;
+
+  auto err = Pa_OpenStream(
+    &stream,
+    nullptr,
+    &params,
+    sample_rate,
+    block_size_samples,
+    paNoFlag,
+    nullptr,
+    nullptr
+  );
+
+  if (err != paNoError) {
+    std::cerr << Pa_GetErrorText(err) << std::endl;
+  }
+
+  Pa_StartStream(stream);
   audio_thread = std::thread(&CDSoundChannel::WriteAudioThread, this);
 }
 
 CDSoundChannel::~CDSoundChannel() {
-  auto err = Pa_StopStream(stream);
+  Pa_StopStream(stream);
+  Pa_CloseStream(&stream);
 }
 
 int CDSoundChannel::GetBlockSize() {
@@ -47,7 +80,8 @@ void CDSoundChannel::WriteAudioThread() {
   while (true) {
     cv.wait(lk);
     if (!to_write.empty()) {
-      auto err = Pa_WriteStream(stream, &to_write.front(), to_write.size()/2);
+      assert(to_write.size() == block_size_bytes);
+      auto err = Pa_WriteStream(stream, &to_write.front(), block_size_samples);
       if (err != paNoError) {
         std::cerr << Pa_GetErrorText(err) << std::endl;
       }
@@ -72,25 +106,14 @@ int CDSound::GetDeviceCount() {
 }
 
 bool CDSound::SetupDevice(int device) {
-  auto info = Pa_GetDeviceInfo(device);
-
-  PaStreamParameters params;
-  params.sampleFormat = paInt16;
-  params.channelCount = 1;
-  params.device = device;
-  params.hostApiSpecificStreamInfo = nullptr;
-  params.suggestedLatency = info->defaultHighOutputLatency;
-
-  auto err = Pa_OpenStream(&stream, nullptr, &params, 44100, 882, paNoFlag, nullptr, nullptr);
-  if (err != paNoError) {
-    std::cerr << Pa_GetErrorText(err) << std::endl;
-  }
-  return err == paNoError;
+  this->device = device;
+  return true;
 }
 
 CDSoundChannel *CDSound::OpenChannel(int sample_rate, int sample_size, int channels, int buffer_length, int blocks) {
-  int block_size_bytes = sample_rate * buffer_length / 1000 * (sample_size / 8) * channels / blocks;
-  return new CDSoundChannel(block_size_bytes, stream);
+  return new CDSoundChannel(
+    device, sample_rate, sample_size, channels, buffer_length, blocks
+  );
 }
 
 void CDSound::CloseChannel(CDSoundChannel *channel) {
@@ -99,5 +122,4 @@ void CDSound::CloseChannel(CDSoundChannel *channel) {
 }
 
 void CDSound::CloseDevice() {
-  Pa_CloseStream(&stream);
 }
