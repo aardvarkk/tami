@@ -24,8 +24,15 @@ void CDSoundChannel::ClearBuffer() {
 }
 
 buffer_event_t CDSoundChannel::WaitForSyncEvent(int timeout) {
-  std::unique_lock lk(mtx);
-  return BUFFER_IN_SYNC;
+  while (true) {
+    {
+      std::unique_lock lk(mtx);
+      if (to_write.empty()) {
+        return BUFFER_IN_SYNC;
+      }
+    }
+    std::this_thread::yield();
+  }
 }
 
 void CDSoundChannel::WriteBuffer(void *buffer, int size) {
@@ -36,15 +43,14 @@ void CDSoundChannel::WriteBuffer(void *buffer, int size) {
 }
 
 void CDSoundChannel::WriteAudioThread() {
+  std::unique_lock lk(mtx);
   while (true) {
-    std::unique_lock lk(mtx);
     cv.wait(lk);
     if (!to_write.empty()) {
       auto err = Pa_WriteStream(stream, &to_write.front(), to_write.size()/2);
       if (err != paNoError) {
         std::cerr << Pa_GetErrorText(err) << std::endl;
       }
-      /* paOutputUnderflowed = -9980 */
       to_write.clear();
     }
   }
