@@ -96,3 +96,8 @@ VRC7 -> emu2413
 - One statically sized *circular* buffer, whose "playhead" moves around
 - Always lock a Blocksize chunk, at an appropriate offset
 - Number of samples being returned is *asserted to match the blocksize*
+
+# Call order
+
+- StreamCallback (starts getting called immediately)
+- WaitForSyncEvent

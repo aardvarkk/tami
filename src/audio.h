@@ -38,16 +38,20 @@ public:
 
   void WriteBuffer(void *buffer, int size);
 
-  void WriteAudioThread();
+  static int StreamCallback(
+    const void *input, void *output,
+    unsigned long frameCount,
+    const PaStreamCallbackTimeInfo *timeInfo,
+    PaStreamCallbackFlags statusFlags,
+    void *userData);
 
 private:
   int block_size_samples;
   int block_size_bytes;
+
   PaStream *stream;
 
-  // Audio thread
   std::vector<uint8_t> to_write;
-  std::thread audio_thread;
   std::mutex mtx;
   std::condition_variable cv;
 };
