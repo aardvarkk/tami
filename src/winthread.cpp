@@ -21,6 +21,19 @@ bool CWinThread::CreateThread(int state) {
   return true;
 }
 
+// POSIX only
+#include <pthread.h>
+
+void CWinThread::SetThreadPriority(thread_priority_t priority) {
+  if (!m_hThread) return;
+
+  // POSIX only
+  sched_param sched;
+  sched.sched_priority = 99;
+  auto err = pthread_setschedparam(m_hThread.native_handle(), SCHED_FIFO, &sched);
+  return;
+}
+
 void CWinThread::ResumeThread() {
   std::unique_lock lk(mutex);
   --suspend_count;

@@ -1579,7 +1579,7 @@ BOOL CSoundGen::InitInstance()
 
 	TRACE1("SoundGen: Created thread (0x%04x)\n", m_nThreadID);
 
-//	SetThreadPriority(THREAD_PRIORITY_TIME_CRITICAL);
+	SetThreadPriority(THREAD_PRIORITY_TIME_CRITICAL);
 
 	m_iDelayedStart = 0;
 	m_iFrameCounter = 0;

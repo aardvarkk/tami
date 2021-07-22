@@ -25,6 +25,10 @@ public:
   bool operator!();
 };
 
+enum thread_priority_t {
+  THREAD_PRIORITY_TIME_CRITICAL
+};
+
 class CWinThread {
 public:
   std::thread m_hThread;
@@ -34,6 +38,7 @@ public:
   bool CreateThread(int state);
   void ResumeThread();
   virtual BOOL OnIdle(LONG lCount);
+  void SetThreadPriority(thread_priority_t priority);
 
 protected:
   std::mutex mutex;
