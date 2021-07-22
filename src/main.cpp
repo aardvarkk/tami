@@ -65,9 +65,6 @@ int main() {
   // Constructor of Doc relies on SoundGen from TheApp to register with it
   theApp.InitInstance();
 
-  // Defaulting generally happens if the player thread *fails to start*, but ours succeeds
-  theApp.GetSettings()->DefaultSettings();
-
   // InitInstance() of SoundGen relies on Doc from theApp
   // Can't call it until the Doc is constructed
   // Must call it from its own thread
