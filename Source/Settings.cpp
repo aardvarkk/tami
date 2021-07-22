@@ -254,18 +254,21 @@ template<class T>
 void CSettingType<T>::Load()
 {
 //	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue);
+  *m_pVariable = m_tDefaultValue;
 }
 
 template<>
 void CSettingType<bool>::Load()
 {
 //	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue ? 1 : 0) == 1;
+  *m_pVariable = m_tDefaultValue;
 }
 
 template<>
 void CSettingType<CString>::Load()
 {
 //	*m_pVariable = theApp.GetProfileString(m_pSection, m_pEntry, m_tDefaultValue);
+  *m_pVariable = m_tDefaultValue;
 }
 
 template<class T>
