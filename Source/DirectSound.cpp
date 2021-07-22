@@ -24,8 +24,8 @@
 
 #include "stdafx.h"
 #include <cstdio>
-#include "Common.h"
-//#include "DirectSound.h"
+#include "common.h"
+#include "DirectSound.h"
 #include "resource.h"
 
 // The single CDSound object
@@ -33,18 +33,18 @@ CDSound *CDSound::pThisObject = NULL;
 
 // Class members
 
-//BOOL CALLBACK CDSound::DSEnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext)
-//{
-//	return pThisObject->EnumerateCallback(lpGuid, lpcstrDescription, lpcstrModule, lpContext);
-//}
+BOOL CALLBACK CDSound::DSEnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext)
+{
+	return pThisObject->EnumerateCallback(lpGuid, lpcstrDescription, lpcstrModule, lpContext);
+}
 
 // Instance members
 
-CDSound::CDSound(/*HWND hWnd, HANDLE hNotification*/) :
-	m_iDevices(0)
-//	m_lpDirectSound(NULL),
-//	m_hWndTarget(hWnd),
-//	m_hNotificationHandle(hNotification)
+CDSound::CDSound(HWND hWnd, HANDLE hNotification) :
+	m_iDevices(0),
+	m_lpDirectSound(NULL),
+	m_hWndTarget(hWnd),
+	m_hNotificationHandle(hNotification)
 {
 	ASSERT(pThisObject == NULL);
 	pThisObject = this;
@@ -53,11 +53,9 @@ CDSound::CDSound(/*HWND hWnd, HANDLE hNotification*/) :
 CDSound::~CDSound()
 {
 	for (int i = 0; i < (int)m_iDevices; ++i) {
-//		delete [] m_pcDevice[i];
-//		delete [] m_pGUIDs[i];
+		delete [] m_pcDevice[i];
+		delete [] m_pGUIDs[i];
 	}
-
-  auto paErr = Pa_Terminate();
 }
 
 bool CDSound::SetupDevice(int iDevice)
@@ -65,23 +63,20 @@ bool CDSound::SetupDevice(int iDevice)
 	if (iDevice > (int)m_iDevices)
 		iDevice = 0;
 	
-//	if (m_lpDirectSound) {
-//		m_lpDirectSound->Release();
-//		m_lpDirectSound = NULL;
-//	}
+	if (m_lpDirectSound) {
+		m_lpDirectSound->Release();
+		m_lpDirectSound = NULL;
+	}
 
-//	if (FAILED(DirectSoundCreate((LPCGUID)m_pGUIDs[iDevice], &m_lpDirectSound, NULL))) {
-//		m_lpDirectSound = NULL;
-//		return false;
-//	}
-  m_lpDirectSound = new AudioBufferController();
-//
-//	if (FAILED(m_lpDirectSound->SetCooperativeLevel(m_hWndTarget, DSSCL_PRIORITY))) {
-//		m_lpDirectSound = NULL;
-//		return false;
-//	}
+	if (FAILED(DirectSoundCreate((LPCGUID)m_pGUIDs[iDevice], &m_lpDirectSound, NULL))) {
+		m_lpDirectSound = NULL;
+		return false;
+	}
 
-  m_iDevice = iDevice;
+	if (FAILED(m_lpDirectSound->SetCooperativeLevel(m_hWndTarget, DSSCL_PRIORITY))) {
+		m_lpDirectSound = NULL;
+		return false;
+	}
 
 	return true;
 }
@@ -101,44 +96,29 @@ void CDSound::CloseDevice()
 void CDSound::ClearEnumeration()
 {
 	for (unsigned i = 0; i < m_iDevices; ++i) {
-//    delete [] m_pcDevice[i];
-    m_pcDevice[i] = "";
+		delete [] m_pcDevice[i];
 		if (m_pGUIDs[i] != NULL)
-//			delete m_pGUIDs[i];
-		  m_pGUIDs[i] = nullptr;
+			delete m_pGUIDs[i];
 	}
 
 	m_iDevices = 0;
 }
 
-//BOOL CDSound::EnumerateCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext)
-BOOL CDSound::EnumerateCallback(PaDeviceIndex lpGuid, LPCTSTR lpcstrDescription)
+BOOL CDSound::EnumerateCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext)
 {
-	m_pcDevice[m_iDevices] = lpcstrDescription; //new TCHAR[_tcslen(lpcstrDescription) + 1];
-//	_tcscpy((TCHAR*)m_pcDevice[m_iDevices], lpcstrDescription);
+	m_pcDevice[m_iDevices] = new TCHAR[_tcslen(lpcstrDescription) + 1];
+	_tcscpy((TCHAR*)m_pcDevice[m_iDevices], lpcstrDescription);
 
-//	if (lpGuid != NULL) {
-		m_pGUIDs[m_iDevices] = new PaDeviceIndex;//GUID;
-		memcpy(m_pGUIDs[m_iDevices], &lpGuid, sizeof(PaDeviceIndex /*GUID*/));
-//	}
-//	else
-//		m_pGUIDs[m_iDevices] = NULL;
+	if (lpGuid != NULL) {
+		m_pGUIDs[m_iDevices] = new GUID;
+		memcpy(m_pGUIDs[m_iDevices], lpGuid, sizeof(GUID));
+	}
+	else
+		m_pGUIDs[m_iDevices] = NULL;
 
 	++m_iDevices;
 
 	return TRUE;
-}
-
-void printDeviceInfo(PaDeviceIndex idx, PaDeviceInfo const* info) {
-  auto host_info = Pa_GetHostApiInfo(info->hostApi);
-  std::cout << std::endl;
-  std::cout << "Index: " << idx << std::endl;
-  std::cout << "Name: " << info->name << std::endl;
-  std::cout << "Host: " << host_info->name << std::endl;
-  std::cout << "Outputs: " << info->maxOutputChannels << std::endl;
-  std::cout << "Low Latency: " << info->defaultLowOutputLatency << std::endl;
-  std::cout << "High Latency: " << info->defaultHighOutputLatency << std::endl;
-  std::cout << "Sample Rate: " << info->defaultSampleRate << std::endl;
 }
 
 void CDSound::EnumerateDevices()
@@ -146,14 +126,8 @@ void CDSound::EnumerateDevices()
 	if (m_iDevices != 0)
 		ClearEnumeration();
 
-//	DirectSoundEnumerate(DSEnumCallback, NULL);
-  for (PaDeviceIndex i = 0; i < Pa_GetDeviceCount(); ++i) {
-    auto device_info = Pa_GetDeviceInfo(i);
-    printDeviceInfo(i, device_info);
-    EnumerateCallback(i, device_info->name);
-  }
-
-
+	DirectSoundEnumerate(DSEnumCallback, NULL);
+	
 #ifdef _DEBUG
 	// Add an invalid device for debugging reasons
 	GUID g;
@@ -180,8 +154,8 @@ LPCTSTR CDSound::GetDeviceName(unsigned int iDevice) const
 int CDSound::MatchDeviceID(LPCTSTR Name) const
 {
 	for (unsigned int i = 0; i < m_iDevices; ++i) {
-//		if (!_tcscmp(Name, m_pcDevice[i]))
-//			return i;
+		if (!_tcscmp(Name, m_pcDevice[i]))
+			return i;
 	}
 
 	return 0;
@@ -193,61 +167,12 @@ int CDSound::CalculateBufferLength(int BufferLen, int Samplerate, int Samplesize
 	return ((Samplerate * BufferLen) / 1000) * (Samplesize / 8) * Channels;
 }
 
-int audio_callback(
-  const void *input,
-  void *output,
-  unsigned long frameCount,
-  const PaStreamCallbackTimeInfo* timeInfo,
-  PaStreamCallbackFlags statusFlags,
-  void *userData
-)
-{
-  auto channel = static_cast<CDSoundChannel*>(userData);
-  if (!channel) return paContinue;
-
-  auto block_size = channel->GetBlockSize();
-  auto blocks = channel->GetBlocks();
-
-  ASSERT(frameCount == channel->GetBlockSamples());
-
-  unsigned int play_pos, write_pos;
-  channel->m_lpDirectSoundBuffer->GetCurrentPosition(&play_pos, &write_pos);
-
-  void* buf1;
-  void* buf2 = nullptr;
-  unsigned int sz1, sz2;
-  int flags;
-
-  channel->m_lpDirectSoundBuffer->Lock(
-    write_pos,
-    block_size,
-    &buf1, &sz1, &buf2, &sz2, flags
-  );
-
-  // Copy audio buffer stream to output
-  memcpy(output, buf1, sz1);
-  if (buf2) {
-    memcpy(static_cast<uint8_t*>(output) + sz1, buf2, sz2);
-  }
-
-  channel->m_lpDirectSoundBuffer->Unlock(buf1, sz1, buf2, sz2);
-
-  channel->m_lpDirectSoundBuffer->SetCurrentPosition(
-    (write_pos + block_size) % (blocks * block_size)
-  );
-
-  // Inform the player thread that it can write more data
-  channel->audio_buffer_writable_cv.notify_one();
-
-  return paContinue;
-}
-
 CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channels, int BufferLength, int Blocks)
 {
 	// Open a new secondary buffer
 	//
 
-//	DSBPOSITIONNOTIFY	dspn[MAX_BLOCKS];
+	DSBPOSITIONNOTIFY	dspn[MAX_BLOCKS];
 	WAVEFORMATEX		wfx;
 	DSBUFFERDESC		dsbd;
 
@@ -262,7 +187,7 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
  
 	CDSoundChannel *pChannel = new CDSoundChannel();
 
-//	HANDLE hBufferEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	HANDLE hBufferEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	int SoundBufferSize = CalculateBufferLength(BufferLength, SampleRate, SampleSize, Channels);
 	int BlockSize = SoundBufferSize / Blocks;
@@ -276,9 +201,9 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
 	pChannel->m_iChannels			= Channels;
 
 	pChannel->m_iCurrentWriteBlock	= 0;
-//	pChannel->m_hWndTarget			= m_hWndTarget;
-//	pChannel->m_hEventList[0]		= m_hNotificationHandle;
-//	pChannel->m_hEventList[1]		= hBufferEvent;
+	pChannel->m_hWndTarget			= m_hWndTarget;
+	pChannel->m_hEventList[0]		= m_hNotificationHandle;
+	pChannel->m_hEventList[1]		= hBufferEvent;
 
 	memset(&wfx, 0x00, sizeof(WAVEFORMATEX));
 	wfx.cbSize				= sizeof(WAVEFORMATEX);
@@ -295,51 +220,30 @@ CDSoundChannel *CDSound::OpenChannel(int SampleRate, int SampleSize, int Channel
 	dsbd.dwFlags		= DSBCAPS_LOCSOFTWARE | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
 	dsbd.lpwfxFormat	= &wfx;
 
-	if (FAILED(m_lpDirectSound->CreateSoundBuffer(&dsbd, pChannel, NULL))) {
+	if (FAILED(m_lpDirectSound->CreateSoundBuffer(&dsbd, &pChannel->m_lpDirectSoundBuffer, NULL))) {
 		delete pChannel;
 		return NULL;
 	}
-//
-//	// Setup notifications
-//	for (int i = 0; i < Blocks; ++i) {
-//		dspn[i].dwOffset = i * BlockSize;
-//		dspn[i].hEventNotify = hBufferEvent;
-//	}
-//
-//	if (FAILED(pChannel->m_lpDirectSoundBuffer->QueryInterface(IID_IDirectSoundNotify, (void**)&pChannel->m_lpDirectSoundNotify))) {
-//		delete pChannel;
-//		return NULL;
-//	}
-//
-//	if (FAILED(pChannel->m_lpDirectSoundNotify->SetNotificationPositions(Blocks, dspn))) {
-//		delete pChannel;
-//		return NULL;
-//	}
 
-  pChannel->ClearBuffer();
+	// Setup notifications
+	for (int i = 0; i < Blocks; ++i) {
+		dspn[i].dwOffset = i * BlockSize;
+		dspn[i].hEventNotify = hBufferEvent;
+	}
 
-  auto paInfo = Pa_GetDeviceInfo(m_iDevice);
-  PaStreamParameters paStreamParams;
-  paStreamParams.hostApiSpecificStreamInfo = nullptr;
-  paStreamParams.device = m_iDevice;
-  paStreamParams.sampleFormat = SampleSize == 16 ? paInt16 : paFloat32; // TODO: Do better
-  paStreamParams.channelCount = Channels;
-  paStreamParams.suggestedLatency = paInfo->defaultHighOutputLatency;
+	if (FAILED(pChannel->m_lpDirectSoundBuffer->QueryInterface(IID_IDirectSoundNotify, (void**)&pChannel->m_lpDirectSoundNotify))) {
+		delete pChannel;
+		return NULL;
+	}
 
-  auto paErr = Pa_OpenStream(
-    &pChannel->m_pStream,
-    nullptr,
-    &paStreamParams,
-    SampleRate,
-    pChannel->GetBlockSamples() /*paFramesPerBufferUnspecified*/,
-    paNoFlag,
-    audio_callback /*nullptr*/,
-    pChannel
-  );
+	if (FAILED(pChannel->m_lpDirectSoundNotify->SetNotificationPositions(Blocks, dspn))) {
+		delete pChannel;
+		return NULL;
+	}
 
-  paErr = Pa_StartStream(pChannel->m_pStream);
-
-  return pChannel;
+	pChannel->ClearBuffer();
+	
+	return pChannel;
 }
 
 void CDSound::CloseChannel(CDSoundChannel *pChannel)
@@ -348,7 +252,7 @@ void CDSound::CloseChannel(CDSoundChannel *pChannel)
 		return;
 
 	pChannel->m_lpDirectSoundBuffer->Release();
-//	pChannel->m_lpDirectSoundNotify->Release();
+	pChannel->m_lpDirectSoundNotify->Release();
 
 	delete pChannel;
 }
@@ -359,22 +263,22 @@ CDSoundChannel::CDSoundChannel()
 {
 	m_iCurrentWriteBlock = 0;
 
-//	m_hEventList[0] = NULL;
-//	m_hEventList[1] = NULL;
-//	m_hWndTarget = NULL;
+	m_hEventList[0] = NULL;
+	m_hEventList[1] = NULL;
+	m_hWndTarget = NULL;
 }
 
 CDSoundChannel::~CDSoundChannel()
 {
 	// Kill buffer event
-//	if (m_hEventList[1])
-//		CloseHandle(m_hEventList[1]);
+	if (m_hEventList[1])
+		CloseHandle(m_hEventList[1]);
 }
 
 bool CDSoundChannel::Play() const
 {
 	// Begin playback of buffer
-	return FAILED(m_lpDirectSoundBuffer->Play(0, 0, DSBPLAY_LOOPING)) ? false : true;
+	return FAILED(m_lpDirectSoundBuffer->Play(NULL, NULL, DSBPLAY_LOOPING)) ? false : true;
 }
 
 bool CDSoundChannel::Stop() const
@@ -401,7 +305,7 @@ bool CDSoundChannel::ClearBuffer()
 
 	if (FAILED(m_lpDirectSoundBuffer->Lock(0, m_iSoundBufferSize, (void**)&pAudioPtr1, &AudioBytes1, (void**)&pAudioPtr2, &AudioBytes2, 0)))
 		return false;
-
+	
 	if (m_iSampleSize == 8) {
 		memset(pAudioPtr1, 0x80, AudioBytes1);
 		if (pAudioPtr2)
@@ -435,7 +339,7 @@ bool CDSoundChannel::WriteBuffer(char *pBuffer, unsigned int Samples)
 	int	  Block = m_iCurrentWriteBlock;
 
 	ASSERT(Samples == m_iBlockSize);
-
+	
 	if (FAILED(m_lpDirectSoundBuffer->Lock(Block * m_iBlockSize, m_iBlockSize, (void**)&pAudioPtr1, &AudioBytes1, (void**)&pAudioPtr2, &AudioBytes2, 0)))
 		return false;
 
@@ -461,25 +365,14 @@ buffer_event_t CDSoundChannel::WaitForSyncEvent(DWORD dwTimeout) const
 	}
 
 	// Wait for events
-//	switch (::WaitForMultipleObjects(2, m_hEventList, FALSE, dwTimeout)) {
-//		case WAIT_OBJECT_0:			// External event
-//			return BUFFER_CUSTOM_EVENT;
-//		case WAIT_OBJECT_0 + 1:		// DirectSound buffer
-//			return (GetWriteBlock() == m_iCurrentWriteBlock) ? BUFFER_OUT_OF_SYNC : BUFFER_IN_SYNC;
-//		case WAIT_TIMEOUT:			// Timeout
-//			return BUFFER_TIMEOUT;
-//	}
-
-  std::cv_status wait_result;
-  {
-    std::unique_lock lk(audio_buffer_writable_mtx);
-    wait_result = audio_buffer_writable_cv.wait_for(lk, std::chrono::milliseconds(dwTimeout));
-  }
-  if (wait_result == std::cv_status::timeout) {
-    return BUFFER_TIMEOUT;
-  } else {
-    return (GetWriteBlock() == m_iCurrentWriteBlock) ? BUFFER_OUT_OF_SYNC : BUFFER_IN_SYNC;
-  }
+	switch (::WaitForMultipleObjects(2, m_hEventList, FALSE, dwTimeout)) {
+		case WAIT_OBJECT_0:			// External event
+			return BUFFER_CUSTOM_EVENT;
+		case WAIT_OBJECT_0 + 1:		// DirectSound buffer
+			return (GetWriteBlock() == m_iCurrentWriteBlock) ? BUFFER_OUT_OF_SYNC : BUFFER_IN_SYNC;
+		case WAIT_TIMEOUT:			// Timeout
+			return BUFFER_TIMEOUT;
+	}
 
 	// Error
 	return BUFFER_NONE;
