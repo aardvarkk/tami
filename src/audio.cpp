@@ -56,7 +56,7 @@ void CDSoundChannel::ClearBuffer() {
 }
 
 buffer_event_t CDSoundChannel::WaitForSyncEvent(int timeout) {
-  std::unique_lock lk(mtx);
+  std::unique_lock lk(mutex);
 
   // Ready to write new data!
   if (to_write.size() == 0) {
@@ -80,7 +80,7 @@ buffer_event_t CDSoundChannel::WaitForSyncEvent(int timeout) {
 }
 
 void CDSoundChannel::WriteBuffer(void *buffer, int size) {
-  std::unique_lock lk(mtx);
+  std::unique_lock lk(mutex);
   uint8_t *buffer_bytes = static_cast<uint8_t *>(buffer);
   to_write = std::vector(buffer_bytes, buffer_bytes + size);
 }
@@ -96,7 +96,7 @@ int CDSoundChannel::StreamCallback(
   assert(frameCount == channel->block_size_samples);
 
   // Make sure we're the only ones using the data
-  std::unique_lock lk(channel->mtx);
+  std::unique_lock lk(channel->mutex);
 
   // We have exactly the data we need to write!
   if (channel->to_write.size() == channel->block_size_bytes) {
@@ -105,6 +105,7 @@ int CDSoundChannel::StreamCallback(
     channel->cv.notify_one();
   }
     // Underflow!
+    // Could conceivably wait a *very* short period of time to allow WriteBuffer to occur
   else if (channel->to_write.size() < frameCount) {
     std::cout << "U" << std::endl;
   }
@@ -117,7 +118,7 @@ int CDSoundChannel::StreamCallback(
 }
 
 //voidCDSoundChannel::StreamCallback() {
-//  std::unique_lock lk(mtx);
+//  std::unique_lock lk(mutex);
 //  while (true) {
 //    cv.wait(lk);
 //    if (!to_write.empty()) {

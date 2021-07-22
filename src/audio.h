@@ -52,7 +52,7 @@ private:
   PaStream *stream;
 
   std::vector<uint8_t> to_write;
-  std::mutex mtx;
+  std::mutex mutex;
   std::condition_variable cv;
 };
 

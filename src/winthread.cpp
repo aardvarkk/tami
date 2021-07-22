@@ -53,6 +53,8 @@ void CWinThread::Lifecycle() {
     }
 
     OnIdle(++idle_count);
+
+    // TODO: Could remove this if we're having underrun troubles, but it'd use more CPU
     std::this_thread::yield();
   }
 
