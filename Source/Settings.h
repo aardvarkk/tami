@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "src/polyfill.h"
 
 // CSettings command target
 
@@ -72,7 +73,7 @@ protected:
 };
 
 // Settings collection
-class CSettings //: public CObject
+class CSettings : public CObject
 {
 private:
 	CSettings();

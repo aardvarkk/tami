@@ -12,4 +12,5 @@
 #include "single_doc_template.h"
 #include "timer.h"
 #include "audio.h"
+#include "object.h"
 

@@ -77,6 +77,7 @@ add_executable(tami
 	src/winapp.cpp
 	src/winthread.cpp
 	src/audio.cpp
+	src/object.cpp
 
 	src/main.cpp
 	)
