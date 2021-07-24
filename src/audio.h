@@ -48,12 +48,16 @@ public:
 private:
   int block_size_samples;
   int block_size_bytes;
+  int blocks;
 
   PaStream *stream;
 
   std::vector<uint8_t> to_write;
+  std::vector<bool> writable;
   std::mutex mutex;
   std::condition_variable cv;
+  int buffer_play_idx;
+  int buffer_write_idx;
 };
 
 class CDSound {

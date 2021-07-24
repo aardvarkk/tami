@@ -7,9 +7,17 @@ CDSoundChannel::CDSoundChannel(
   int channels,
   int buffer_length,
   int blocks
-) : stream(nullptr) {
-  block_size_samples = sample_rate * buffer_length / 1000 * channels / blocks;
-  block_size_bytes = block_size_samples * (sample_size / 8);
+) : stream(nullptr), buffer_play_idx(0), buffer_write_idx(0) {
+  this->block_size_samples = sample_rate * buffer_length / 1000 * channels / blocks;
+  this->block_size_bytes = block_size_samples * (sample_size / 8);
+  this->blocks = blocks;
+
+  to_write.resize(block_size_bytes * blocks);
+
+  writable.resize(blocks);
+  for (auto i = 0; i < blocks; ++i) {
+    writable[i] = true;
+  }
 
   auto info = Pa_GetDeviceInfo(device);
 
@@ -52,28 +60,32 @@ void CDSoundChannel::Stop() {
 }
 
 void CDSoundChannel::ClearBuffer() {
-  int n = 0;
+  std::fill(&to_write.front(), &to_write.back(), 0);
+  std::fill(&writable.front(), &writable.back(), true);
 }
 
 buffer_event_t CDSoundChannel::WaitForSyncEvent(int timeout) {
   std::unique_lock lk(mutex);
 
+//  std::cout << "S" << buffer_write_idx << writable[buffer_write_idx] << std::endl;
+
   // Ready to write new data!
-  if (to_write.size() == 0) {
+  if (writable[buffer_write_idx]) {
     return BUFFER_IN_SYNC;
   }
-  // Wait for existing data to be played!
+    // Wait for existing data to be played!
   else {
     auto cv_status = cv.wait_for(lk, std::chrono::milliseconds(timeout));
     if (cv_status == std::cv_status::timeout) {
       std::cout << "T" << std::endl;
       return BUFFER_TIMEOUT;
     } else {
-      if (to_write.size() > 0) {
+      if (writable[buffer_write_idx]) {
+//        std::cout << "G" << buffer_write_idx << std::endl;
+        return BUFFER_IN_SYNC;
+      } else {
         std::cout << "E" << std::endl;
         return BUFFER_OUT_OF_SYNC;
-      } else {
-        return BUFFER_IN_SYNC;
       }
     }
   }
@@ -81,8 +93,11 @@ buffer_event_t CDSoundChannel::WaitForSyncEvent(int timeout) {
 
 void CDSoundChannel::WriteBuffer(void *buffer, int size) {
   std::unique_lock lk(mutex);
-  uint8_t *buffer_bytes = static_cast<uint8_t *>(buffer);
-  to_write = std::vector(buffer_bytes, buffer_bytes + size);
+
+//  std::cout << "W" << buffer_write_idx << std::endl;
+  memcpy(&to_write[buffer_write_idx * block_size_bytes], buffer, size);
+  writable[buffer_write_idx] = false;
+  buffer_write_idx = (buffer_write_idx + 1) % blocks;
 }
 
 int CDSoundChannel::StreamCallback(
@@ -98,39 +113,21 @@ int CDSoundChannel::StreamCallback(
   // Make sure we're the only ones using the data
   std::unique_lock lk(channel->mutex);
 
-  // We have exactly the data we need to write!
-  if (channel->to_write.size() == channel->block_size_bytes) {
-    memcpy(output, &channel->to_write.front(), channel->block_size_bytes);
-    channel->to_write.clear();
-    channel->cv.notify_one();
-  }
-    // Underflow!
-    // Could conceivably wait a *very* short period of time to allow WriteBuffer to occur
-  else if (channel->to_write.size() < frameCount) {
+  // Underflow! Kept playing and resetting buffers and nothing filled them in time.
+  if (channel->writable[channel->buffer_play_idx]) {
     std::cout << "U" << std::endl;
+    return paContinue;
   }
-    // Overflow!
-  else {
-    std::cout << "O" << std::endl;
-  }
+
+  auto idx = channel->buffer_play_idx * channel->block_size_bytes;
+//  std::cout << "P" << channel->buffer_play_idx << std::endl;
+  memcpy(output, &channel->to_write[idx], channel->block_size_bytes);
+  channel->writable[channel->buffer_play_idx] = true;
+  channel->buffer_play_idx = (channel->buffer_play_idx + 1) % channel->blocks;
+  channel->cv.notify_one();
 
   return paContinue;
 }
-
-//voidCDSoundChannel::StreamCallback() {
-//  std::unique_lock lk(mutex);
-//  while (true) {
-//    cv.wait(lk);
-//    if (!to_write.empty()) {
-//      assert(to_write.size() == block_size_bytes);
-//      auto err = Pa_WriteStream(stream, &to_write.front(), block_size_samples);
-//      if (err != paNoError) {
-//        std::cerr << Pa_GetErrorText(err) << std::endl;
-//      }
-//      to_write.clear();
-//    }
-//  }
-//}
 
 CDSound::CDSound() {
   Pa_Initialize();
