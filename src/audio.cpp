@@ -130,6 +130,7 @@ int CDSoundChannel::StreamCallback(
 }
 
 CDSound::CDSound() {
+  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
   Pa_Initialize();
 }
 
