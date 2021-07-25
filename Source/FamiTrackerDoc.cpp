@@ -3222,6 +3222,8 @@ int CFamiTrackerDoc::DeepCloneInstrument(unsigned int Index)
 					}
 				}
 				break;
+		  default: // INST_NONE, INST_VRC7, INST_FDS, INST_S5B
+		    break;
 		}
 
 	}

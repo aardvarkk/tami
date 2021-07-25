@@ -297,6 +297,8 @@ void CVRC7Channel::RefreshChannel()
 		case CMD_NOTE_RELEASE:
 			Cmd = OPL_SUSTAIN_ON;
 			break;
+	  default: // CMD_NONE and CMD_NOTE_OFF
+	    break;
 	}
 	
 	// Write frequency
