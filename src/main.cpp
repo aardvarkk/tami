@@ -57,9 +57,6 @@ public:
 };
 
 int main() {
-  auto paErr = Pa_Initialize();
-  std::cout << "Using PortAudio version " << Pa_GetVersionText() << std::endl;
-
   // Manually calling this -- can't call directly from constructor because it's virtual
   // Constructs SoundGen
   // Constructor of Doc relies on SoundGen from TheApp to register with it
@@ -73,37 +70,8 @@ int main() {
   soundGen->LoadMachineSettings(NTSC, 0, 0);
   soundGen->StartPlayer(MODE_PLAY_START, 0);
 
-  auto summary = [&] {
-    auto content = vbox({
-                          hbox({text(L"- done:   "), text(L"3") | bold}) | color(Color::Green),
-                          hbox({text(L"- active: "), text(L"2") | bold}) | color(Color::RedLight),
-                          hbox({text(L"- queue:  "), text(L"9") | bold}) | color(Color::Red),
-                        });
-    return window(text(L" Summary "), content);
-  };
-
-  auto document =  //
-    vbox({
-           hbox({
-                  summary(),
-                  summary(),
-                  summary() | flex,
-                }),
-           summary(),
-           summary(),
-         });
-
-  // Limit the size of the document to 80 char.
-  document = document | size(WIDTH, LESS_THAN, 80);
-
   auto screen = ScreenInteractive::Fullscreen();
   screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
-
-//  Pa_Sleep(1000);
-//
-//  paErr = Pa_CloseStream(paStream);
-//  paErr = Pa_StopStream(paStream);
-//  paErr = Pa_Terminate();
 
   return EXIT_SUCCESS;
 }
