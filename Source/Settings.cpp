@@ -32,6 +32,10 @@
 #include "Settings.h"
 #include "ColorScheme.h"
 
+#include <fstream>
+#include "src/picojson/picojson.h"
+const std::string SETTINGS_FILENAME = "settings.json";
+
 #define SETTING_INT(Section, Entry, Default, Variable)	\
 	AddSetting<int>(_T(Section), _T(Entry), Default, Variable)	\
 
@@ -208,8 +212,9 @@ void CSettings::DefaultSettings()
 void CSettings::DeleteSettings()
 {
 	// Delete all settings from registry
-	HKEY hKey = theApp.GetAppRegistryKey();
-	theApp.DelRegTree(hKey, _T(""));
+//	HKEY hKey = theApp.GetAppRegistryKey();
+//	theApp.DelRegTree(hKey, _T(""));
+  remove(SETTINGS_FILENAME.c_str());
 }
 
 void CSettings::SetWindowPos(int Left, int Top, int Right, int Bottom, int State)
@@ -238,46 +243,81 @@ void CSettings::SetPath(CString PathName, unsigned int PathType)
 		Paths[PathType] = PathName.Left(PathName.ReverseFind(_T('\\')));
 }
 
-void CSettings::StoreSetting(CString Section, CString Name, int Value) const
-{
-	theApp.WriteProfileInt(Section, Name, Value);
-}
-
-int CSettings::LoadSetting(CString Section, CString Name, int Default) const
-{
-	return theApp.GetProfileInt(Section, Name, Default);
-}
+//void CSettings::StoreSetting(CString Section, CString Name, int Value) const
+//{
+//	theApp.WriteProfileInt(Section, Name, Value);
+//}
+//
+//int CSettings::LoadSetting(CString Section, CString Name, int Default) const
+//{
+//	return theApp.GetProfileInt(Section, Name, Default);
+//}
 
 // Settings types
+
+picojson::object FindSection(picojson::object& settings, std::string section) {
+  if (!settings[section].is<picojson::object>()) {
+    settings[section] = picojson::value(picojson::object());
+  }
+  return settings[section].get<picojson::object>();
+}
+
+picojson::object LoadSettings() {
+  picojson::value settings;
+  std::ifstream file(SETTINGS_FILENAME);
+  picojson::parse(settings, file);
+  return settings.is<picojson::object>() ? settings.get<picojson::object>() : picojson::object();
+}
+
+void SaveSettings() {
+  std::ofstream file(SETTINGS_FILENAME);
+  file << settings.serialize(true);
+  file.close();
+}
 
 template<class T>
 void CSettingType<T>::Load()
 {
-	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue);
+//	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue);
+  auto settings = LoadSettings();
+  auto value = FindSection(settings, m_pSection)[m_pEntry];
+  *m_pVariable = value.template is<double>() ? value.template get<double>() : m_tDefaultValue;
 }
 
 template<>
 void CSettingType<bool>::Load()
 {
-	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue ? 1 : 0) == 1;
+//	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue ? 1 : 0) == 1;
+  auto settings = LoadSettings();
+  auto value = FindSection(settings, m_pSection)[m_pEntry];
+  *m_pVariable = value.template is<bool>() ? value.template get<bool>() : m_tDefaultValue;
 }
 
 template<>
 void CSettingType<CString>::Load()
 {
-	*m_pVariable = theApp.GetProfileString(m_pSection, m_pEntry, m_tDefaultValue);
+//	*m_pVariable = theApp.GetProfileString(m_pSection, m_pEntry, m_tDefaultValue);
+  auto settings = LoadSettings();
+  auto value = FindSection(settings, m_pSection)[m_pEntry];
+  *m_pVariable = value.template is<std::string>() ? value.template get<std::string>() : m_tDefaultValue;
 }
 
 template<class T>
 void CSettingType<T>::Save()
 {
-	theApp.WriteProfileInt(m_pSection, m_pEntry, *m_pVariable);
+//	theApp.WriteProfileInt(m_pSection, m_pEntry, *m_pVariable);
+  auto settings = LoadSettings();
+  FindSection(settings, m_pSection)[m_pEntry] = picojson::value(static_cast<double>(*m_pVariable));
+  SaveSettings(picojson::value(settings));
 }
 
 template<>
 void CSettingType<CString>::Save()
 {
-	theApp.WriteProfileString(m_pSection, m_pEntry, *m_pVariable);
+//	theApp.WriteProfileString(m_pSection, m_pEntry, *m_pVariable);
+  auto settings = LoadSettings();
+  FindSection(settings, m_pSection)[m_pEntry] = picojson::value(*m_pVariable);
+  SaveSettings(picojson::value(settings));
 }
 
 template<class T>

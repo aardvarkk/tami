@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include "typedefs.h"
 
 class CString : public std::string {
 public:
   CString();
+  CString(TCHAR const* str);
   CString(std::string const& str);
   int GetLength() const;
   char GetAt(int idx);
@@ -16,6 +18,7 @@ public:
   CString Right(int n);
   CString Left(int n);
   int Find(char letter);
+  int ReverseFind(char letter);
 };
 
 class CStringA : public CString {};

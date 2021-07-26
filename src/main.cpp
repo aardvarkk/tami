@@ -61,6 +61,7 @@ int main() {
   // Constructs SoundGen
   // Constructor of Doc relies on SoundGen from TheApp to register with it
   theApp.InitInstance();
+  theApp.GetSettings()->SaveSettings();
 
   // InitInstance() of SoundGen relies on Doc from theApp
   // Can't call it until the Doc is constructed

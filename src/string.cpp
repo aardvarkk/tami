@@ -2,6 +2,8 @@
 
 CString::CString() {}
 
+CString::CString(TCHAR const* str) : std::string(str) {}
+
 CString::CString(std::string const &str) : std::string(str) {}
 
 int CString::GetLength() const { return this->size(); }
@@ -24,5 +26,10 @@ CString CString::Left(int n) { return this->substr(0, n); }
 
 int CString::Find(char letter) {
   auto idx = this->find(letter);
+  return idx == std::string::npos ? -1 : idx;
+}
+
+int CString::ReverseFind(char letter) {
+  auto idx = this->rfind(letter);
   return idx == std::string::npos ? -1 : idx;
 }

@@ -87,8 +87,8 @@ public:
 	void	DeleteSettings();
 	void	SetWindowPos(int Left, int Top, int Right, int Bottom, int State);
 
-	void	StoreSetting(CString Section, CString Name, int Value) const;
-	int		LoadSetting(CString Section, CString Name, int Default) const;
+//	void	StoreSetting(CString Section, CString Name, int Value) const;
+//	int		LoadSetting(CString Section, CString Name, int Default) const;
 
 	CString GetPath(unsigned int PathType) const;
 	void	SetPath(CString PathName, unsigned int PathType);
