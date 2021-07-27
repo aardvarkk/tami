@@ -17,25 +17,17 @@
 using namespace std;
 using namespace ftxui;
 
-//PaError paErr = paNoError;
-//PaDeviceIndex paDevice = -1;
-//PaDeviceInfo const* paInfo = nullptr;
-//PaStream* paStream = nullptr;
-//PaStreamParameters paStreamParams = {};
-//PaStreamFlags paFlags = paNoFlag;
-
-class App : public IAudioCallback {
-  void FlushBuffer(int16 *Buffer, uint32 Size) override {
-    std::cout << "flush" << std::endl;
-  }
-};
-
+// https://arthursonzogni.github.io/FTXUI/index.html
 class MainWindow : public ComponentBase {
   function<void()> do_exit;
   shared_ptr<ComponentBase> container;
 
   Element Render() override {
-    return container->Render();
+//    return container->Render();
+    return vbox({
+                  window(text(L"Top"), text(L"The element")),
+                  window(text(L"Bottom"), text(L"The element")) | flex
+                });
   }
 
   bool OnEvent(Event ev) override {
