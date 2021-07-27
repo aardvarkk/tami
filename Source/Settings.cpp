@@ -35,6 +35,7 @@
 #include <fstream>
 #include "src/picojson/picojson.h"
 const std::string SETTINGS_FILENAME = "settings.json";
+picojson::object g_settings;
 
 #define SETTING_INT(Section, Entry, Default, Variable)	\
 	AddSetting<int>(_T(Section), _T(Entry), Default, Variable)	\
@@ -190,6 +191,11 @@ void CSettings::AddSetting(CSettingBase *pSetting)
 
 void CSettings::LoadSettings()
 {
+  picojson::value val;
+  std::ifstream file(SETTINGS_FILENAME);
+  picojson::parse(val, file);
+  g_settings = val.is<picojson::object>() ? val.get<picojson::object>() : picojson::object();
+
 	for (int i = 0; i < m_iAddedSettings; ++i) {
 		m_pSettings[i]->Load();
 	}
@@ -200,6 +206,10 @@ void CSettings::SaveSettings()
 	for (int i = 0; i < m_iAddedSettings; ++i) {
 		m_pSettings[i]->Save();
 	}
+
+  std::ofstream file(SETTINGS_FILENAME);
+  file << picojson::value(g_settings).serialize(true);
+  file.close();
 }
 
 void CSettings::DefaultSettings()
@@ -255,32 +265,18 @@ void CSettings::SetPath(CString PathName, unsigned int PathType)
 
 // Settings types
 
-picojson::object FindSection(picojson::object& settings, std::string section) {
-  if (!settings[section].is<picojson::object>()) {
-    settings[section] = picojson::value(picojson::object());
+picojson::object& FindSection(std::string section) {
+  if (!g_settings[section].is<picojson::object>()) {
+    g_settings[section] = picojson::value(picojson::object());
   }
-  return settings[section].get<picojson::object>();
-}
-
-picojson::object LoadSettings() {
-  picojson::value settings;
-  std::ifstream file(SETTINGS_FILENAME);
-  picojson::parse(settings, file);
-  return settings.is<picojson::object>() ? settings.get<picojson::object>() : picojson::object();
-}
-
-void SaveSettings() {
-  std::ofstream file(SETTINGS_FILENAME);
-  file << settings.serialize(true);
-  file.close();
+  return g_settings.at(section).get<picojson::object>();
 }
 
 template<class T>
 void CSettingType<T>::Load()
 {
 //	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue);
-  auto settings = LoadSettings();
-  auto value = FindSection(settings, m_pSection)[m_pEntry];
+  auto value = FindSection(m_pSection)[m_pEntry];
   *m_pVariable = value.template is<double>() ? value.template get<double>() : m_tDefaultValue;
 }
 
@@ -288,8 +284,7 @@ template<>
 void CSettingType<bool>::Load()
 {
 //	*m_pVariable = theApp.GetProfileInt(m_pSection, m_pEntry, m_tDefaultValue ? 1 : 0) == 1;
-  auto settings = LoadSettings();
-  auto value = FindSection(settings, m_pSection)[m_pEntry];
+  auto value = FindSection(m_pSection)[m_pEntry];
   *m_pVariable = value.template is<bool>() ? value.template get<bool>() : m_tDefaultValue;
 }
 
@@ -297,8 +292,7 @@ template<>
 void CSettingType<CString>::Load()
 {
 //	*m_pVariable = theApp.GetProfileString(m_pSection, m_pEntry, m_tDefaultValue);
-  auto settings = LoadSettings();
-  auto value = FindSection(settings, m_pSection)[m_pEntry];
+  auto value = FindSection(m_pSection)[m_pEntry];
   *m_pVariable = value.template is<std::string>() ? value.template get<std::string>() : m_tDefaultValue;
 }
 
@@ -306,18 +300,14 @@ template<class T>
 void CSettingType<T>::Save()
 {
 //	theApp.WriteProfileInt(m_pSection, m_pEntry, *m_pVariable);
-  auto settings = LoadSettings();
-  FindSection(settings, m_pSection)[m_pEntry] = picojson::value(static_cast<double>(*m_pVariable));
-  SaveSettings(picojson::value(settings));
+  FindSection(m_pSection)[m_pEntry] = picojson::value(static_cast<double>(*m_pVariable));
 }
 
 template<>
 void CSettingType<CString>::Save()
 {
 //	theApp.WriteProfileString(m_pSection, m_pEntry, *m_pVariable);
-  auto settings = LoadSettings();
-  FindSection(settings, m_pSection)[m_pEntry] = picojson::value(*m_pVariable);
-  SaveSettings(picojson::value(settings));
+  FindSection(m_pSection)[m_pEntry] = picojson::value(*m_pVariable);
 }
 
 template<class T>
