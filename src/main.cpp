@@ -69,7 +69,7 @@ int main() {
   auto soundGen = theApp.GetSoundGenerator();
   soundGen->GetDocument()->OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
   soundGen->LoadMachineSettings(NTSC, 0, 0);
-  soundGen->StartPlayer(MODE_PLAY_START, 0);
+//  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   auto screen = ScreenInteractive::Fullscreen();
   screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));

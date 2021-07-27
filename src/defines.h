@@ -10,10 +10,10 @@
 #define AfxMessageBox(x, y) std::cerr << #x << " " << #y << std::endl;
 #define AfxDebugBreak abort
 #define _T(x) x
-#define TRACE(...) printf(__VA_ARGS__);
-#define TRACE0(...) printf(__VA_ARGS__);
-#define TRACE1(...) printf(__VA_ARGS__);
-#define TRACE2(...) printf(__VA_ARGS__);
+#define TRACE(...)  //printf(__VA_ARGS__);
+#define TRACE0(...) //printf(__VA_ARGS__);
+#define TRACE1(...) //printf(__VA_ARGS__);
+#define TRACE2(...) //printf(__VA_ARGS__);
 #define IMPLEMENT_DYNCREATE(x,y)
 
 // Goes in the header file
