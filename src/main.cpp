@@ -20,15 +20,6 @@ using namespace ftxui;
 // https://arthursonzogni.github.io/FTXUI/index.html
 class MainWindow : public ComponentBase {
   function<void()> do_exit;
-  shared_ptr<ComponentBase> container;
-
-  Element Render() override {
-//    return container->Render();
-    return vbox({
-                  window(text(L"Top"), text(L"The element")),
-                  window(text(L"Bottom"), text(L"The element")) | flex
-                });
-  }
 
   bool OnEvent(Event ev) override {
     if (ev.character() == 'q') {
@@ -36,14 +27,18 @@ class MainWindow : public ComponentBase {
       return true;
     }
 
-    return false;
+    return ComponentBase::OnEvent(ev);
   }
 
 public:
   static shared_ptr<ComponentBase> Create(function<void()> do_exit) {
     auto mw = new MainWindow();
+    mw->Add(Container::Vertical({
+                                  Button("Hello", []{}),
+                                  Button("There", []{}),
+                                  Button("You", []{})
+                                }));
     mw->do_exit = do_exit;
-    mw->container = Container::Vertical({});
     return shared_ptr<ComponentBase>(mw);
   }
 };
