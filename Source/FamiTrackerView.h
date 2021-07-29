@@ -20,6 +20,9 @@
 
 #pragma once
 
+#include "src/polyfill.h"
+#include "FamiTrackerTypes.h"
+#include "FamiTrackerDoc.h"
 
 // CFamiTrackerView, the document view class
 

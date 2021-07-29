@@ -920,8 +920,8 @@ void CSoundGen::HaltPlayer()
 #endif
 
 	// Signal that playback has stopped
-	if (m_pTrackerView != NULL)
-		m_pTrackerView->PostMessage(WM_USER_PLAYER, m_iPlayFrame, m_iPlayRow);
+//	if (m_pTrackerView != NULL)
+//		m_pTrackerView->PostMessage(WM_USER_PLAYER, m_iPlayFrame, m_iPlayRow);
 }
 
 void CSoundGen::ResetAPU()

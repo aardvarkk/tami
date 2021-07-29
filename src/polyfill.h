@@ -13,4 +13,5 @@
 #include "timer.h"
 #include "audio.h"
 #include "object.h"
+#include "view.h"
 
