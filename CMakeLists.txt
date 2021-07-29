@@ -68,6 +68,7 @@ add_executable(tami
 	Source/Settings.cpp
 	Source/SoundGen.cpp
 	Source/TrackerChannel.cpp
+	Source/FamiTrackerView.cpp
 
 	src/document.cpp
 	src/file.cpp
@@ -77,7 +78,7 @@ add_executable(tami
 	src/winthread.cpp
 	src/audio.cpp
 	src/object.cpp
-	src/view.cpp
+#	src/view.cpp
 
 	src/main.cpp
 	)

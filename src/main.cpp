@@ -54,7 +54,24 @@ int main() {
   // Can't call it until the Doc is constructed
   // Must call it from its own thread
   auto soundGen = theApp.GetSoundGenerator();
-  soundGen->GetDocument()->OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
+
+  auto doc = soundGen->GetDocument();
+  doc->OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
+
+//  std::cout << "Tracks: " << doc->GetTrackCount() << std::endl;
+//  std::cout << "Track Frames: " << doc->GetFrameCount(0) << std::endl;
+//  std::cout << "Channels: " << doc->GetChannelCount() << std::endl;
+//  std::cout << "Track Pattern Length: " << doc->GetPatternLength(0) << std::endl;
+//
+//  stChanNote data;
+//  doc->GetDataAtPattern(0, 0, 0, 0, &data);
+//  std::cout << "Note: " << static_cast<int>(data.Note) << std::endl;
+//  std::cout << "Octave: " << static_cast<int>(data.Octave) << std::endl;
+//  std::cout << "Vol: " << static_cast<int>(data.Vol) << std::endl;
+//  std::cout << "Instrument: " << static_cast<int>(data.Instrument) << std::endl;
+//  std::cout << "EffNumber[0]: " << static_cast<int>(data.EffNumber[0]) << std::endl;
+//  std::cout << "EffParam[0]: " << static_cast<int>(data.EffParam[0]) << std::endl;
+
   soundGen->LoadMachineSettings(NTSC, 0, 0);
 //  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
