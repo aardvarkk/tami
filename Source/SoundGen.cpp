@@ -851,13 +851,13 @@ void CSoundGen::BeginPlayer(play_mode_t Mode, int Track)
 		// Play from top of pattern
 		case MODE_PLAY:
 			m_bPlayLooping = false;
-//			m_iPlayFrame = m_pTrackerView->GetSelectedFrame();
+			m_iPlayFrame = m_pTrackerView->GetSelectedFrame();
 			m_iPlayRow = 0;
 			break;
 		// Repeat pattern
 		case MODE_PLAY_REPEAT:
 			m_bPlayLooping = true;
-//			m_iPlayFrame = m_pTrackerView->GetSelectedFrame();
+			m_iPlayFrame = m_pTrackerView->GetSelectedFrame();
 			m_iPlayRow = 0;
 			break;
 		// Start of song
@@ -869,8 +869,8 @@ void CSoundGen::BeginPlayer(play_mode_t Mode, int Track)
 		// From cursor
 		case MODE_PLAY_CURSOR:
 			m_bPlayLooping = false;
-//			m_iPlayFrame = m_pTrackerView->GetSelectedFrame();
-//			m_iPlayRow = m_pTrackerView->GetSelectedRow();
+			m_iPlayFrame = m_pTrackerView->GetSelectedFrame();
+			m_iPlayRow = m_pTrackerView->GetSelectedRow();
 			break;
 	}
 
@@ -920,8 +920,8 @@ void CSoundGen::HaltPlayer()
 #endif
 
 	// Signal that playback has stopped
-//	if (m_pTrackerView != NULL)
-//		m_pTrackerView->PostMessage(WM_USER_PLAYER, m_iPlayFrame, m_iPlayRow);
+	if (m_pTrackerView != NULL)
+		m_pTrackerView->PostMessage(WM_USER_PLAYER, m_iPlayFrame, m_iPlayRow);
 }
 
 void CSoundGen::ResetAPU()
@@ -1017,7 +1017,7 @@ void CSoundGen::RunFrame()
 	ASSERT(m_pTrackerView != NULL);
 
 	// View callback
-//	m_pTrackerView->PlayerTick();
+	m_pTrackerView->PlayerTick();
 
 	if (IsPlaying()) {
 		
@@ -1691,10 +1691,10 @@ void CSoundGen::PlayChannelNotes()
 		int Channel = m_pDocument->GetChannelType(i);
 		
 		// Run auto-arpeggio, if enabled
-//		int Arpeggio = m_pTrackerView->GetAutoArpeggio(i);
-//		if (Arpeggio > 0) {
-//			m_pChannels[Channel]->Arpeggiate(Arpeggio);
-//		}
+		int Arpeggio = m_pTrackerView->GetAutoArpeggio(i);
+		if (Arpeggio > 0) {
+			m_pChannels[Channel]->Arpeggiate(Arpeggio);
+		}
 
 		// Check if new note data has been queued for playing
 		if (m_pTrackerChannels[Channel]->NewNoteData()) {
@@ -1711,9 +1711,9 @@ void CSoundGen::PlayChannelNotes()
 	}
 
 	// Instrument sequence visualization
-//	int SelectedChan = m_pTrackerView->GetSelectedChannel();
-//	if (m_pChannels[SelectedChan])
-//		m_pChannels[SelectedChan]->UpdateSequencePlayPos();
+	int SelectedChan = m_pTrackerView->GetSelectedChannel();
+	if (m_pChannels[SelectedChan])
+		m_pChannels[SelectedChan]->UpdateSequencePlayPos();
 
 }
 

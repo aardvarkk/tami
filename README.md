@@ -101,3 +101,51 @@ VRC7 -> emu2413
 
 - StreamCallback (starts getting called immediately)
 - WaitForSyncEvent
+
+# Keyboard Shortcuts
+
+- https://web.archive.org/web/20210522182455/http://www.famitracker.com/wiki/index.php?title=Key_commands
+
+## General
+Alt+F4 	Exit
+Ctrl+N 	Create new file
+Ctrl+O 	Open file
+Ctrl+S 	Save file
+F1 	Help
+Return 	Play song / stop
+Shift+Return 	Play from current position
+Alt+Return 	Play pattern looped
+Ctrl+Return 	Play a single row
+F2 - F9 	Select octave 0 - 7
+F12 	Kill sound
+Alt+F9 	Mute channel
+Alt+F10 	Solo channel
+
+## Editing
+Ctrl+X 	Cut
+Ctrl+C 	Copy
+Ctrl+V 	Paste
+Ctrl+B 	Paste and overwrite
+Ctrl+G 	Paste and mix
+Ctrl+Z 	Undo last action
+Ctrl+Y 	Redo last action
+Del 	Delete selection / selected row
+Backspace 	Delete the row above
+Insert 	Insert rows below
+Ctrl+F1 	Decrease notes
+Ctrl+F2 	Increase notes
+Ctrl+F3 	Decrease octaves
+Ctrl+F4 	Increase octaves
+Space 	Switch between edit / normal mode
+Ctrl+Right 	Jump forward one frame
+Ctrl+Left 	Jump backward one frame
+Tab 	Go to to next channel
+Shift+Tab 	Go to to previous channel
++ 	Next pattern
+- 	Previous pattern
+     Numpad 0-9 	Select instrument 0 - 9
+     Ctrl+Numpad 0-9 	Set step size, 0 - 9
+     / 	Select previous octave
+* 	Select next octave
+     Ctrl+Up 	Next instrument
+     Ctrl+Down 	Previous instrument 
