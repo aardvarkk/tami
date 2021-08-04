@@ -1,10 +1,12 @@
 #include <iostream>
+#include <sstream>
 
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/screen/screen.hpp"
 #include "ftxui/screen/string.hpp"
 #include "ftxui/component/container.hpp"
 #include "ftxui/component/screen_interactive.hpp"
+#include "ftxui/component/button.hpp"
 
 #include "portaudio.h"
 
@@ -17,12 +19,35 @@
 using namespace std;
 using namespace ftxui;
 
+std::string blah;
+
+class BlahButtonBase : public ButtonBase {
+public:
+  BlahButtonBase() : ButtonBase("", []{}, true) {
+  }
+
+  Element Render() override {
+    std::stringstream ss;
+    for (int i = 0; i < blah.size(); ++i) {
+      ss << static_cast<int>(blah[i]) << " ";
+    }
+    return text(to_wstring(ss.str()));
+  }
+};
+
+std::shared_ptr<BlahButtonBase> BlahButton() {
+  return std::make_shared<BlahButtonBase>();
+};
+
 // https://arthursonzogni.github.io/FTXUI/index.html
 class MainWindow : public ComponentBase {
   function<void()> do_exit;
 
   bool OnEvent(Event ev) override {
-    if (ev.character() == 'q') {
+    blah = ev.input();
+
+    // Alt-F4 to Quit
+    if (ev == Event::Special({ 27, 79, 83 })) {
       do_exit();
       return true;
     }
@@ -34,7 +59,7 @@ public:
   static shared_ptr<ComponentBase> Create(function<void()> do_exit) {
     auto mw = new MainWindow();
     mw->Add(Container::Vertical({
-                                  Button("Hello", []{}),
+                                  BlahButton(),
                                   Button("There", []{}),
                                   Button("You", []{})
                                 }));

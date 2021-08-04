@@ -105,6 +105,8 @@ VRC7 -> emu2413
 # Keyboard Shortcuts
 
 - https://web.archive.org/web/20210522182455/http://www.famitracker.com/wiki/index.php?title=Key_commands
+- Can't copy these shortcuts because they're not really cross-platform since they involve modifiers
+- For instance, I can't seem to get the Ctrl-O combo to show up as it may be stolen by the terminal, etc.
 
 ## General
 Alt+F4 	Exit
