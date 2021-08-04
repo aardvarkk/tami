@@ -19,35 +19,30 @@
 using namespace std;
 using namespace ftxui;
 
-std::string blah;
-
-class BlahButtonBase : public ButtonBase {
-public:
-  BlahButtonBase() : ButtonBase("", []{}, true) {
-  }
-
-  Element Render() override {
-    std::stringstream ss;
-    for (int i = 0; i < blah.size(); ++i) {
-      ss << static_cast<int>(blah[i]) << " ";
-    }
-    return text(to_wstring(ss.str()));
-  }
-};
-
-std::shared_ptr<BlahButtonBase> BlahButton() {
-  return std::make_shared<BlahButtonBase>();
-};
-
 // https://arthursonzogni.github.io/FTXUI/index.html
 class MainWindow : public ComponentBase {
   function<void()> do_exit;
+  bool open_file_dlg_open = false;
+
+  Element Render() override {
+    if (open_file_dlg_open) {
+      return dbox({ComponentBase::Render(),
+                   text(L"hello") | border | color(Color::GreenLight) | clear_under | center });
+    } else {
+      return ComponentBase::Render();
+    }
+  }
 
   bool OnEvent(Event ev) override {
-    blah = ev.input();
 
-    // Alt-F4 to Quit
-    if (ev == Event::Special({ 27, 79, 83 })) {
+    // Open
+    if (ev.character() == 'o') {
+      open_file_dlg_open = true;
+      return true;
+    }
+
+    // Quit
+    if (ev.character() == 'q') {
       do_exit();
       return true;
     }
@@ -56,15 +51,12 @@ class MainWindow : public ComponentBase {
   }
 
 public:
-  static shared_ptr<ComponentBase> Create(function<void()> do_exit) {
-    auto mw = new MainWindow();
-    mw->Add(Container::Vertical({
-                                  BlahButton(),
-                                  Button("There", []{}),
-                                  Button("You", []{})
-                                }));
-    mw->do_exit = do_exit;
-    return shared_ptr<ComponentBase>(mw);
+  MainWindow(std::function<void()> do_exit) : do_exit(do_exit) {
+    Add(Container::Vertical({
+                              Button("Open File", [&] { open_file_dlg_open = true; }),
+                              Button("There", [] {}),
+                              Button("You", [] {})
+                            }));
   }
 };
 
@@ -101,7 +93,7 @@ int main() {
 //  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   auto screen = ScreenInteractive::Fullscreen();
-  screen.Loop(MainWindow::Create(screen.ExitLoopClosure()));
+  screen.Loop(Make<MainWindow>(screen.ExitLoopClosure()));
 
   return EXIT_SUCCESS;
 }
