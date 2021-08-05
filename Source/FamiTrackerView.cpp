@@ -1392,16 +1392,19 @@ void CFamiTrackerView::PlayerPlayNote(int Channel, stChanNote *pNote)
 unsigned int CFamiTrackerView::GetSelectedFrame() const 
 { 
 //	return m_pPatternEditor->GetFrame();
+  return 0;
 }
 
 unsigned int CFamiTrackerView::GetSelectedChannel() const 
 { 
 //	return m_pPatternEditor->GetChannel();
+  return 0;
 }
 
 unsigned int CFamiTrackerView::GetSelectedRow() const
 {
 //	return m_pPatternEditor->GetRow();
+  return 0;
 }
 
 void CFamiTrackerView::SetFollowMode(bool Mode)
