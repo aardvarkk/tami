@@ -7,6 +7,7 @@
 #include "ftxui/component/container.hpp"
 #include "ftxui/component/screen_interactive.hpp"
 #include "ftxui/component/button.hpp"
+#include "ftxui/component/menu.hpp"
 
 #include "portaudio.h"
 
@@ -19,25 +20,70 @@
 using namespace std;
 using namespace ftxui;
 
+class OpenFileDialog : public MenuBase {
+public:
+  OpenFileDialog() : MenuBase(&entries_str, &selected) {
+    SetPath(filesystem::current_path());
+  }
+
+  void SetPath(filesystem::path const &path) {
+    this->path = path;
+    this->entries.clear();
+    this->entries_str.clear();
+    filesystem::directory_iterator it(path);
+    for (auto const &entry : it) {
+      this->entries.push_back(entry);
+      this->entries_str.push_back(entry.path().wstring());
+    }
+  }
+
+  static Component Create() {
+    auto dialog = Make<OpenFileDialog>();
+    return Renderer(dialog, [dialog]{
+      return vbox({
+        text(L"Open File..."),
+        separator(),
+        dialog->Render()
+      });
+    });
+  }
+
+private:
+  filesystem::path path;
+  Component menu;
+  vector<filesystem::directory_entry> entries;
+  vector<wstring> entries_str;
+  int selected;
+};
+
 // https://arthursonzogni.github.io/FTXUI/index.html
-class MainWindow : public ComponentBase {
+class View : public ComponentBase {
   function<void()> do_exit;
+
+  Component main_window;
+
   bool open_file_dlg_open = false;
+  Component open_file_dlg;
 
   Element Render() override {
     if (open_file_dlg_open) {
-      return dbox({ComponentBase::Render(),
-                   text(L"hello") | border | color(Color::GreenLight) | clear_under | center });
+      return dbox({main_window->Render(),
+                   open_file_dlg->Render()});
     } else {
-      return ComponentBase::Render();
+      return main_window->Render();
     }
   }
 
   bool OnEvent(Event ev) override {
 
+    if (open_file_dlg_open) {
+      return open_file_dlg->OnEvent(ev);
+    }
+
     // Open
     if (ev.character() == 'o') {
       open_file_dlg_open = true;
+      open_file_dlg->TakeFocus();
       return true;
     }
 
@@ -51,12 +97,15 @@ class MainWindow : public ComponentBase {
   }
 
 public:
-  MainWindow(std::function<void()> do_exit) : do_exit(do_exit) {
-    Add(Container::Vertical({
-                              Button("Open File", [&] { open_file_dlg_open = true; }),
-                              Button("There", [] {}),
-                              Button("You", [] {})
-                            }));
+  View(std::function<void()> do_exit) : do_exit(do_exit) {
+    main_window = Container::Vertical({
+                                        Button("Open File", [&] { open_file_dlg_open = true; }),
+                                        Button("There", [] {}),
+                                        Button("You", [] {})
+                                      });
+    open_file_dlg = OpenFileDialog::Create();
+    Add(main_window);
+    Add(open_file_dlg);
   }
 };
 
@@ -93,7 +142,7 @@ int main() {
 //  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   auto screen = ScreenInteractive::Fullscreen();
-  screen.Loop(Make<MainWindow>(screen.ExitLoopClosure()));
+  screen.Loop(Make<View>(screen.ExitLoopClosure()));
 
   return EXIT_SUCCESS;
 }
