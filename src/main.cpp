@@ -57,16 +57,14 @@ private:
 };
 
 // https://arthursonzogni.github.io/FTXUI/index.html
-class View : public ComponentBase {
+class View : public ContainerBase {
   function<void()> do_exit;
 
   Component main_window;
-
-  bool open_file_dlg_open = false;
   Component open_file_dlg;
 
   Element Render() override {
-    if (open_file_dlg_open) {
+    if (ActiveChild() == open_file_dlg) {
       return dbox({main_window->Render(),
                    open_file_dlg->Render()});
     } else {
@@ -74,28 +72,18 @@ class View : public ComponentBase {
     }
   }
 
-  Component ActiveChild() override {
-    if (open_file_dlg_open) {
-      return open_file_dlg;
-    } else {
-      return main_window;
-    }
-  }
-
   bool OnEvent(Event ev) override {
 
     // Open
     if (ev.character() == 'o') {
-      open_file_dlg_open = true;
-      SetActiveChild(open_file_dlg);
+      ComponentBase::SetActiveChild(open_file_dlg);
       return true;
     }
 
     // Close Dialog
     if (ev == Event::Escape) {
-      if (open_file_dlg_open) {
-        open_file_dlg_open = false;
-        SetActiveChild()
+      if (ActiveChild() == open_file_dlg) {
+        ComponentBase::SetActiveChild(main_window);
         return true;
       }
     }
@@ -112,13 +100,15 @@ class View : public ComponentBase {
 public:
   View(std::function<void()> do_exit) : do_exit(do_exit) {
     main_window = Container::Vertical({
-                                        Button("Open File", [&] { open_file_dlg_open = true; }),
+                                        Button("Open File", [&] { ComponentBase::SetActiveChild(open_file_dlg); }),
                                         Button("There", [] {}),
                                         Button("You", [] {})
                                       });
     open_file_dlg = OpenFileDialog::Create();
     Add(main_window);
     Add(open_file_dlg);
+
+    ComponentBase::SetActiveChild(main_window);
   }
 };
 
