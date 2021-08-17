@@ -102,8 +102,6 @@ class View : public ContainerBase {
 
       return main_window->OnEvent(ev);
     }
-
-    return false;
   }
 
 public:
