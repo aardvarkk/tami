@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 #include <sstream>
 
 #include "ftxui/dom/elements.hpp"
@@ -32,7 +33,9 @@ public:
     this->entries_str.clear();
     filesystem::directory_iterator it(path);
     for (auto const &entry : it) {
-      this->entries.push_back(entry);
+      this->entries.insert(entry);
+    }
+    for (auto const& entry : entries) {
       this->entries_str.push_back(entry.path().wstring());
     }
   }
@@ -51,7 +54,7 @@ public:
 private:
   filesystem::path path;
   Component menu;
-  vector<filesystem::directory_entry> entries;
+  set<filesystem::directory_entry> entries;
   vector<wstring> entries_str;
   int selected;
 };
