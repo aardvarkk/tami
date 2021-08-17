@@ -74,19 +74,7 @@ class View : public ContainerBase {
 
   bool OnEvent(Event ev) override {
 
-    // Open
-    if (ev.character() == 'o') {
-      ComponentBase::SetActiveChild(open_file_dlg);
-      return true;
-    }
-
-    // Close Dialog
-    if (ev == Event::Escape) {
-      if (ActiveChild() == open_file_dlg) {
-        ComponentBase::SetActiveChild(main_window);
-        return true;
-      }
-    }
+    // Global
 
     // Quit
     if (ev.character() == 'q') {
@@ -94,13 +82,34 @@ class View : public ContainerBase {
       return true;
     }
 
-    return ComponentBase::OnEvent(ev);
+    // Open File Dialog
+    if (ActiveChild() == open_file_dlg) {
+      // Close
+      if (ev == Event::Escape) {
+        SetActiveChild(main_window.get());
+        return true;
+      }
+
+      return open_file_dlg->OnEvent(ev);
+    }
+    // Main Window
+    else {
+      // Open
+      if (ev.character() == 'o') {
+        SetActiveChild(open_file_dlg.get());
+        return true;
+      }
+
+      return main_window->OnEvent(ev);
+    }
+
+    return false;
   }
 
 public:
   View(std::function<void()> do_exit) : do_exit(do_exit) {
     main_window = Container::Vertical({
-                                        Button("Open File", [&] { ComponentBase::SetActiveChild(open_file_dlg); }),
+                                        Button("Open File", [&] { SetActiveChild(open_file_dlg.get()); }),
                                         Button("There", [] {}),
                                         Button("You", [] {})
                                       });
@@ -108,7 +117,7 @@ public:
     Add(main_window);
     Add(open_file_dlg);
 
-    ComponentBase::SetActiveChild(main_window);
+    SetActiveChild(main_window.get());
   }
 };
 
