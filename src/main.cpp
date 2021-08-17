@@ -41,10 +41,10 @@ public:
     auto dialog = Make<OpenFileDialog>();
     return Renderer(dialog, [dialog]{
       return vbox({
-        text(L"Open File..."),
+        text(L"Open File"),
         separator(),
         dialog->Render()
-      });
+      }) | border | clear_under | center;
     });
   }
 
@@ -74,17 +74,30 @@ class View : public ComponentBase {
     }
   }
 
-  bool OnEvent(Event ev) override {
-
+  Component ActiveChild() override {
     if (open_file_dlg_open) {
-      return open_file_dlg->OnEvent(ev);
+      return open_file_dlg;
+    } else {
+      return main_window;
     }
+  }
+
+  bool OnEvent(Event ev) override {
 
     // Open
     if (ev.character() == 'o') {
       open_file_dlg_open = true;
-      open_file_dlg->TakeFocus();
+      SetActiveChild(open_file_dlg);
       return true;
+    }
+
+    // Close Dialog
+    if (ev == Event::Escape) {
+      if (open_file_dlg_open) {
+        open_file_dlg_open = false;
+        SetActiveChild()
+        return true;
+      }
     }
 
     // Quit
