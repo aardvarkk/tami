@@ -25,18 +25,28 @@ class OpenFileDialog : public MenuBase {
 public:
   OpenFileDialog() : MenuBase(&entries_str, &selected) {
     SetPath(filesystem::current_path());
+    on_enter = [this]{
+      SetPath(entries[selected]);
+    };
   }
 
   void SetPath(filesystem::path const &path) {
     this->path = path;
-    this->entries.clear();
-    this->entries_str.clear();
+    entries.clear();
+    entries_str.clear();
+
+    set<filesystem::path> sorted_paths;
     filesystem::directory_iterator it(path);
     for (auto const &entry : it) {
-      this->entries.insert(entry);
+      sorted_paths.insert(entry.path());
     }
-    for (auto const& entry : entries) {
-      this->entries_str.push_back(entry.path().wstring());
+
+    entries.push_back(path.parent_path());
+    entries_str.push_back(L"..");
+
+    for (auto const& entry : sorted_paths) {
+      entries.push_back(entry);
+      entries_str.push_back(entry.wstring());
     }
   }
 
@@ -54,7 +64,7 @@ public:
 private:
   filesystem::path path;
   Component menu;
-  set<filesystem::directory_entry> entries;
+  vector<filesystem::path> entries;
   vector<wstring> entries_str;
   int selected;
 };
