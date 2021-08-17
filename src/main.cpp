@@ -26,7 +26,11 @@ public:
   OpenFileDialog() : MenuBase(&entries_str, &selected) {
     SetPath(filesystem::current_path());
     on_enter = [this]{
-      SetPath(entries[selected]);
+      if (is_directory(entries[selected])) {
+        SetPath(entries[selected]);
+      } else {
+        theApp.GetSoundGenerator()->GetDocument()->OpenDocument(entries[selected]);
+      }
     };
   }
 
@@ -144,9 +148,6 @@ int main() {
   // Must call it from its own thread
   auto soundGen = theApp.GetSoundGenerator();
 
-  auto doc = soundGen->GetDocument();
-  doc->OpenDocument("/Users/aardvarkk/Desktop/2A03_fluidvolt-Pallid_Underbrush.ftm");
-
 //  std::cout << "Tracks: " << doc->GetTrackCount() << std::endl;
 //  std::cout << "Track Frames: " << doc->GetFrameCount(0) << std::endl;
 //  std::cout << "Channels: " << doc->GetChannelCount() << std::endl;
@@ -162,7 +163,7 @@ int main() {
 //  std::cout << "EffParam[0]: " << static_cast<int>(data.EffParam[0]) << std::endl;
 
   soundGen->LoadMachineSettings(NTSC, 0, 0);
-//  soundGen->StartPlayer(MODE_PLAY_START, 0);
+  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   auto screen = ScreenInteractive::Fullscreen();
   screen.Loop(Make<View>(screen.ExitLoopClosure()));

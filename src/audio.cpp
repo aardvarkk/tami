@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "Source/FamiTracker.h"
 
 CDSoundChannel::CDSoundChannel(
   int device,
@@ -109,6 +110,12 @@ int CDSoundChannel::StreamCallback(
 ) {
   auto channel = static_cast<CDSoundChannel *>(userData);
   assert(frameCount == channel->block_size_samples);
+
+  // If we're not playing, there's nothing to do here...
+  if (!theApp.GetSoundGenerator()->IsPlaying()) {
+    memset(output, 0, channel->block_size_bytes);
+    return paContinue;
+  }
 
   // Make sure we're the only ones using the data
   std::unique_lock lk(channel->mutex);
