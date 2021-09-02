@@ -40,7 +40,7 @@ public:
     entries_str.clear();
 
     set<filesystem::path> sorted_paths;
-    filesystem::directory_iterator it(path);
+    filesystem::directory_iterator it(this->path);
     for (auto const &entry : it) {
       sorted_paths.insert(entry.path());
     }
