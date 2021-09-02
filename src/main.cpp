@@ -29,7 +29,9 @@ public:
       if (is_directory(entries[selected])) {
         SetPath(entries[selected]);
       } else {
-        theApp.GetSoundGenerator()->GetDocument()->OpenDocument(entries[selected]);
+        auto soundGen = theApp.GetSoundGenerator();
+        soundGen->GetDocument()->OpenDocument(entries[selected]);
+        soundGen->StartPlayer(MODE_PLAY_START, 0);
       }
     };
   }
@@ -165,7 +167,7 @@ int main() {
 //  std::cout << "EffParam[0]: " << static_cast<int>(data.EffParam[0]) << std::endl;
 
   soundGen->LoadMachineSettings(NTSC, 0, 0);
-  soundGen->StartPlayer(MODE_PLAY_START, 0);
+//  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   auto screen = ScreenInteractive::Fullscreen();
   screen.Loop(Make<View>(screen.ExitLoopClosure()));
