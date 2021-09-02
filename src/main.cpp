@@ -61,7 +61,7 @@ public:
         text(L"Open File"),
         separator(),
         dialog->Render()
-      }) | border | clear_under | center;
+      }) | yframe | border | clear_under | center;
     });
   }
 
