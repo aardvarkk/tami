@@ -45,13 +45,15 @@ public:
       sorted_paths.insert(entry.path());
     }
 
-    entries.push_back(path.parent_path());
+    entries.push_back(this->path.parent_path());
     entries_str.push_back(L"..");
 
     for (auto const& entry : sorted_paths) {
       entries.push_back(entry);
       entries_str.push_back(entry.wstring());
     }
+
+    selected = focused = 0;
   }
 
   static Component Create() {
