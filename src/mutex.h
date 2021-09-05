@@ -2,11 +2,11 @@
 
 #include <mutex>
 
-class CMutex : public std::mutex {
+class CMutex : public std::timed_mutex {
 public:
-  void Lock();
-
-  void Unlock();
+  bool Lock();
+  bool Lock(int timeout_ms);
+  bool Unlock();
 };
 
 class CCriticalSection : public CMutex {

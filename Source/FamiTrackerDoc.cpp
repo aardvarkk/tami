@@ -261,17 +261,17 @@ CFamiTrackerDoc *CFamiTrackerDoc::GetDoc()
 // Synchronization
 BOOL CFamiTrackerDoc::LockDocument() const
 {
-	return true;//m_csDocumentLock.Lock();
+	return m_csDocumentLock.Lock();
 }
 
 BOOL CFamiTrackerDoc::LockDocument(DWORD dwTimeout) const
 {
-	return true;//m_csDocumentLock.Lock(dwTimeout);
+	return m_csDocumentLock.Lock(dwTimeout);
 }
 
 BOOL CFamiTrackerDoc::UnlockDocument() const
 {
-	return true;//m_csDocumentLock.Unlock();
+	return m_csDocumentLock.Unlock();
 }
 
 //

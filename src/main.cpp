@@ -31,7 +31,6 @@ public:
       } else {
         auto soundGen = theApp.GetSoundGenerator();
         soundGen->GetDocument()->OpenDocument(entries[selected]);
-        soundGen->StartPlayer(MODE_PLAY_START, 0);
       }
     };
   }
@@ -58,15 +57,12 @@ public:
     selected = focused = 0;
   }
 
-  static Component Create() {
-    auto dialog = Make<OpenFileDialog>();
-    return Renderer(dialog, [dialog]{
-      return vbox({
-        text(L"Open File"),
-        separator(),
-        dialog->Render()
-      }) | yframe | border | clear_under | center;
-    });
+  Element Render() override {
+    return vbox({
+                  text(L"Open File"),
+                  separator(),
+                  MenuBase::Render()
+                }) | yframe | border | clear_under | center;
   }
 
 private:
@@ -82,7 +78,7 @@ class View : public ContainerBase {
   function<void()> do_exit;
 
   Component main_window;
-  Component open_file_dlg;
+  shared_ptr<OpenFileDialog> open_file_dlg;
 
   Element Render() override {
     if (ActiveChild() == open_file_dlg) {
@@ -96,6 +92,16 @@ class View : public ContainerBase {
   bool OnEvent(Event ev) override {
 
     // Global
+
+    // Play/Pause
+    if (ev.character() == 'p') {
+      auto soundGen = theApp.GetSoundGenerator();
+      if (soundGen->IsPlaying()) {
+        soundGen->StopPlayer();
+      } else {
+        soundGen->StartPlayer(MODE_PLAY_START, 0);
+      }
+    }
 
     // Quit
     if (ev.character() == 'q') {
@@ -117,6 +123,7 @@ class View : public ContainerBase {
     else {
       // Open
       if (ev.character() == 'o') {
+        open_file_dlg->SetPath(filesystem::current_path());
         SetActiveChild(open_file_dlg.get());
         return true;
       }
@@ -128,11 +135,8 @@ class View : public ContainerBase {
 public:
   View(std::function<void()> do_exit) : do_exit(do_exit) {
     main_window = Container::Vertical({
-                                        Button("Open File", [&] { SetActiveChild(open_file_dlg.get()); }),
-                                        Button("There", [] {}),
-                                        Button("You", [] {})
                                       });
-    open_file_dlg = OpenFileDialog::Create();
+    open_file_dlg = Make<OpenFileDialog>();
     Add(main_window);
     Add(open_file_dlg);
 
