@@ -155,6 +155,7 @@ int main() {
   // Can't call it until the Doc is constructed
   // Must call it from its own thread
   auto soundGen = theApp.GetSoundGenerator();
+  soundGen->GetDocument()->OnNewDocument();
 
 //  std::cout << "Tracks: " << doc->GetTrackCount() << std::endl;
 //  std::cout << "Track Frames: " << doc->GetFrameCount(0) << std::endl;
