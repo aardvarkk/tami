@@ -114,20 +114,15 @@ int CDSoundChannel::StreamCallback(
   // Make sure we're the only ones using the data
   std::unique_lock lk(channel->mutex);
 
-  // If we're not playing, there's nothing to do here...
-  if (!theApp.GetSoundGenerator()->IsPlaying()) {
-    memset(output, 0, channel->block_size_bytes);
-  } else {
-    // Underflow! Kept playing and resetting buffers and nothing filled them in time.
-    if (channel->writable[channel->buffer_play_idx]) {
-      std::cout << "U" << std::endl;
-      return paContinue;
-    }
-
-    auto idx = channel->buffer_play_idx * channel->block_size_bytes;
-//  std::cout << "P" << channel->buffer_play_idx << std::endl;
-    memcpy(output, &channel->to_write[idx], channel->block_size_bytes);
+  // Underflow! Kept playing and resetting buffers and nothing filled them in time.
+  if (channel->writable[channel->buffer_play_idx]) {
+    std::cout << "U" << std::endl;
+    return paContinue;
   }
+
+  auto idx = channel->buffer_play_idx * channel->block_size_bytes;
+//  std::cout << "P" << channel->buffer_play_idx << std::endl;
+  memcpy(output, &channel->to_write[idx], channel->block_size_bytes);
 
   channel->writable[channel->buffer_play_idx] = true;
   channel->buffer_play_idx = (channel->buffer_play_idx + 1) % channel->blocks;
