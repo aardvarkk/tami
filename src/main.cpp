@@ -21,6 +21,8 @@
 using namespace std;
 using namespace ftxui;
 
+auto screen = ScreenInteractive::Fullscreen();
+
 class OpenFileDialog : public MenuBase {
 public:
   OpenFileDialog() : MenuBase(&entries_str, &selected) {
@@ -31,6 +33,7 @@ public:
       } else {
         auto soundGen = theApp.GetSoundGenerator();
         soundGen->GetDocument()->OpenDocument(entries[selected]);
+        screen.PostEvent(Event::Escape); // Close the dialog
       }
     };
   }
@@ -174,7 +177,6 @@ int main() {
   soundGen->LoadMachineSettings(NTSC, 0, 0);
 //  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
-  auto screen = ScreenInteractive::Fullscreen();
   screen.Loop(Make<View>(screen.ExitLoopClosure()));
 
   return EXIT_SUCCESS;
