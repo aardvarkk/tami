@@ -27,12 +27,12 @@ class OpenFileDialog : public MenuBase {
 public:
   OpenFileDialog() : MenuBase(&entries_str, &selected) {
     SetPath(filesystem::current_path());
-    on_enter = [this]{
+    on_enter = [this] {
       if (is_directory(entries[selected])) {
         SetPath(entries[selected]);
       } else {
         auto soundGen = theApp.GetSoundGenerator();
-        soundGen->GetDocument()->OpenDocument(entries[selected]);
+        soundGen->GetDocument()->OnOpenDocument(entries[selected]);
         screen.PostEvent(Event::Escape); // Close the dialog
       }
     };
@@ -45,14 +45,14 @@ public:
 
     set<filesystem::path> sorted_paths;
     filesystem::directory_iterator it(this->path);
-    for (auto const &entry : it) {
+    for (auto const &entry: it) {
       sorted_paths.insert(entry.path());
     }
 
     entries.push_back(this->path.parent_path());
     entries_str.push_back(L"..");
 
-    for (auto const& entry : sorted_paths) {
+    for (auto const &entry: sorted_paths) {
       entries.push_back(entry);
       entries_str.push_back(entry.wstring());
     }
@@ -93,7 +93,6 @@ class View : public ContainerBase {
   }
 
   bool OnEvent(Event ev) override {
-
     // Global
 
     // Play/Pause
@@ -122,7 +121,7 @@ class View : public ContainerBase {
 
       return open_file_dlg->OnEvent(ev);
     }
-    // Main Window
+      // Main Window
     else {
       // Open
       if (ev.character() == 'o') {
@@ -137,8 +136,14 @@ class View : public ContainerBase {
 
 public:
   View(std::function<void()> do_exit) : do_exit(do_exit) {
-    main_window = Container::Vertical({
-                                      });
+    auto doc = theApp.GetSoundGenerator()->GetDocument();
+    main_window = Renderer([doc] {
+      return window(text(L"Song Information"), vbox({
+                                                      text(to_wstring(string(doc->GetSongName()))),
+                                                      text(to_wstring(string(doc->GetSongArtist()))),
+                                                      text(to_wstring(string(doc->GetSongCopyright())))
+                                                    }));
+    });
     open_file_dlg = Make<OpenFileDialog>();
     Add(main_window);
     Add(open_file_dlg);
@@ -158,7 +163,7 @@ int main() {
   // Can't call it until the Doc is constructed
   // Must call it from its own thread
   auto soundGen = theApp.GetSoundGenerator();
-  soundGen->GetDocument()->OnNewDocument();
+//  soundGen->GetDocument()->OnNewDocument();
 
 //  std::cout << "Tracks: " << doc->GetTrackCount() << std::endl;
 //  std::cout << "Track Frames: " << doc->GetFrameCount(0) << std::endl;
@@ -175,6 +180,7 @@ int main() {
 //  std::cout << "EffParam[0]: " << static_cast<int>(data.EffParam[0]) << std::endl;
 
   soundGen->LoadMachineSettings(NTSC, 0, 0);
+  soundGen->GetDocument()->OnOpenDocument("/Users/aardvarkk/tami/2A03_fluidvolt-Pallid_Underbrush.ftm");
 //  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   screen.Loop(Make<View>(screen.ExitLoopClosure()));
