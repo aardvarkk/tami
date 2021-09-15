@@ -163,7 +163,8 @@ int main() {
   // Can't call it until the Doc is constructed
   // Must call it from its own thread
   auto soundGen = theApp.GetSoundGenerator();
-//  soundGen->GetDocument()->OnNewDocument();
+  soundGen->GetDocument()->OnNewDocument();
+//  soundGen->GetDocument()->OnOpenDocument("/Users/aardvarkk/tami/2A03_fluidvolt-Pallid_Underbrush.ftm");
 
 //  std::cout << "Tracks: " << doc->GetTrackCount() << std::endl;
 //  std::cout << "Track Frames: " << doc->GetFrameCount(0) << std::endl;
@@ -180,7 +181,6 @@ int main() {
 //  std::cout << "EffParam[0]: " << static_cast<int>(data.EffParam[0]) << std::endl;
 
   soundGen->LoadMachineSettings(NTSC, 0, 0);
-  soundGen->GetDocument()->OnOpenDocument("/Users/aardvarkk/tami/2A03_fluidvolt-Pallid_Underbrush.ftm");
 //  soundGen->StartPlayer(MODE_PLAY_START, 0);
 
   screen.Loop(Make<View>(screen.ExitLoopClosure()));
