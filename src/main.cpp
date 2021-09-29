@@ -62,10 +62,10 @@ public:
 
   Element Render() override {
     return vbox({
-                  text(L"Open File"),
-                  separator(),
-                  MenuBase::Render()
-                }) | yframe | border | clear_under | center;
+      text(L"Open File"),
+      separator(),
+      MenuBase::Render()
+    }) | yframe | border | clear_under | center;
   }
 
 private:
@@ -76,6 +76,16 @@ private:
   int selected;
 };
 
+Component SongInfo(CFamiTrackerDoc const *doc) {
+  return Renderer([doc] {
+    return vbox({ window(text(L"Song Information"), vbox({
+      text(to_wstring(string(doc->GetSongName()))),
+      text(to_wstring(string(doc->GetSongArtist()))),
+      text(to_wstring(string(doc->GetSongCopyright())))
+    })) });
+  });
+}
+
 // https://arthursonzogni.github.io/FTXUI/index.html
 class View : public ContainerBase {
   function<void()> do_exit;
@@ -85,8 +95,8 @@ class View : public ContainerBase {
 
   Element Render() override {
     if (ActiveChild() == open_file_dlg) {
-      return dbox({main_window->Render(),
-                   open_file_dlg->Render()});
+      return dbox({ main_window->Render(),
+        open_file_dlg->Render() });
     } else {
       return main_window->Render();
     }
@@ -137,13 +147,7 @@ class View : public ContainerBase {
 public:
   View(std::function<void()> do_exit) : do_exit(do_exit) {
     auto doc = theApp.GetSoundGenerator()->GetDocument();
-    main_window = Renderer([doc] {
-      return window(text(L"Song Information"), vbox({
-                                                      text(to_wstring(string(doc->GetSongName()))),
-                                                      text(to_wstring(string(doc->GetSongArtist()))),
-                                                      text(to_wstring(string(doc->GetSongCopyright())))
-                                                    }));
-    });
+    main_window = Vertical({ SongInfo(doc) });
     open_file_dlg = Make<OpenFileDialog>();
     Add(main_window);
     Add(open_file_dlg);
