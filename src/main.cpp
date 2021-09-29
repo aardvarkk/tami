@@ -1,4 +1,3 @@
-#include <iostream>
 #include <set>
 #include <sstream>
 
@@ -9,8 +8,6 @@
 #include "ftxui/component/screen_interactive.hpp"
 #include "ftxui/component/button.hpp"
 #include "ftxui/component/menu.hpp"
-
-#include "portaudio.h"
 
 #include "Source/FamiTracker.h"
 #include "Source/APU/APU.h"
@@ -25,7 +22,7 @@ auto screen = ScreenInteractive::Fullscreen();
 
 class OpenFileDialog : public MenuBase {
 public:
-  OpenFileDialog() : MenuBase(&entries_str, &selected) {
+  OpenFileDialog() : selected(0), MenuBase(&entries_str, &selected) {
     SetPath(filesystem::current_path());
     on_enter = [this] {
       if (is_directory(entries[selected])) {
@@ -38,8 +35,8 @@ public:
     };
   }
 
-  void SetPath(filesystem::path const &path) {
-    this->path = path;
+  void SetPath(filesystem::path const &new_path) {
+    this->path = new_path;
     entries.clear();
     entries_str.clear();
 
@@ -50,7 +47,7 @@ public:
     }
 
     entries.push_back(this->path.parent_path());
-    entries_str.push_back(L"..");
+    entries_str.emplace_back(L"..");
 
     for (auto const &entry: sorted_paths) {
       entries.push_back(entry);
@@ -145,14 +142,13 @@ class View : public ContainerBase {
   }
 
 public:
-  View(std::function<void()> do_exit) : do_exit(do_exit) {
+  explicit View(std::function<void()> do_exit) : do_exit(std::move(do_exit)) {
     auto doc = theApp.GetSoundGenerator()->GetDocument();
     main_window = Vertical({ SongInfo(doc) });
     open_file_dlg = Make<OpenFileDialog>();
     Add(main_window);
     Add(open_file_dlg);
-
-    SetActiveChild(main_window.get());
+    selected_ = 0;
   }
 };
 
